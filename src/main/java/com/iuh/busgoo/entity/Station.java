@@ -45,4 +45,8 @@ public class Station extends AbstractEntity implements Serializable{
 
     @Column(name = "description", length = 255)
     private String description;
+    
+    @ManyToOne
+    @JoinColumn(name = "route_id")
+    private Route route;
 }

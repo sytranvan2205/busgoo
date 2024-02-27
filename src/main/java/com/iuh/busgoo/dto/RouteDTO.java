@@ -2,6 +2,9 @@ package com.iuh.busgoo.dto;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
+
+import com.iuh.busgoo.entity.Seat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +26,6 @@ public class RouteDTO implements Serializable{
 	private String nameBus;
 	private String typeBusName;
 	private String typeBusDescription;
-//	private List<Seat> lstSeat;
 	private Double price;
+	private List<Seat> lstSeat;
 }

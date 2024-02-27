@@ -46,7 +46,5 @@ public class Route extends AbstractEntity implements Serializable {
     @Column(name = "transfer_time")
     private LocalTime transferTime;
     
-    @ManyToOne
-    @JoinColumn(name="price_detail_id")
-    private PriceDetail priceDetail;
+    
 }

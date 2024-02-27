@@ -38,8 +38,8 @@ public class PromotionDetail extends AbstractEntity implements Serializable {
     @Column(name = "max_discount")
     private BigDecimal maxDiscount;
 
-    @Column(name = "condition_apply", length = 255)
-    private String conditionApply;
+    @Column(name = "discount_value", length = 255)
+    private String discountValue;
 
     @ManyToOne
     @JoinColumn(name = "promotion_line_id")

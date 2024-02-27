@@ -38,8 +38,8 @@ public class Promotion extends AbstractEntity implements Serializable{
     @Column(name = "name", length = 255)
     private String name;
 
-    @Column(name = "start_date")
-    private LocalDate startDate;
+    @Column(name = "from_date")
+    private LocalDate fromDate;
 
     @Column(name = "to_date")
     private LocalDate toDate;
