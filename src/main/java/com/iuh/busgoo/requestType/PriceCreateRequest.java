@@ -12,8 +12,8 @@ public class PriceCreateRequest {
 	private LocalDate toDate;
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate fromDate;
-	private String typeBusCode;
-	private String routeCode;
+//	private String typeBusCode;
+//	private String routeCode;
 	private String priceDescription;
-	private Double priceValue;
+//	private Double priceValue;
 }

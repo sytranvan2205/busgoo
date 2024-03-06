@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,4 +40,12 @@ public class PriceDetail extends AbstractEntity implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "price_id")
 	private Price price;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "route_id")
+    private Route route;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "type_bus_id")
+    private TypeBus typeBus;
 }

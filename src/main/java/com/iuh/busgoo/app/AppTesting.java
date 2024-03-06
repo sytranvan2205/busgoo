@@ -67,8 +67,8 @@ public class AppTesting implements CommandLineRunner{
 		accountRepo.save(account);
 		System.out.println(account);
 		
-		DataResponse dataResponse =  accountService.createTokenAccount("sytranvan2205@gmail.com");
-		accountService.activeAccount(account.getEmail(), dataResponse.getValueReponse().get("token").toString());
+//		DataResponse dataResponse =  accountService.createTokenAccount("sytranvan2205@gmail.com");
+//		accountService.activeAccount(account.getEmail(), dataResponse.getValueReponse().get("token").toString());
 	}
 
 }

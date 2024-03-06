@@ -36,6 +36,8 @@ public class Constant {
 	public static final Integer TRANSFER_TIME_IS_NOT_NULL = 132;
 	public static final Integer ROUTE_HAS_EXIST = 133;
 	public static final Integer TIME_STATED_IS_NOT_NULL = 134;
+	public static final Integer PRICE_IS_NOT_EXIST = 135;
+	public static final Integer PRICE_DETAIL_IS_EXIST = 136;
 
 
 }

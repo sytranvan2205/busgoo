@@ -36,12 +36,11 @@ public class Order extends AbstractEntity implements Serializable{
     @Column(name = "code", length = 255)
     private String code;
 
-    @ManyToOne
-    @JoinColumn(name = "station_id")
-    private Station station;
-
     @Column(name = "is_pay")
     private Integer isPay;
+    
+    @Column
+    private Integer status;
     
     @ManyToOne
     @JoinColumn(name = "route_id")

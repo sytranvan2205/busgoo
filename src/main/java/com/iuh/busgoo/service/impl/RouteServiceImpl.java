@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
@@ -18,6 +19,7 @@ import com.iuh.busgoo.repository.RouteRepository;
 import com.iuh.busgoo.requestType.RouteCreateRequest;
 import com.iuh.busgoo.service.RouteService;
 
+@Service
 public class RouteServiceImpl implements RouteService{
 	
 	@Autowired

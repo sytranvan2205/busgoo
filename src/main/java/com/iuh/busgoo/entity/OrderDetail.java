@@ -43,4 +43,8 @@ public class OrderDetail extends AbstractEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
+    
+    @ManyToOne
+    @JoinColumn(name = "time_table_id")
+    private TimeTable timeTable;
 }
