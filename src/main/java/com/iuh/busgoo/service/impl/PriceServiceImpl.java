@@ -60,7 +60,7 @@ public class PriceServiceImpl implements PriceService {
 				response.setRespType(Constant.FROM_DATE_NOT_NULL);
 				return response;
 			}
-			if(priceCreateRequest.getToDate()!=null && !priceCreateRequest.getToDate().isAfter(curDate)) {
+			if(priceCreateRequest.getToDate()!=null && priceCreateRequest.getToDate().isBefore(curDate)) {
 				throw new Exception();
 			}
 			if(priceCreateRequest.getFromDate().isAfter(priceCreateRequest.getToDate())) {
@@ -106,7 +106,7 @@ public class PriceServiceImpl implements PriceService {
 				response.setResponseMsg("Price create success !!!");
 				response.setRespType(Constant.HTTP_SUCCESS);
 				Map<String, Object> reponseValue = new HashMap<>();
-				reponseValue.put("price", priceSave);
+				reponseValue.put("data", priceSave);
 				response.setValueReponse(reponseValue);
 				return response;
 			}else {
@@ -168,7 +168,7 @@ public class PriceServiceImpl implements PriceService {
 			response.setRespType(Constant.HTTP_SUCCESS);
 			List<Price> prices = priceRepository.findAll();
 			Map<String, Object> respValue = new HashMap<>();
-			respValue.put("prices", prices);
+			respValue.put("data", prices);
 			return response;
 		} catch (Exception e) {
 			response.setResponseMsg("System error");
@@ -190,7 +190,7 @@ public class PriceServiceImpl implements PriceService {
 				response.setResponseMsg("Get price success!!!");
 				response.setRespType(Constant.HTTP_SUCCESS);
 				Map<String, Object> respValue = new HashMap<>();
-				respValue.put("price", price);
+				respValue.put("data", price);
 				response.setValueReponse(respValue);
 				return response;
 			}

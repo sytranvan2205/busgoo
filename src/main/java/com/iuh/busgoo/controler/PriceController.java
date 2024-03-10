@@ -14,7 +14,10 @@ import com.iuh.busgoo.requestType.PriceCreateRequest;
 import com.iuh.busgoo.requestType.PriceDetailRequest;
 import com.iuh.busgoo.service.PriceService;
 
-@RestController
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@RestController()
 @RequestMapping("/api/price")
 public class PriceController {
 	
@@ -22,6 +25,7 @@ public class PriceController {
 	private PriceService priceService;
 	
 	@PostMapping("/create")
+	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse createPrice(@RequestBody PriceCreateRequest priceCreateRequest) {
 		DataResponse dataResponse = new DataResponse();
 		try {
@@ -37,6 +41,7 @@ public class PriceController {
 	}
 	
 	@GetMapping("/find")
+	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse getPrice() {
 		try {
 			return priceService.getAllPrice();
@@ -49,6 +54,7 @@ public class PriceController {
 	}
 	
 	@PostMapping("/delete")
+	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse deletePrice(@RequestBody Long priceId) {
 		try {
 			return priceService.deletePrice(priceId);
@@ -61,6 +67,7 @@ public class PriceController {
 	}
 	
 	@PostMapping("/create-detail")
+	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse createPriceDetail(@RequestBody PriceDetailRequest priceDetailRequest) {
 		try {
 			return priceService.createPriceDetail(priceDetailRequest);
@@ -73,6 +80,7 @@ public class PriceController {
 	}
 	
 	@GetMapping("/get-detail")
+	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse getLstPriceDetail (@RequestParam Long priceId) {
 		try {
 			return priceService.getPriceDetailByPriceId(priceId);

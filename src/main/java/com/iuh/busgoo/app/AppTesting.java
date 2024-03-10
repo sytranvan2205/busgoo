@@ -60,7 +60,7 @@ public class AppTesting implements CommandLineRunner{
 		Account account = new Account();
 		account.setEmail("sytranvan2205@gmail.com");
 		account.setPassword(passwordEncoder.encode("123456"));
-		account.setIsActive(0);
+		account.setIsActive(1);
 		account.setRole(role);
 		account.setUser(user);
 		
