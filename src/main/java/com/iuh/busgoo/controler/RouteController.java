@@ -13,6 +13,8 @@ import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.service.RouteService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping("/api/route")
 public class RouteController {
@@ -21,6 +23,7 @@ public class RouteController {
 	private RouteService routeService;
 	
 	@GetMapping("/find")
+	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse findRoute() {
 		try {
 			return routeService.getAllRoute();
@@ -33,6 +36,7 @@ public class RouteController {
 	}
 	
 	@PostMapping("/delete")
+	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse deleteRoute(@RequestBody Long routeId) {
 		try {
 			return routeService.deleteRoute(routeId);
@@ -45,6 +49,7 @@ public class RouteController {
 	}
 	
 	@PostMapping("/get-bus-trip")
+	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse getBusTrip(@RequestBody String fromCode,@RequestBody String toCode, @RequestBody LocalDate timeStated) {
 		try {
 			return routeService.getBusTripByAddressAndTime(fromCode, toCode, timeStated);

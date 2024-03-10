@@ -79,7 +79,7 @@ public class PriceServiceImpl implements PriceService {
 //				return response;
 //			}
 			List<Price> prices = priceRepository.getLstByFromDateAndToDate(priceCreateRequest.getFromDate(),priceCreateRequest.getToDate());
-			if (prices == null) {
+			if (prices == null || prices.size() == 0) {
 				//create price
 				Price newPrice = new Price();
 				Long countPrice = priceRepository.count();

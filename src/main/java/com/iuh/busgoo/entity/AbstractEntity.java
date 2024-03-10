@@ -11,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.iuh.busgoo.secirity.CustomUserDetail;
+
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
@@ -51,8 +53,8 @@ public class AbstractEntity implements Serializable{
     public String getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            String currentUser = (String) authentication.getPrincipal();
-            return currentUser;
+            CustomUserDetail currentUser =  (CustomUserDetail) authentication.getPrincipal();
+            return currentUser.getAccount().getUser().getUserCode();
         }
         return "anonymous"; // Trả về một giá trị mặc định nếu không có ai được xác thực
     }

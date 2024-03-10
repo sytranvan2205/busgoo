@@ -60,7 +60,7 @@ public class OrderServiceImpl implements OrderService{
 			dataResponse.setResponseMsg("Get orders success!!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
 			Map<String, Object> respValue = new HashMap<>();
-			respValue.put("orders", orders);
+			respValue.put("data", orders);
 			dataResponse.setValueReponse(respValue);
 			return dataResponse;
 		} catch (Exception e) {

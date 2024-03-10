@@ -36,7 +36,7 @@ public class RouteServiceImpl implements RouteService{
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
 			List<Route> routes = routeRepository.findAll();
 			Map<String, Object> respValue = new HashMap<>();
-			respValue.put("routes", routes);
+			respValue.put("data", routes);
 			dataResponse.setValueReponse(respValue);
 			return dataResponse;
 		} catch (Exception e) {
@@ -54,7 +54,7 @@ public class RouteServiceImpl implements RouteService{
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
 			List<Route> routes = routeRepository.findByFromDetailCodeAndToDetailCodeAndStatus(fromCode, toCode,1);
 			Map<String, Object> respValue = new HashMap<>();
-			respValue.put("routes", routes);
+			respValue.put("data", routes);
 			dataResponse.setValueReponse(respValue);
 			return dataResponse;
 		} catch (Exception e) {
@@ -103,7 +103,7 @@ public class RouteServiceImpl implements RouteService{
 				dataResponse.setResponseMsg("Create success !!!");
 				dataResponse.setRespType(Constant.HTTP_SUCCESS);
 				Map<String, Object> respValue = new HashMap<>();
-				respValue.put("route", route);
+				respValue.put("data", route);
 				dataResponse.setValueReponse(respValue);
 				return dataResponse;
 			}
@@ -155,7 +155,7 @@ public class RouteServiceImpl implements RouteService{
 			}
 			List<RouteDTO> dtos = routeRepository.getRouteByAddressAndTime(fromCode, toCode, timeStated);
 			Map<String, Object> respValue = new HashMap<>();
-			respValue.put("bus_trip", dtos);
+			respValue.put("data", dtos);
 			dataResponse.setValueReponse(respValue);
 			dataResponse.setResponseMsg("Get bustrip success!!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);

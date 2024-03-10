@@ -24,7 +24,7 @@ import com.iuh.busgoo.secirity.CustomUserDetail;
 import com.iuh.busgoo.service.AccountService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/auth")
 public class AuthenController {
 	@Autowired
     AuthenticationManager authenticationManager;
@@ -38,7 +38,7 @@ public class AuthenController {
 //	@Autowired
 //	private UserService userService;
 	
-	@PostMapping("/auth/login")
+	@PostMapping("/login")
 	public DataResponse authenticateUser(@RequestBody LoginRequest loginRequest) {
 		DataResponse dataResponse = null;
 		try {
@@ -66,7 +66,7 @@ public class AuthenController {
 		return dataResponse;
 	}
 	
-	@PostMapping("/auth/register")
+	@PostMapping("/register")
 	public DataResponse createAccount(@RequestBody AccountCreateRequest accountCreateRequest) {
 		DataResponse dataResponse = null;
 		try {
@@ -84,7 +84,7 @@ public class AuthenController {
 		return dataResponse;
 	}
 	
-	@PostMapping("/auth/createToken")
+	@PostMapping("/createToken")
 	public DataResponse createToken(@RequestBody String email) {
 		DataResponse dataResponse = new DataResponse();
 		try {
@@ -103,7 +103,7 @@ public class AuthenController {
 		}
 	}
 	
-	@GetMapping("/auth/verify")
+	@GetMapping("/verify")
 	public DataResponse verifyAccount(@RequestParam String email, @RequestParam String token) {
 		DataResponse dataResponse = new DataResponse();
 		try {

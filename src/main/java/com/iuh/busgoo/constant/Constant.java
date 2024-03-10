@@ -11,6 +11,7 @@ public class Constant {
 	public static final Integer ACCOUNT_VERIFY_FAILD = 501;
 	
 	//Code validate
+	public static final Integer USER_HAS_EXIST = 109;
 	public static final Integer USER_NOT_NULL = 110;// code when username null
 	public static final Integer EMAIL_NOT_NULL = 111;// code when email null
 	public static final Integer PASSWORD_NOT_NULL = 112;// code when password null

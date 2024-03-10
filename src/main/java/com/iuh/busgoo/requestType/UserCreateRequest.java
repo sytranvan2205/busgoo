@@ -1,5 +1,10 @@
 package com.iuh.busgoo.requestType;
 
-public class UserCreateRequest {
+import lombok.Data;
 
+@Data
+public class UserCreateRequest {
+	private String fullName;
+	private String phone;
+	private Long regeionDetailId;
 }
