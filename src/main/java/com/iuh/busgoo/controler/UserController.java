@@ -19,16 +19,16 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @RestController()
 @RequestMapping("/api/user")
 public class UserController {
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@PostMapping("/create")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse createUser(@RequestBody UserCreateRequest userCreateRequest) {
 		DataResponse dataResponse = new DataResponse();
 		try {
-			if(userCreateRequest == null) {
+			if (userCreateRequest == null) {
 				throw new Exception();
 			}
 			return dataResponse = userService.createUser(userCreateRequest);
@@ -38,7 +38,7 @@ public class UserController {
 			return dataResponse;
 		}
 	}
-	
+
 	@GetMapping("/get-by-phone")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse getUserByPhone(@RequestParam String phone) {
@@ -51,10 +51,12 @@ public class UserController {
 			return dataResponse;
 		}
 	}
-	
+
 	@GetMapping("/find")
 	@SecurityRequirement(name = "bearerAuth")
-	public DataResponse getListUser(@RequestParam(required = false) String q, @RequestParam Integer status, @RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam String sortBy, @RequestParam String orderBy  ) {
+	public DataResponse getListUser(@RequestParam(required = false) String q, @RequestParam(required = false) Integer status,
+			@RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam String sortBy,
+			@RequestParam String orderBy) {
 		DataResponse dataResponse = new DataResponse();
 		FilterUserRq filterUserRq = new FilterUserRq();
 		filterUserRq.setStatus(status);
@@ -71,5 +73,5 @@ public class UserController {
 			return dataResponse;
 		}
 	}
-	
+
 }
