@@ -28,4 +28,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	
 	Page<User> findByStatusAndFullNameContaining(Integer status,String fullName, Pageable pageable );
+	
+	Page<User> findByFullNameContaining(String fullName, Pageable pageable );
+	
+	Page<User> findByStatus(Integer status, Pageable pageable );
+	
 }

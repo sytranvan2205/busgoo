@@ -139,8 +139,16 @@ public class UserServiceImpl implements UserService {
 				sort = Sort.by(filterUserRq.getOrderBy()).descending();
 			}
 			Pageable page = PageRequest.of(filterUserRq.getPage(), filterUserRq.getItemPerPage(), sort);
-			
-			Page<User> pageUsers = userRepo.findByStatusAndFullNameContaining(filterUserRq.getStatus(),filterUserRq.getQ(), page);
+			Page<User> pageUsers;
+			if(filterUserRq.getStatus() == null && filterUserRq.getQ() == null) {
+				pageUsers = userRepo.findAll(page);
+			}else if(filterUserRq.getStatus() != null && filterUserRq.getQ() == null) {
+				pageUsers = userRepo.findByStatus(filterUserRq.getStatus(), page);
+			}else if(filterUserRq.getStatus() == null && filterUserRq.getQ() != null) {
+				pageUsers = userRepo.findByFullNameContaining(filterUserRq.getQ(), page);
+			}else {
+				pageUsers = userRepo.findByStatusAndFullNameContaining(filterUserRq.getStatus(),filterUserRq.getQ(), page);
+			}
 //			Page<User> pageUsers = userRepo.findAll(page);
 //			Page<User> pageUser = userRepo.findAll(page);
 			dataResponse.setResponseMsg("Get data success !!!");
