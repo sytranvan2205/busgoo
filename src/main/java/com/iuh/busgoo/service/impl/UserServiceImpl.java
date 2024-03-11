@@ -140,7 +140,7 @@ public class UserServiceImpl implements UserService {
 			}
 			Pageable page = PageRequest.of(filterUserRq.getPage(), filterUserRq.getItemPerPage(), sort);
 			
-			Page<User> pageUsers = userRepo.findByStatusFullNameContaining(filterUserRq.getStatus(),filterUserRq.getQ(), page);
+			Page<User> pageUsers = userRepo.findByStatusAndFullNameContaining(filterUserRq.getStatus(),filterUserRq.getQ(), page);
 //			Page<User> pageUsers = userRepo.findAll(page);
 //			Page<User> pageUser = userRepo.findAll(page);
 			dataResponse.setResponseMsg("Get data success !!!");
