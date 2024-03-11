@@ -1,5 +1,7 @@
 package com.iuh.busgoo.controler;
 
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
+import com.iuh.busgoo.filter.PriceFilter;
 import com.iuh.busgoo.requestType.PriceCreateRequest;
 import com.iuh.busgoo.requestType.PriceDetailRequest;
 import com.iuh.busgoo.service.PriceService;
@@ -19,16 +22,16 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @RestController()
 @RequestMapping("/api/price")
 public class PriceController {
-	
+
 	@Autowired
 	private PriceService priceService;
-	
+
 	@PostMapping("/create")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse createPrice(@RequestBody PriceCreateRequest priceCreateRequest) {
 		DataResponse dataResponse = new DataResponse();
 		try {
-			if(priceCreateRequest == null) {
+			if (priceCreateRequest == null) {
 				throw new Exception();
 			}
 			return dataResponse = priceService.createPrice(priceCreateRequest);
@@ -38,12 +41,23 @@ public class PriceController {
 			return dataResponse;
 		}
 	}
-	
+
 	@GetMapping("/find")
 	@SecurityRequirement(name = "bearerAuth")
-	public DataResponse getPrice() {
+	public DataResponse getPrice(@RequestParam(required = false) Integer status,
+			@RequestParam(required = false) LocalDate fromDate, @RequestParam(required = false) LocalDate toDate,
+			@RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam String sortBy,
+			@RequestParam String orderBy) {
 		try {
-			return priceService.getAllPrice();
+			PriceFilter priceFilter = new PriceFilter();
+			priceFilter.setFromDate(fromDate);
+			priceFilter.setItemPerPage(itemPerPage);
+			priceFilter.setOrderBy(orderBy);
+			priceFilter.setPage(page);
+			priceFilter.setSortBy(sortBy);
+			priceFilter.setStatus(status);
+			priceFilter.setToDate(toDate);
+			return priceService.getAllPriceByFilter(priceFilter);
 		} catch (Exception e) {
 			DataResponse dataResponse = new DataResponse();
 			dataResponse.setResponseMsg("System error");
@@ -51,7 +65,7 @@ public class PriceController {
 			return dataResponse;
 		}
 	}
-	
+
 	@PostMapping("/delete")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse deletePrice(@RequestBody Long priceId) {
@@ -64,7 +78,7 @@ public class PriceController {
 			return dataResponse;
 		}
 	}
-	
+
 	@PostMapping("/create-detail")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse createPriceDetail(@RequestBody PriceDetailRequest priceDetailRequest) {
@@ -77,10 +91,10 @@ public class PriceController {
 			return dataResponse;
 		}
 	}
-	
+
 	@GetMapping("/get-detail")
 	@SecurityRequirement(name = "bearerAuth")
-	public DataResponse getLstPriceDetail (@RequestParam Long priceId) {
+	public DataResponse getLstPriceDetail(@RequestParam Long priceId) {
 		try {
 			return priceService.getPriceDetailByPriceId(priceId);
 		} catch (Exception e) {

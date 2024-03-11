@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.iuh.busgoo.constant.Constant;
@@ -14,6 +18,7 @@ import com.iuh.busgoo.entity.Price;
 import com.iuh.busgoo.entity.PriceDetail;
 import com.iuh.busgoo.entity.Route;
 import com.iuh.busgoo.entity.TypeBus;
+import com.iuh.busgoo.filter.PriceFilter;
 import com.iuh.busgoo.repository.PriceDetailRepository;
 import com.iuh.busgoo.repository.PriceRepository;
 import com.iuh.busgoo.repository.RouteRepository;
@@ -35,7 +40,7 @@ public class PriceServiceImpl implements PriceService {
 
 	@Autowired
 	private PriceRepository priceRepository;
-	
+
 	@Autowired
 	private PriceDetailRepository priceDetailRepository;
 
@@ -60,10 +65,10 @@ public class PriceServiceImpl implements PriceService {
 				response.setRespType(Constant.FROM_DATE_NOT_NULL);
 				return response;
 			}
-			if(priceCreateRequest.getToDate()!=null && priceCreateRequest.getToDate().isBefore(curDate)) {
+			if (priceCreateRequest.getToDate() != null && priceCreateRequest.getToDate().isBefore(curDate)) {
 				throw new Exception();
 			}
-			if(priceCreateRequest.getFromDate().isAfter(priceCreateRequest.getToDate())) {
+			if (priceCreateRequest.getFromDate().isAfter(priceCreateRequest.getToDate())) {
 				throw new Exception();
 			}
 //			Route route = routeRepository.findByCode(priceCreateRequest.getRouteCode());
@@ -78,9 +83,10 @@ public class PriceServiceImpl implements PriceService {
 //				response.setRespType(Constant.TYPE_BUS_NOT_EXIST);
 //				return response;
 //			}
-			List<Price> prices = priceRepository.getLstByFromDateAndToDate(priceCreateRequest.getFromDate(),priceCreateRequest.getToDate());
+			List<Price> prices = priceRepository.getLstByFromDateAndToDate(priceCreateRequest.getFromDate(),
+					priceCreateRequest.getToDate());
 			if (prices == null || prices.size() == 0) {
-				//create price
+				// create price
 				Price newPrice = new Price();
 				Long countPrice = priceRepository.count();
 				newPrice.setCode("P" + countPrice);
@@ -92,8 +98,8 @@ public class PriceServiceImpl implements PriceService {
 //				newPrice.setRoute(route);
 //				newPrice.setTypeBus(typeBus);
 				Price priceSave = priceRepository.save(newPrice);
-				
-				//create price detail
+
+				// create price detail
 //				PriceDetail priceDetail = new PriceDetail();
 //				Long countDetail = priceDetailRepository.count();
 //				priceDetail.setDetailCode("PD"+ countDetail);
@@ -101,28 +107,28 @@ public class PriceServiceImpl implements PriceService {
 //				priceDetail.setStatus(1);
 //				priceDetail.setPrice(priceSave);
 //				priceDetailRepository.save(priceDetail);
-				
-				//trả về data
+
+				// trả về data
 				response.setResponseMsg("Price create success !!!");
 				response.setRespType(Constant.HTTP_SUCCESS);
 				Map<String, Object> reponseValue = new HashMap<>();
 				reponseValue.put("data", priceSave);
 				response.setValueReponse(reponseValue);
 				return response;
-			}else {
-				//check validate
+			} else {
+				// check validate
 				Integer checkErrorInsert = 0;
-				for(Price price: prices) {
-					if(price.getToDate().isAfter(priceCreateRequest.getFromDate())) {
+				for (Price price : prices) {
+					if (price.getToDate().isAfter(priceCreateRequest.getFromDate())) {
 						checkErrorInsert = 1;
 					}
 				}
-				if(checkErrorInsert == 1) {
+				if (checkErrorInsert == 1) {
 					response.setResponseMsg("Price is exist");
 					response.setRespType(Constant.PRICE_IS_EXIST);
 					return response;
-				}else {
-					//create price
+				} else {
+					// create price
 					Price newPrice = new Price();
 					Long countPrice = priceRepository.count();
 					newPrice.setCode("P" + countPrice);
@@ -134,8 +140,8 @@ public class PriceServiceImpl implements PriceService {
 //					newPrice.setRoute(route);
 //					newPrice.setTypeBus(typeBus);
 					Price priceSave = priceRepository.save(newPrice);
-					
-					//create price detail
+
+					// create price detail
 //					PriceDetail priceDetail = new PriceDetail();
 //					Long countDetail = priceDetailRepository.count();
 //					priceDetail.setDetailCode("PD"+ countDetail);
@@ -143,8 +149,8 @@ public class PriceServiceImpl implements PriceService {
 //					priceDetail.setStatus(1);
 //					priceDetail.setPrice(priceSave);
 //					priceDetailRepository.save(priceDetail);
-					
-					//trả về data
+
+					// trả về data
 					response.setResponseMsg("Price create success !!!");
 					response.setRespType(Constant.HTTP_SUCCESS);
 					Map<String, Object> reponseValue = new HashMap<>();
@@ -161,14 +167,25 @@ public class PriceServiceImpl implements PriceService {
 	}
 
 	@Override
-	public DataResponse getAllPrice() {
+	public DataResponse getAllPriceByFilter(PriceFilter filter) {
 		DataResponse response = new DataResponse();
 		try {
+			Sort sort;
+			if (filter.getSortBy().toUpperCase().equals("ASC")) {
+				sort = Sort.by(filter.getOrderBy()).ascending();
+			} else {
+				sort = Sort.by(filter.getOrderBy()).descending();
+			}
+			Pageable page = PageRequest.of(filter.getPage(), filter.getItemPerPage(), sort);
+			Page<Price> pagePrice;
+			pagePrice = priceRepository.findByStatusAndFromDateGreaterThanEqualAndToDateLessThanEqual(
+					filter.getStatus(), filter.getFromDate(), filter.getToDate(), page);
 			response.setResponseMsg("Get prices success!!!");
 			response.setRespType(Constant.HTTP_SUCCESS);
-			List<Price> prices = priceRepository.findAll();
+//			List<Price> prices = priceRepository.findAll();
 			Map<String, Object> respValue = new HashMap<>();
-			respValue.put("data", prices);
+			respValue.put("data", pagePrice);
+			response.setValueReponse(respValue);
 			return response;
 		} catch (Exception e) {
 			response.setResponseMsg("System error");
@@ -182,11 +199,11 @@ public class PriceServiceImpl implements PriceService {
 		DataResponse response = new DataResponse();
 		try {
 			Price price = priceRepository.getById(id);
-			if(price == null) {
+			if (price == null) {
 				response.setResponseMsg("Price is not exist");
 				response.setRespType(Constant.PRICE_IS_NOT_EXIST);
 				return response;
-			}else {
+			} else {
 				response.setResponseMsg("Get price success!!!");
 				response.setRespType(Constant.HTTP_SUCCESS);
 				Map<String, Object> respValue = new HashMap<>();
@@ -206,11 +223,11 @@ public class PriceServiceImpl implements PriceService {
 		DataResponse response = new DataResponse();
 		try {
 			Price price = priceRepository.getById(id);
-			if(price == null) {
+			if (price == null) {
 				response.setResponseMsg("Price is not exist");
 				response.setRespType(Constant.PRICE_IS_NOT_EXIST);
 				return response;
-			}else {
+			} else {
 				price.setStatus(0);
 				priceRepository.save(price);
 				response.setResponseMsg("Delete success!!!");
@@ -228,7 +245,7 @@ public class PriceServiceImpl implements PriceService {
 	public DataResponse createPriceDetail(PriceDetailRequest request) {
 		DataResponse response = new DataResponse();
 		try {
-			if(request.getPriceId() == null) {
+			if (request.getPriceId() == null) {
 				throw new Exception();
 			}
 			if (request.getTypeBusCode() == null || request.getTypeBusCode().length() == 0) {
@@ -254,26 +271,27 @@ public class PriceServiceImpl implements PriceService {
 				return response;
 			}
 			Price price = priceRepository.getById(request.getPriceId());
-			if(price == null) {
+			if (price == null) {
 				response.setResponseMsg("Price is not exist");
 				response.setRespType(Constant.PRICE_IS_NOT_EXIST);
 				return response;
-			}else {
-				List<PriceDetail> checkExsit = priceDetailRepository.findByRouteCodeAndTypeBusCode(request.getRouteCode(), request.getTypeBusCode());
-				if(checkExsit != null) {
+			} else {
+				List<PriceDetail> checkExsit = priceDetailRepository
+						.findByRouteCodeAndTypeBusCode(request.getRouteCode(), request.getTypeBusCode());
+				if (checkExsit != null) {
 					response.setResponseMsg("PriceDetail is exist");
 					response.setRespType(Constant.PRICE_DETAIL_IS_EXIST);
 					return response;
 				}
 				PriceDetail priceDetail = new PriceDetail();
 				Long countDetail = priceDetailRepository.count();
-				priceDetail.setDetailCode("PD"+ countDetail);
+				priceDetail.setDetailCode("PD" + countDetail);
 				priceDetail.setPrice(price);
 				priceDetail.setRoute(route);
 				priceDetail.setTypeBus(typeBus);
 				priceDetail.setValue(request.getPriceValue());
 				priceDetailRepository.save(priceDetail);
-				//trả về data
+				// trả về data
 				response.setResponseMsg("PriceDetail create success!!!");
 				response.setRespType(Constant.HTTP_SUCCESS);
 				Map<String, Object> reponseValue = new HashMap<>();
@@ -292,11 +310,11 @@ public class PriceServiceImpl implements PriceService {
 	public DataResponse getPriceDetailByPriceId(Long priceId) {
 		DataResponse response = new DataResponse();
 		try {
-			if(priceId == null) {
+			if (priceId == null) {
 				throw new Exception();
-			}else {
+			} else {
 				List<PriceDetail> lstPriceDetail = priceDetailRepository.findByPriceId(priceId);
-				//trả về data
+				// trả về data
 				response.setResponseMsg("Get list PriceDetail success!!!");
 				response.setRespType(Constant.HTTP_SUCCESS);
 				Map<String, Object> reponseValue = new HashMap<>();
@@ -310,7 +328,5 @@ public class PriceServiceImpl implements PriceService {
 			return response;
 		}
 	}
-	
-	
 
 }

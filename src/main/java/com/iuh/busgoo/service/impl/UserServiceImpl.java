@@ -16,7 +16,6 @@ import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.entity.RegionDetail;
 import com.iuh.busgoo.entity.User;
-import com.iuh.busgoo.page.UserPage;
 import com.iuh.busgoo.repository.RegionDetailRepository;
 import com.iuh.busgoo.repository.UserRepository;
 import com.iuh.busgoo.requestType.UserCreateRequest;
