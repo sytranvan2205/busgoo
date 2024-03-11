@@ -21,4 +21,6 @@ public interface PromotionLineRepository extends JpaRepository<PromotionLine, Lo
 	
 	@Query("SELECT p FROM PromotionLine p WHERE (:startDate IS NULL OR p.fromDate >= :startDate) AND (:endDate IS NULL OR p.toDate <= :endDate)")
     List<PromotionLine> findPromotionsBetweenDates(Date startDate, Date endDate);
+	
+	List<PromotionLine> findByPromotionId(Long promotionId);
 }

@@ -39,6 +39,8 @@ public class Constant {
 	public static final Integer TIME_STATED_IS_NOT_NULL = 134;
 	public static final Integer PRICE_IS_NOT_EXIST = 135;
 	public static final Integer PRICE_DETAIL_IS_EXIST = 136;
-
+	public static final Integer PROMOTION_IS_EXIST = 137;
+	public static final Integer FROM_DATE_BEFORE_CURR_DATE = 138;
+	public static final Integer FROM_DATE_AFTER__TO_DATE = 139;
 
 }
