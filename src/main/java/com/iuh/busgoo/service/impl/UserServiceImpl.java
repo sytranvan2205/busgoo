@@ -157,6 +157,7 @@ public class UserServiceImpl implements UserService {
 			dataResponse.setValueReponse(respValue);
 			return dataResponse;
 		} catch (Exception e) {
+			e.printStackTrace();
 			dataResponse.setResponseMsg("System error");
 			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
 			return dataResponse;
