@@ -42,5 +42,6 @@ public class Constant {
 	public static final Integer PROMOTION_IS_EXIST = 137;
 	public static final Integer FROM_DATE_BEFORE_CURR_DATE = 138;
 	public static final Integer FROM_DATE_AFTER__TO_DATE = 139;
+	public static final Integer REGEION_STRUCTURE_ID_IS_NOT_NULL = 140;
 
 }

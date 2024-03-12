@@ -20,4 +20,10 @@ public interface RegionDetailRepository extends JpaRepository<RegionDetail, Long
 	
 	RegionDetail findRegionDetailByDetailCode(String detailCode);
 	
+	List<RegionDetail> findByStatusAndRegionParentIdAndRegionStructureId(Integer status, Long regionParentId, Long RegionStructureId);
+	
+	List<RegionDetail> findByStatusAndRegionStructureId(Integer status, Long regionStructureId);
+	
+	
+	
 }

@@ -171,12 +171,18 @@ public class PriceServiceImpl implements PriceService {
 		DataResponse response = new DataResponse();
 		try {
 			Sort sort;
-			if (filter.getSortBy().toUpperCase().equals("ASC")) {
-				sort = Sort.by(filter.getOrderBy()).ascending();
-			} else {
-				sort = Sort.by(filter.getOrderBy()).descending();
+			Pageable page;
+			if(filter.getSortBy()!= null && filter.getOrderBy()!= null) {
+				if (filter.getSortBy().toUpperCase().equals("ASC")) {
+					sort = Sort.by(filter.getOrderBy()).ascending();
+				} else {
+					sort = Sort.by(filter.getOrderBy()).descending();
+				}
+				page = PageRequest.of(filter.getPage(), filter.getItemPerPage(), sort);
+			}else {
+				page = PageRequest.of(filter.getPage(),filter.getItemPerPage());
 			}
-			Pageable page = PageRequest.of(filter.getPage(), filter.getItemPerPage(), sort);
+			
 			Page<Price> pagePrice;
 			pagePrice = priceRepository.findByStatusAndFromDateGreaterThanEqualAndToDateLessThanEqual(
 					filter.getStatus(), filter.getFromDate(), filter.getToDate(), page);

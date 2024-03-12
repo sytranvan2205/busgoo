@@ -29,8 +29,8 @@ public class PromotionController {
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse getPromotion(@RequestParam(required = false) Integer status, @RequestParam(required = false) String q,
 			@RequestParam(required = false) LocalDate fromDate, @RequestParam(required = false) LocalDate toDate,
-			@RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam String sortBy,
-			@RequestParam String orderBy) {
+			@RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam(required = false) String sortBy,
+			@RequestParam(required = false) String orderBy) {
 		try {
 			PromotionFilter promotionFilter = new PromotionFilter();
 			promotionFilter.setFromDate(fromDate);

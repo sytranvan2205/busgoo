@@ -46,8 +46,8 @@ public class PriceController {
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse getPrice(@RequestParam(required = false) Integer status,
 			@RequestParam(required = false) LocalDate fromDate, @RequestParam(required = false) LocalDate toDate,
-			@RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam String sortBy,
-			@RequestParam String orderBy) {
+			@RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam(required = false) String sortBy,
+			@RequestParam(required = false) String orderBy) {
 		try {
 			PriceFilter priceFilter = new PriceFilter();
 			priceFilter.setFromDate(fromDate);
