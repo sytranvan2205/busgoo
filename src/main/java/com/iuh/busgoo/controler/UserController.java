@@ -55,8 +55,8 @@ public class UserController {
 	@GetMapping("/find")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse getListUser(@RequestParam(required = false) String q, @RequestParam(required = false) Integer status,
-			@RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam String sortBy,
-			@RequestParam String orderBy) {
+			@RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam(required = false) String sortBy,
+			@RequestParam(required = false) String orderBy) {
 		DataResponse dataResponse = new DataResponse();
 		FilterUserRq filterUserRq = new FilterUserRq();
 		filterUserRq.setStatus(status);
