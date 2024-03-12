@@ -131,13 +131,18 @@ public class UserServiceImpl implements UserService {
 	public DataResponse findUserByFilter(FilterUserRq filterUserRq) {
 		DataResponse dataResponse = new DataResponse();
 		try {
+			Pageable page;
 			Sort sort;
-			if(filterUserRq.getSortBy().toUpperCase().equals("ASC")) {
-				sort = Sort.by(filterUserRq.getOrderBy()).ascending();
+			if(filterUserRq.getSortBy() != null && filterUserRq.getOrderBy() != null) {
+				if(filterUserRq.getSortBy().toUpperCase().equals("ASC")) {
+					sort = Sort.by(filterUserRq.getOrderBy()).ascending();
+				}else {
+					sort = Sort.by(filterUserRq.getOrderBy()).descending();
+				}
+				page= PageRequest.of(filterUserRq.getPage(), filterUserRq.getItemPerPage(), sort);
 			}else {
-				sort = Sort.by(filterUserRq.getOrderBy()).descending();
+				page = PageRequest.of(filterUserRq.getPage(), filterUserRq.getItemPerPage());
 			}
-			Pageable page = PageRequest.of(filterUserRq.getPage(), filterUserRq.getItemPerPage(), sort);
 			Page<User> pageUsers;
 			if(filterUserRq.getStatus() == null && filterUserRq.getQ() == null) {
 				pageUsers = userRepo.findAll(page);
@@ -157,6 +162,7 @@ public class UserServiceImpl implements UserService {
 			dataResponse.setValueReponse(respValue);
 			return dataResponse;
 		} catch (Exception e) {
+			e.printStackTrace();
 			dataResponse.setResponseMsg("System error");
 			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
 			return dataResponse;
