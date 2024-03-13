@@ -167,4 +167,41 @@ public class RouteServiceImpl implements RouteService{
 		}
 	}
 
+	@Override
+	public DataResponse findAll() {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			List<Route> routes = routeRepository.findByStatus(1);
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data", routes);
+			dataResponse.setValueReponse(respValue);
+			dataResponse.setResponseMsg("Get bustrip success!!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse getRouteById(Long routeId) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			Route route = routeRepository.findById(routeId).get();
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data", route);
+			dataResponse.setValueReponse(respValue);
+			dataResponse.setResponseMsg("Get bustrip success!!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			return dataResponse;
+		} catch (Exception e) {
+			e.printStackTrace();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
 }

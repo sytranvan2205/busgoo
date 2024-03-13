@@ -154,7 +154,7 @@ public class PriceServiceImpl implements PriceService {
 					response.setResponseMsg("Price create success !!!");
 					response.setRespType(Constant.HTTP_SUCCESS);
 					Map<String, Object> reponseValue = new HashMap<>();
-					reponseValue.put("price", priceSave);
+					reponseValue.put("data", priceSave);
 					response.setValueReponse(reponseValue);
 					return response;
 				}
@@ -301,7 +301,7 @@ public class PriceServiceImpl implements PriceService {
 				response.setResponseMsg("PriceDetail create success!!!");
 				response.setRespType(Constant.HTTP_SUCCESS);
 				Map<String, Object> reponseValue = new HashMap<>();
-				reponseValue.put("priceDetail", priceDetail);
+				reponseValue.put("data", priceDetail);
 				response.setValueReponse(reponseValue);
 				return response;
 			}
@@ -324,7 +324,7 @@ public class PriceServiceImpl implements PriceService {
 				response.setResponseMsg("Get list PriceDetail success!!!");
 				response.setRespType(Constant.HTTP_SUCCESS);
 				Map<String, Object> reponseValue = new HashMap<>();
-				reponseValue.put("lstPriceDetail", lstPriceDetail);
+				reponseValue.put("data", lstPriceDetail);
 				response.setValueReponse(reponseValue);
 				return response;
 			}
@@ -332,6 +332,42 @@ public class PriceServiceImpl implements PriceService {
 			response.setResponseMsg("System error");
 			response.setRespType(Constant.SYSTEM_ERROR_CODE);
 			return response;
+		}
+	}
+
+	@Override
+	public DataResponse findPriceById(Long priceId) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			Price price = priceRepository.findById(priceId).get();
+			dataResponse.setResponseMsg("Get price success!!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> reponseValue = new HashMap<>();
+			reponseValue.put("data", price);
+			dataResponse.setValueReponse(reponseValue);
+			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse findPriceDetailById(Long priceDetailId) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			PriceDetail priceDetail = priceDetailRepository.findById(priceDetailId).get();
+			dataResponse.setResponseMsg("Get price success!!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> reponseValue = new HashMap<>();
+			reponseValue.put("data", priceDetail);
+			dataResponse.setValueReponse(reponseValue);
+			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
 		}
 	}
 

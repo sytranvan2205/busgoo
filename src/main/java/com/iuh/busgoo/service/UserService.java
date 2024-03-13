@@ -19,4 +19,6 @@ public interface UserService {
 	DataResponse findUserByPhone(String phone);
 	
 	DataResponse findUserByFilter(FilterUserRq filterUserRq);
+
+	DataResponse getUserById(Long userId);
 }

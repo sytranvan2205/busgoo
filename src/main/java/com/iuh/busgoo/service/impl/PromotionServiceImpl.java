@@ -20,6 +20,7 @@ import com.iuh.busgoo.filter.PromotionFilter;
 import com.iuh.busgoo.repository.PromotionLineRepository;
 import com.iuh.busgoo.repository.PromotionRepository;
 import com.iuh.busgoo.requestType.PromotionCreateRequest;
+import com.iuh.busgoo.requestType.PromotionLineRq;
 import com.iuh.busgoo.service.PromotionService;
 
 @Service
@@ -27,7 +28,7 @@ public class PromotionServiceImpl implements PromotionService {
 
 	@Autowired
 	private PromotionRepository promotionRepo;
-	
+
 	@Autowired
 	private PromotionLineRepository lineRepo;
 
@@ -37,15 +38,15 @@ public class PromotionServiceImpl implements PromotionService {
 		try {
 			Sort sort;
 			Pageable page;
-			if(filter.getSortBy()!= null && filter.getOrderBy()!= null) {
+			if (filter.getSortBy() != null && filter.getOrderBy() != null) {
 				if (filter.getSortBy().toUpperCase().equals("ASC")) {
 					sort = Sort.by(filter.getOrderBy()).ascending();
 				} else {
 					sort = Sort.by(filter.getOrderBy()).descending();
 				}
 				page = PageRequest.of(filter.getPage(), filter.getItemPerPage(), sort);
-			}else {
-				page = PageRequest.of(filter.getPage(),filter.getItemPerPage());
+			} else {
+				page = PageRequest.of(filter.getPage(), filter.getItemPerPage());
 			}
 
 			Page<Promotion> pagePromotion = promotionRepo.findByStatusAndCodeAndFromDateAndToDate(filter.getStatus(),
@@ -73,12 +74,12 @@ public class PromotionServiceImpl implements PromotionService {
 				throw new Exception();
 			}
 			LocalDate currentDate = LocalDate.now();
-			if(promotionCreateRequest.getFromDate().isBefore(currentDate)) {
+			if (promotionCreateRequest.getFromDate().isBefore(currentDate)) {
 				dataResponse.setResponseMsg("From date must be greater than or equal to the current date");
 				dataResponse.setRespType(Constant.FROM_DATE_BEFORE_CURR_DATE);
 				return dataResponse;
 			}
-			if(promotionCreateRequest.getFromDate().isAfter(promotionCreateRequest.getToDate())) {
+			if (promotionCreateRequest.getFromDate().isAfter(promotionCreateRequest.getToDate())) {
 				dataResponse.setResponseMsg("To date must be greater than or equal to the from date");
 				dataResponse.setRespType(Constant.FROM_DATE_AFTER__TO_DATE);
 				return dataResponse;
@@ -114,7 +115,7 @@ public class PromotionServiceImpl implements PromotionService {
 	public DataResponse getPromotionLine(Long promotionId) {
 		DataResponse dataResponse = new DataResponse();
 		try {
-			if(promotionId == null) {
+			if (promotionId == null) {
 				throw new Exception();
 			}
 			dataResponse.setResponseMsg("Get promotion line success!!!");
@@ -135,17 +136,56 @@ public class PromotionServiceImpl implements PromotionService {
 	public DataResponse deletePromotion(Long promotionId) {
 		DataResponse dataResponse = new DataResponse();
 		try {
-			if(promotionId == null) {
+			if (promotionId == null) {
 				throw new Exception();
 			}
 			Promotion checkExist = promotionRepo.findByIdAndStatus(promotionId, 1);
-			if(checkExist != null) {
+			if (checkExist != null) {
 				checkExist.setStatus(0);
 			}
 			promotionRepo.save(checkExist);
 			dataResponse.setResponseMsg("Delete success !!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
 			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse createPromotionLine(PromotionLineRq promotionLineRq) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			if(promotionLineRq.getFromDate() == null || promotionLineRq.getToDate() == null || promotionLineRq.getLineCode() == null || promotionLineRq.getLineName() == null || promotionLineRq.getPromotionType() == null) {
+				throw new Exception();
+			}
+			if(promotionLineRq.getPromotionId() == null) {
+				throw new Exception();
+			}else {
+				Promotion checkExist = promotionRepo.findById(promotionLineRq.getPromotionId()).get();
+				if(checkExist == null) {
+					dataResponse.setResponseMsg("Promotion not exist");
+					dataResponse.setRespType(Constant.PROMOTION_IS_NOT_EXIST);
+					return dataResponse;
+				}else {
+					PromotionLine line = new PromotionLine();
+					line.setLineName(promotionLineRq.getLineName());
+					line.setCode(promotionLineRq.getLineCode());
+					line.setPromotionType(promotionLineRq.getPromotionType());
+					line.setFromDate(promotionLineRq.getFromDate());
+					line.setToDate(promotionLineRq.getToDate());
+					line.setPromotion(checkExist);
+					lineRepo.save(line);
+					dataResponse.setResponseMsg("Create success !!!");
+					dataResponse.setRespType(Constant.HTTP_SUCCESS);
+					Map<String, Object> respValue = new HashMap<>();
+					respValue.put("data", line);
+					dataResponse.setValueReponse(respValue);
+					return dataResponse;
+				}
+			}
 		} catch (Exception e) {
 			dataResponse.setResponseMsg("System error");
 			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);

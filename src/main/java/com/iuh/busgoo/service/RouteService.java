@@ -16,4 +16,8 @@ public interface RouteService {
 	DataResponse deleteRoute(Long routeId);
 	
 	DataResponse getBusTripByAddressAndTime(String fromCode, String toCode,LocalDate timeStated );
+
+	DataResponse findAll();
+
+	DataResponse getRouteById(Long routeId);
 }

@@ -44,4 +44,7 @@ public class PromotionDetail extends AbstractEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "promotion_line_id")
     private PromotionLine promotionLine;
+    
+    @Column(name = "condition_apply", length = 255)
+    private String conditionApply;
 }

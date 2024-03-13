@@ -1,6 +1,7 @@
 package com.iuh.busgoo.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -34,19 +35,16 @@ public class PromotionLine extends AbstractEntity implements Serializable {
     private String code;
 
     @Column(name = "from_date")
-    private Date fromDate;
+    private LocalDate fromDate;
 
     @Column(name = "to_date")
-    private Date toDate;
+    private LocalDate toDate;
 
     @Column(name = "line_name", length = 255)
     private String lineName;
 
-    @Column(name = "promotion_type", length = 255)
-    private String promotionType;
-    
-    @Column(name = "condition_apply", length = 255)
-    private String conditionApply;
+    @Column(name = "promotion_type")
+    private Integer promotionType;
     
     @Column
     private Integer status;

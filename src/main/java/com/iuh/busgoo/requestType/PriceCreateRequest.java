@@ -8,9 +8,7 @@ import lombok.Data;
 
 @Data
 public class PriceCreateRequest {
-	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate toDate;
-	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate fromDate;
 //	private String typeBusCode;
 //	private String routeCode;

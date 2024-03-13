@@ -14,6 +14,7 @@ import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.filter.PromotionFilter;
 import com.iuh.busgoo.requestType.PromotionCreateRequest;
+import com.iuh.busgoo.requestType.PromotionLineRq;
 import com.iuh.busgoo.service.PromotionService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -89,4 +90,16 @@ public class PromotionController {
 		}
 	}
 	
+	@PostMapping("")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse createPromotionLine(@RequestBody PromotionLineRq promotionLineRq) {
+		try {
+			return promotionService.createPromotionLine(promotionLineRq);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
 }

@@ -168,5 +168,24 @@ public class UserServiceImpl implements UserService {
 			return dataResponse;
 		}
 	}
+
+	@Override
+	public DataResponse getUserById(Long userId) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			User user = userRepo.findById(userId).get();
+			dataResponse.setResponseMsg("Get data success !!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data", user);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
+		} catch (Exception e) {
+			e.printStackTrace();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
 	
 }

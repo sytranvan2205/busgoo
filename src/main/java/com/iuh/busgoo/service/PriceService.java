@@ -17,5 +17,9 @@ public interface PriceService {
 	DataResponse createPriceDetail(PriceDetailRequest request);
 	
 	DataResponse getPriceDetailByPriceId(Long priceId);
+
+	DataResponse findPriceById(Long priceId);
+
+	DataResponse findPriceDetailById(Long priceDetailId);
 	
 }

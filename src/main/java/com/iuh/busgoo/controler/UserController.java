@@ -74,4 +74,16 @@ public class UserController {
 		}
 	}
 
+	@GetMapping("/get")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse findUserById(@RequestParam Long userId) {
+		try {
+			return userService.getUserById(userId);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
 }

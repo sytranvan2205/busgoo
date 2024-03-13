@@ -34,5 +34,7 @@ public interface RouteRepository extends JpaRepository<Route, Long>{
 	Route findByCode(String code);
 	
 	List<Route> findByFromDetailCodeAndToDetailCodeAndStatus(String fromDetailCode,String toDetailCode, Integer status);
+
+	List<Route> findByStatus(Integer status);
 	
 }

@@ -104,4 +104,30 @@ public class PriceController {
 			return dataResponse;
 		}
 	}
+	
+	@GetMapping("/get")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse getPriceById(@RequestParam Long priceId) {
+		try {
+			return priceService.findPriceById(priceId);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+	@GetMapping("/get-detail")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse getPriceDetailById(@RequestParam Long priceDetailId) {
+		try {
+			return priceService.findPriceDetailById(priceDetailId);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
 }
