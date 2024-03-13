@@ -66,9 +66,9 @@ public class PriceController {
 		}
 	}
 
-	@PostMapping("/delete")
+	@GetMapping("/delete")
 	@SecurityRequirement(name = "bearerAuth")
-	public DataResponse deletePrice(@RequestBody Long priceId) {
+	public DataResponse deletePrice(@RequestParam Long priceId) {
 		try {
 			return priceService.deletePrice(priceId);
 		} catch (Exception e) {
