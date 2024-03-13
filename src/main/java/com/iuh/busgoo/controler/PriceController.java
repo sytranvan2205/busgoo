@@ -92,7 +92,7 @@ public class PriceController {
 		}
 	}
 
-	@GetMapping("/get-detail")
+	@GetMapping("/find-detail")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse getLstPriceDetail(@RequestParam Long priceId) {
 		try {
@@ -123,6 +123,19 @@ public class PriceController {
 	public DataResponse getPriceDetailById(@RequestParam Long priceDetailId) {
 		try {
 			return priceService.findPriceDetailById(priceDetailId);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+	@GetMapping("/delete-price-detail")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse deletePriceDetail(@RequestParam Long priceDetailId) {
+		try {
+			return priceService.deletePriceDetailById(priceDetailId);
 		} catch (Exception e) {
 			DataResponse dataResponse = new DataResponse();
 			dataResponse.setResponseMsg("System error");

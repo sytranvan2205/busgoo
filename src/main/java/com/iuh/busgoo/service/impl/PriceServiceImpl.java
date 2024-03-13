@@ -371,4 +371,25 @@ public class PriceServiceImpl implements PriceService {
 		}
 	}
 
+	@Override
+	public DataResponse deletePriceDetailById(Long priceDetailId) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			PriceDetail priceDetail = priceDetailRepository.findById(priceDetailId).get();
+			if(priceDetail != null) {
+				priceDetail.setStatus(0);
+				priceDetailRepository.save(priceDetail);
+				dataResponse.setResponseMsg("Delete success!!!");
+				dataResponse.setRespType(Constant.HTTP_SUCCESS);
+				return dataResponse;
+			}else {
+				throw new Exception();
+			}
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
 }

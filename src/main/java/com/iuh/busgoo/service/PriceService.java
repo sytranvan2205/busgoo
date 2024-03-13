@@ -21,5 +21,7 @@ public interface PriceService {
 	DataResponse findPriceById(Long priceId);
 
 	DataResponse findPriceDetailById(Long priceDetailId);
+
+	DataResponse deletePriceDetailById(Long priceDetailId);
 	
 }
