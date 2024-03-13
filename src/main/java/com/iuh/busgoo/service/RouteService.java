@@ -3,6 +3,7 @@ package com.iuh.busgoo.service;
 import java.time.LocalDate;
 
 import com.iuh.busgoo.dto.DataResponse;
+import com.iuh.busgoo.filter.RouteFilter;
 import com.iuh.busgoo.requestType.RouteCreateRequest;
 
 public interface RouteService {
@@ -11,7 +12,7 @@ public interface RouteService {
 
 	DataResponse getRouteByAddress(String fromCode, String toCode);
 
-	DataResponse createRote(RouteCreateRequest routeCreateRequest);
+	DataResponse createRoute(RouteCreateRequest routeCreateRequest);
 
 	DataResponse deleteRoute(Long routeId);
 	
@@ -20,4 +21,6 @@ public interface RouteService {
 	DataResponse findAll();
 
 	DataResponse getRouteById(Long routeId);
+
+	DataResponse findRouteByFilter(RouteFilter filter);
 }

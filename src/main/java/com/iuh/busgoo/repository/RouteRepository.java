@@ -3,6 +3,8 @@ package com.iuh.busgoo.repository;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,5 +38,13 @@ public interface RouteRepository extends JpaRepository<Route, Long>{
 	List<Route> findByFromDetailCodeAndToDetailCodeAndStatus(String fromDetailCode,String toDetailCode, Integer status);
 
 	List<Route> findByStatus(Integer status);
+
+	@Query("Select r from Route r "
+			+ "INNER JOIN r.to as to "
+			+ "INNER JOIN r.from as from where"
+			+ "(:status is null or r.status = :status ) "
+			+ "and (:fromId is null or from.id = :fromId) "
+			+ "and (:toId is null or to.id = :toId )")
+	Page<Route> findRouteByFilter(Integer status, Long fromId, Long toId, Pageable page);
 	
 }

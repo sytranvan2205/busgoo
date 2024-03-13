@@ -7,6 +7,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.iuh.busgoo.constant.Constant;
@@ -14,6 +18,7 @@ import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.dto.RouteDTO;
 import com.iuh.busgoo.entity.RegionDetail;
 import com.iuh.busgoo.entity.Route;
+import com.iuh.busgoo.filter.RouteFilter;
 import com.iuh.busgoo.repository.RegionDetailRepository;
 import com.iuh.busgoo.repository.RouteRepository;
 import com.iuh.busgoo.requestType.RouteCreateRequest;
@@ -34,7 +39,7 @@ public class RouteServiceImpl implements RouteService{
 		try {
 			dataResponse.setResponseMsg("get routes success !!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
-			List<Route> routes = routeRepository.findAll();
+			List<Route> routes = routeRepository.findByStatus(1);
 			Map<String, Object> respValue = new HashMap<>();
 			respValue.put("data", routes);
 			dataResponse.setValueReponse(respValue);
@@ -65,15 +70,15 @@ public class RouteServiceImpl implements RouteService{
 	}
 
 	@Override
-	public DataResponse createRote(RouteCreateRequest routeCreateRequest) {
+	public DataResponse createRoute(RouteCreateRequest routeCreateRequest) {
 		DataResponse dataResponse = new DataResponse();
 		try {
-			if(routeCreateRequest.getFromCode() == null) {
+			if(routeCreateRequest.getFromId() == null) {
 				dataResponse.setResponseMsg("Departure point must not be empty.");
 				dataResponse.setRespType(Constant.FROM_ADDRESS_IS_NOT_NULL);
 				return dataResponse;
 			}
-			if(routeCreateRequest.getFromCode() == null) {
+			if(routeCreateRequest.getFromId() == null) {
 				dataResponse.setResponseMsg("Destination must not be empty.");
 				dataResponse.setRespType(Constant.TO_ADDRESS_IS_NOT_NULL);
 				return dataResponse;
@@ -83,8 +88,13 @@ public class RouteServiceImpl implements RouteService{
 				dataResponse.setRespType(Constant.TRANSFER_TIME_IS_NOT_NULL);
 				return dataResponse;
 			}
+			RegionDetail from = regionDetailRepository.findById(routeCreateRequest.getFromId()).get();
+			RegionDetail to = regionDetailRepository.findById(routeCreateRequest.getToId()).get();
+			if(from == null || to == null) {
+				throw new Exception();
+			}
 			//create new route
-			List<Route> list = routeRepository.findByFromDetailCodeAndToDetailCodeAndStatus(routeCreateRequest.getFromCode(), routeCreateRequest.getFromCode(), 1);
+			List<Route> list = routeRepository.findByFromDetailCodeAndToDetailCodeAndStatus(to.getDetailCode(), from.getDetailCode(), 1);
 			if(list != null) {
 				dataResponse.setResponseMsg("The route already exists.");
 				dataResponse.setRespType(Constant.ROUTE_HAS_EXIST);
@@ -93,9 +103,7 @@ public class RouteServiceImpl implements RouteService{
 				Route route = new Route();
 				Long countRoute = routeRepository.count();
 				route.setCode("R"+countRoute);
-				RegionDetail from = regionDetailRepository.findRegionDetailByDetailCode(routeCreateRequest.getFromCode());
 				route.setFrom(from);
-				RegionDetail to = regionDetailRepository.findRegionDetailByDetailCode(routeCreateRequest.getToCode());
 				route.setTo(to);
 				route.setTransferTime(routeCreateRequest.getTransferTime());
 				route.setStatus(1);
@@ -195,6 +203,39 @@ public class RouteServiceImpl implements RouteService{
 			dataResponse.setValueReponse(respValue);
 			dataResponse.setResponseMsg("Get bustrip success!!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			return dataResponse;
+		} catch (Exception e) {
+			e.printStackTrace();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse findRouteByFilter(RouteFilter filter) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			Sort sort;
+			Pageable page;
+			if(filter.getSortBy()!= null && filter.getOrderBy()!= null) {
+				if (filter.getSortBy().toUpperCase().equals("ASC")) {
+					sort = Sort.by(filter.getOrderBy()).ascending();
+				} else {
+					sort = Sort.by(filter.getOrderBy()).descending();
+				}
+				page = PageRequest.of(filter.getPage(), filter.getItemPerPage(), sort);
+			}else {
+				page = PageRequest.of(filter.getPage(),filter.getItemPerPage());
+			}
+			Page<Route> pageRoute;
+			pageRoute = routeRepository.findRouteByFilter(filter.getStatus(),filter.getFromId(),filter.getToId(),page);
+			dataResponse.setResponseMsg("Get routes success!!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+//			List<Price> prices = priceRepository.findAll();
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data", pageRoute);
+			dataResponse.setValueReponse(respValue);
 			return dataResponse;
 		} catch (Exception e) {
 			e.printStackTrace();

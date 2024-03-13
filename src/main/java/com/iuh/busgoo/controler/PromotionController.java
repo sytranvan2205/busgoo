@@ -90,7 +90,7 @@ public class PromotionController {
 		}
 	}
 	
-	@PostMapping("")
+	@PostMapping("/create-promotionline")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse createPromotionLine(@RequestBody PromotionLineRq promotionLineRq) {
 		try {
