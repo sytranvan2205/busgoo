@@ -14,6 +14,7 @@ import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.filter.PromotionFilter;
 import com.iuh.busgoo.requestType.PromotionCreateRequest;
+import com.iuh.busgoo.requestType.PromotionDetailRequest;
 import com.iuh.busgoo.requestType.PromotionLineRq;
 import com.iuh.busgoo.service.PromotionService;
 
@@ -95,6 +96,58 @@ public class PromotionController {
 	public DataResponse createPromotionLine(@RequestBody PromotionLineRq promotionLineRq) {
 		try {
 			return promotionService.createPromotionLine(promotionLineRq);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+	@GetMapping("/delete-line")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse deletePromotionLine(@RequestParam Long promotionLineId) {
+		try {
+			return promotionService.deletePromotionLine(promotionLineId);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+	@GetMapping("/find-detail")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse findPromotionDetail() {
+		try {
+			return promotionService.findAllDetail();
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+	@PostMapping("/create-detail")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse createPromotionDetail(@RequestBody PromotionDetailRequest promotionDetailRequest) {
+		try {
+			return promotionService.createPromotionDetail(promotionDetailRequest);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+	@PostMapping("/delete-detail")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse deletePromotionDetail(@RequestParam Long promotionDetailId) {
+		try {
+			return promotionService.deletePromotionDetail(promotionDetailId);
 		} catch (Exception e) {
 			DataResponse dataResponse = new DataResponse();
 			dataResponse.setResponseMsg("System error");

@@ -1,5 +1,6 @@
 package com.iuh.busgoo.service.impl;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -15,11 +16,14 @@ import org.springframework.stereotype.Service;
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.entity.Promotion;
+import com.iuh.busgoo.entity.PromotionDetail;
 import com.iuh.busgoo.entity.PromotionLine;
 import com.iuh.busgoo.filter.PromotionFilter;
+import com.iuh.busgoo.repository.PromotionDetailRepository;
 import com.iuh.busgoo.repository.PromotionLineRepository;
 import com.iuh.busgoo.repository.PromotionRepository;
 import com.iuh.busgoo.requestType.PromotionCreateRequest;
+import com.iuh.busgoo.requestType.PromotionDetailRequest;
 import com.iuh.busgoo.requestType.PromotionLineRq;
 import com.iuh.busgoo.service.PromotionService;
 
@@ -31,6 +35,8 @@ public class PromotionServiceImpl implements PromotionService {
 
 	@Autowired
 	private PromotionLineRepository lineRepo;
+	
+	private PromotionDetailRepository promoDetailRepository;
 
 	@Override
 	public DataResponse getAllPromotionByFilter(PromotionFilter filter) {
@@ -192,5 +198,107 @@ public class PromotionServiceImpl implements PromotionService {
 			return dataResponse;
 		}
 	}
+
+	@Override
+	public DataResponse deletePromotionLine(Long promotionLineId) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			if (promotionLineId == null) {
+				throw new Exception();
+			}
+			Promotion checkExist = lineRepo.findByIdAndStatus(promotionLineId, 1);
+			if (checkExist != null) {
+				checkExist.setStatus(0);
+				promotionRepo.save(checkExist);
+			}
+			dataResponse.setResponseMsg("Delete success !!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse findAllDetail() {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			dataResponse.setResponseMsg("Get promotion detail success!!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			List<PromotionDetail> promotionDetail = promoDetailRepository.findByStatus(1);
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data", promotionDetail);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse createPromotionDetail(PromotionDetailRequest promotionDetailRequest) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			if(promotionDetailRequest.getPromotionLineId()==null) {
+				throw new Exception();
+			}else {
+				PromotionLine line = lineRepo.findById(promotionDetailRequest.getPromotionLineId()).get();
+				if(line == null) {
+					throw new Exception();
+				}else {
+					PromotionDetail checkExist = promoDetailRepository.findByPromotionLineId(promotionDetailRequest.getPromotionLineId());
+					if(checkExist != null) {
+						dataResponse.setResponseMsg("You cannot have two promotional structures at the same time");
+						dataResponse.setRespType(Constant.PROMOTION_DETAIL_ALREADY_EXIST);
+						return dataResponse;
+					}
+					PromotionDetail promotionDetail = new PromotionDetail();
+					promotionDetail.setPromotionLine(line);
+					promotionDetail.setCode(promotionDetailRequest.getDetailCode());
+					promotionDetail.setConditionApply(new BigDecimal(promotionDetailRequest.getConditionApply()));
+					promotionDetail.setDiscount(new BigDecimal(promotionDetailRequest.getDiscount()));
+					if(line.getPromotionType().equals(2)) {
+						promotionDetail.setMaxDiscount(new BigDecimal(promotionDetailRequest.getMaxDiscount()));
+					}
+					promotionDetail.setStatus(1);
+					promoDetailRepository.save(promotionDetail);
+					dataResponse.setResponseMsg("Create success!!!");
+					dataResponse.setRespType(Constant.HTTP_SUCCESS);
+					Map<String, Object> respValue = new HashMap<>();
+					respValue.put("data", promotionDetail);
+					dataResponse.setValueReponse(respValue);
+					return dataResponse;
+				}
+			}
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse deletePromotionDetail(Long promotionDetailId) {DataResponse dataResponse = new DataResponse();
+	try {
+		if (promotionDetailId == null) {
+			throw new Exception();
+		}
+		PromotionDetail checkExist = promoDetailRepository.findByIdAndStatus(promotionDetailId, 1);
+		if (checkExist != null) {
+			checkExist.setStatus(0);
+			promoDetailRepository.save(checkExist);
+		}
+		dataResponse.setResponseMsg("Delete success !!!");
+		dataResponse.setRespType(Constant.HTTP_SUCCESS);
+		return dataResponse;
+	} catch (Exception e) {
+		dataResponse.setResponseMsg("System error");
+		dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+		return dataResponse;
+	}}
 
 }

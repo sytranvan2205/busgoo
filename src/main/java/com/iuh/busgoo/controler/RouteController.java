@@ -103,6 +103,7 @@ public class RouteController {
 	}
 	
 	@PostMapping("/create")
+	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse createRoute(@RequestBody RouteCreateRequest routeCreateRequest) {
 		try {
 			return routeService.createRoute(routeCreateRequest);

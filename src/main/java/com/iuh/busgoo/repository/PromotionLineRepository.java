@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.iuh.busgoo.entity.Promotion;
 import com.iuh.busgoo.entity.PromotionLine;
 
 
@@ -23,4 +24,6 @@ public interface PromotionLineRepository extends JpaRepository<PromotionLine, Lo
     List<PromotionLine> findPromotionsBetweenDates(Date startDate, Date endDate);
 	
 	List<PromotionLine> findByPromotionId(Long promotionId);
+
+	Promotion findByIdAndStatus(Long promotionLineId, int i);
 }

@@ -3,6 +3,7 @@ package com.iuh.busgoo.service;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.filter.PromotionFilter;
 import com.iuh.busgoo.requestType.PromotionCreateRequest;
+import com.iuh.busgoo.requestType.PromotionDetailRequest;
 import com.iuh.busgoo.requestType.PromotionLineRq;
 
 public interface PromotionService {
@@ -16,5 +17,13 @@ public interface PromotionService {
 	DataResponse deletePromotion(Long promotionId);
 
 	DataResponse createPromotionLine(PromotionLineRq promotionLineRq);
+
+	DataResponse deletePromotionLine(Long promotionLineId);
+
+	DataResponse findAllDetail();
+
+	DataResponse createPromotionDetail(PromotionDetailRequest promotionDetailRequest);
+
+	DataResponse deletePromotionDetail(Long promotionDetailId);
 
 }
