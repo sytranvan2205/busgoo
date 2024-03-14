@@ -28,7 +28,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
 	
 	@Query("select p from Promotion p where "
 			+ "(:status is null or p.status = :status) "
-			+ "and (:code is null or p.code = :code) "
+			+ "and (:code is null or p.code like %:code% ) "
 			+ "and (:fromDate is null or p.fromDate >= :fromDate ) "
 			+ "and (:toDate is null or p.toDate <= :toDate ) ")
 	Page<Promotion> findByStatusAndCodeAndFromDateAndToDate(Integer status, String code, LocalDate fromDate, LocalDate toDate, Pageable pageable);

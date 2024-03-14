@@ -42,7 +42,11 @@ public class PromotionController {
 			promotionFilter.setSortBy(sortBy);
 			promotionFilter.setStatus(status);
 			promotionFilter.setToDate(toDate);
-			promotionFilter.setQ(q);
+			if(q!= null && q.trim().length() == 0) {
+				promotionFilter.setQ(null);
+			}else {
+				promotionFilter.setQ(q);
+			}
 			return promotionService.getAllPromotionByFilter(promotionFilter);
 		} catch (Exception e) {
 			DataResponse dataResponse = new DataResponse();
