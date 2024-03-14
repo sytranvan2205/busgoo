@@ -1,6 +1,8 @@
 package com.iuh.busgoo.service.impl;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +107,9 @@ public class RouteServiceImpl implements RouteService{
 				route.setCode("R"+countRoute);
 				route.setFrom(from);
 				route.setTo(to);
-				route.setTransferTime(routeCreateRequest.getTransferTime());
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+				LocalTime transferTime = LocalTime.parse(routeCreateRequest.getTransferTime(), formatter);
+				route.setTransferTime(transferTime);
 				route.setStatus(1);
 				routeRepository.save(route);
 				dataResponse.setResponseMsg("Create success !!!");

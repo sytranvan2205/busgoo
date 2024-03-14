@@ -8,7 +8,7 @@ import lombok.Data;
 public class RouteCreateRequest {
 	private Long fromId;
 	private Long toId;
-	private LocalTime transferTime;
+	private String transferTime;
 
 
 }
