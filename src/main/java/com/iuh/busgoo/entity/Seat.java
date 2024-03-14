@@ -30,20 +30,19 @@ public class Seat extends AbstractEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "code", length = 255)
-    private String code;
-
-    @Column(name = "is_available")
-    private boolean isAvailable;
-
     @Column(name = "seat_type", length = 255)
     private String seatType;
+    
+    @Column(name = "seat_colunm")
+    private String seatColunm;
+    
+    @Column(name ="seat_row")
+    private Long seatRow;
     
     @ManyToOne
     @JoinColumn(name = "bus_id")
     private Bus bus;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_detail_id")
-    private OrderDetail orderDetail;
+    private Long status;
+    
 }

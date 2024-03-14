@@ -1,4 +1,4 @@
-package com.iuh.busgoo.controler;
+package com.iuh.busgoo.controller;
 
 import java.time.LocalDate;
 
