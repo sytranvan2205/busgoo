@@ -11,7 +11,7 @@ import com.iuh.busgoo.entity.PromotionDetail;
 public interface PromotionDetailRepository extends JpaRepository<PromotionDetail, Long>{
 	List<PromotionDetail> findByStatus(Integer status);
 
-	PromotionDetail findByPromotionLineId(Long promotionLineId);
+	PromotionDetail findByPromotionLineIdAndStatus(Long promotionLineId,Integer status);
 
 	PromotionDetail findByIdAndStatus(Long promotionDetailId, Integer i);
 }

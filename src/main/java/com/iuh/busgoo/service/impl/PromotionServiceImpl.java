@@ -171,12 +171,18 @@ public class PromotionServiceImpl implements PromotionService {
 			if(promotionLineRq.getPromotionId() == null) {
 				throw new Exception();
 			}else {
+				LocalDate currDate = LocalDate.now();
 				Promotion checkExist = promotionRepo.findById(promotionLineRq.getPromotionId()).get();
 				if(checkExist == null) {
 					dataResponse.setResponseMsg("Promotion not exist");
 					dataResponse.setRespType(Constant.PROMOTION_IS_NOT_EXIST);
 					return dataResponse;
 				}else {
+					if(checkExist.getFromDate().isBefore(currDate)) {
+						dataResponse.setResponseMsg("Can't update promotion is active");
+						dataResponse.setRespType(Constant.PROMOTION_UPDATE_FAILED);
+						return dataResponse;
+					}
 					PromotionLine line = lineRepo.findById(promotionLineRq.getPromotionLineId()).get();
 					if(line != null) {
 						if(!line.getPromotion().equals(checkExist)) {
@@ -272,19 +278,32 @@ public class PromotionServiceImpl implements PromotionService {
 			if(promotionDetailRequest.getPromotionLineId()==null) {
 				throw new Exception();
 			}else {
+				LocalDate currDate = LocalDate.now();
 				PromotionLine line = lineRepo.findById(promotionDetailRequest.getPromotionLineId()).get();
 				if(line == null) {
 					throw new Exception();
 				}else {
-					PromotionDetail checkExist = promoDetailRepository.findByPromotionLineId(promotionDetailRequest.getPromotionLineId());
+					Boolean isCreate = false;
+					if(line.getPromotion().getFromDate().isBefore(currDate)) {
+						dataResponse.setResponseMsg("Can't update promotion is active");
+						dataResponse.setRespType(Constant.PROMOTION_UPDATE_FAILED);
+						return dataResponse;
+					}
+					PromotionDetail checkExist = promoDetailRepository.findByPromotionLineIdAndStatus(promotionDetailRequest.getPromotionLineId(),1);
 					if(checkExist != null) {
 						dataResponse.setResponseMsg("You cannot have two promotional structures at the same time");
 						dataResponse.setRespType(Constant.PROMOTION_DETAIL_ALREADY_EXIST);
 						return dataResponse;
 					}
-					PromotionDetail promotionDetail = new PromotionDetail();
+					PromotionDetail promotionDetail = promoDetailRepository.findByPromotionLineIdAndStatus(line.getId(), 1);
+					if(promotionDetail == null) {
+						promotionDetail = new PromotionDetail();
+						isCreate = true;
+					}
 					promotionDetail.setPromotionLine(line);
-					promotionDetail.setCode(promotionDetailRequest.getDetailCode());
+					if(isCreate) {
+						promotionDetail.setCode(promotionDetailRequest.getDetailCode());
+					}
 					promotionDetail.setConditionApply(new BigDecimal(promotionDetailRequest.getConditionApply()));
 					promotionDetail.setDiscount(new BigDecimal(promotionDetailRequest.getDiscount()));
 					if(line.getPromotionType().equals(2)) {
@@ -365,6 +384,28 @@ public class PromotionServiceImpl implements PromotionService {
 			respValue.put("data", promotion);
 			dataResponse.setValueReponse(respValue);
 			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse findDetailByLineId(Long promotionLineId) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			if(promotionLineId == null) {
+				throw new Exception();
+			}else {
+				PromotionDetail promotionDetail = promoDetailRepository.findByPromotionLineIdAndStatus(promotionLineId,1);
+				dataResponse.setResponseMsg("Get data success!!!");
+				dataResponse.setRespType(Constant.HTTP_SUCCESS);
+				Map<String, Object> respValue = new HashMap<>();
+				respValue.put("data", promotionDetail);
+				dataResponse.setValueReponse(respValue);
+				return dataResponse;
+			}
 		} catch (Exception e) {
 			dataResponse.setResponseMsg("System error");
 			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);

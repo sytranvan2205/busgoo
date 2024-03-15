@@ -83,7 +83,7 @@ public class PromotionController {
 		}
 	}
 	
-	@GetMapping("/get-detail")
+	@GetMapping("/get-line")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse getPromotionLine(@RequestParam Long promotionId) {
 		try {
@@ -122,11 +122,11 @@ public class PromotionController {
 		}
 	}
 	
-	@GetMapping("/find-detail")
+	@GetMapping("/get-detail")
 	@SecurityRequirement(name = "bearerAuth")
-	public DataResponse findPromotionDetail() {
+	public DataResponse findPromotionDetail(@RequestParam Long promotionLineId) {
 		try {
-			return promotionService.findAllDetail();
+			return promotionService.findDetailByLineId(promotionLineId);
 		} catch (Exception e) {
 			DataResponse dataResponse = new DataResponse();
 			dataResponse.setResponseMsg("System error");
@@ -135,7 +135,7 @@ public class PromotionController {
 		}
 	}
 	
-	@PostMapping("/create-detail")
+	@PostMapping("/create-update/promotiondetail")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse createPromotionDetail(@RequestBody PromotionDetailRequest promotionDetailRequest) {
 		try {
