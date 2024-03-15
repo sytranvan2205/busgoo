@@ -1,6 +1,6 @@
 package com.iuh.busgoo.requestType;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import lombok.Data;
 
@@ -8,5 +8,5 @@ import lombok.Data;
 public class TimeTableCreateRequest {
 	private Long routeId;
 	private Long busId;
-	private LocalTime startTime;
+	private LocalDateTime startTime;
 }

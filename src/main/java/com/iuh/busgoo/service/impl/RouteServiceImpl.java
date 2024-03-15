@@ -97,7 +97,7 @@ public class RouteServiceImpl implements RouteService{
 			}
 			//create new route
 			List<Route> list = routeRepository.findByFromDetailCodeAndToDetailCodeAndStatus(to.getDetailCode(), from.getDetailCode(), 1);
-			if(list != null) {
+			if(list != null && list.size()>0) {
 				dataResponse.setResponseMsg("The route already exists.");
 				dataResponse.setRespType(Constant.ROUTE_HAS_EXIST);
 				return dataResponse;

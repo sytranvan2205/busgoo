@@ -1,7 +1,7 @@
 package com.iuh.busgoo.entity;
 
 import java.io.Serializable;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,8 +33,8 @@ public class TimeTable extends AbstractEntity implements Serializable {
     @Column(name = "code", length = 255)
     private String code;
 
-    @Column(name = "start_time")
-    private LocalTime startTime;
+    @Column(name = "started_time")
+    private LocalDateTime startedTime;
 
     private Integer status;
 

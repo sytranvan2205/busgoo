@@ -45,5 +45,6 @@ public class Constant {
 	public static final Integer REGEION_STRUCTURE_ID_IS_NOT_NULL = 140;
 	public static final Integer PROMOTION_IS_NOT_EXIST = 141;
 	public static final Integer PROMOTION_DETAIL_ALREADY_EXIST = 142;
+	public static final Integer TIME_START_INVALID = 143;
 
 }

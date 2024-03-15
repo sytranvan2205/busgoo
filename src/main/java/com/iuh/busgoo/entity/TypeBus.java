@@ -42,6 +42,4 @@ public class TypeBus extends AbstractEntity implements Serializable {
 
     private Integer status;
     
-    @OneToMany(mappedBy = "typeBus", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Bus> buses;
 }

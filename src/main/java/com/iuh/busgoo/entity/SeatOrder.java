@@ -106,7 +106,7 @@ public class SeatOrder extends AbstractEntity implements Serializable{
 		this.isAvailable = isAvailable;
 	}
 	
-	public SeatOrder(Long id, String seatType, String seatColunm, Long seatRow, TimeTable timeTable,
+	public SeatOrder(String seatType, String seatColunm, Long seatRow, TimeTable timeTable,
 			OrderDetail orderDetail, Boolean isAvailable) {
 		super();
 		this.seatType = seatType;
