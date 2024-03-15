@@ -11,9 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TimeTableDTO {
+	private Long id;
+	private String code;
 	private String busName;
 	private String busType;
 	private String routeDescription;
 	private LocalTime timeTransfer;
 	private LocalDateTime timeStarted;
+	private int status;
 }
