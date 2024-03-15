@@ -255,23 +255,23 @@ public class PriceServiceImpl implements PriceService {
 			if (request.getPriceId() == null) {
 				throw new Exception();
 			}
-			if (request.getTypeBusCode() == null || request.getTypeBusCode().length() == 0) {
+			if (request.getTypeBusId() == null) {
 				response.setResponseMsg("Type bus is not null");
 				response.setRespType(Constant.TYPE_BUS_CODE_NOT_NULL);
 				return response;
 			}
-			if (request.getRouteCode() == null || request.getRouteCode().length() == 0) {
+			if (request.getRouteId() == null) {
 				response.setResponseMsg("Route code is not null");
 				response.setRespType(Constant.ROUTE_CODE_NOT_NULL);
 				return response;
 			}
-			Route route = routeRepository.findByCode(request.getRouteCode());
+			Route route = routeRepository.findById(request.getRouteId()).get();
 			if (route == null) {
 				response.setResponseMsg("Route is not exist");
 				response.setRespType(Constant.ROUTE_NOT_EXIST);
 				return response;
 			}
-			TypeBus typeBus = typeBusRepository.findByCode(request.getTypeBusCode());
+			TypeBus typeBus = typeBusRepository.findById(request.getTypeBusId()).get();
 			if (typeBus == null) {
 				response.setResponseMsg("Type bus is not exist");
 				response.setRespType(Constant.TYPE_BUS_NOT_EXIST);
@@ -284,8 +284,8 @@ public class PriceServiceImpl implements PriceService {
 				return response;
 			} else {
 				List<PriceDetail> checkExsit = priceDetailRepository
-						.findByRouteCodeAndTypeBusCode(request.getRouteCode(), request.getTypeBusCode());
-				if (checkExsit != null) {
+						.findByRouteIdAndTypeBusId(request.getRouteId(), request.getTypeBusId());
+				if (checkExsit != null && checkExsit.size()>0) {
 					response.setResponseMsg("PriceDetail is exist");
 					response.setRespType(Constant.PRICE_DETAIL_IS_EXIST);
 					return response;

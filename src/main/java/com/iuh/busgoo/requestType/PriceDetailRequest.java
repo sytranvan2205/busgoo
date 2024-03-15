@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class PriceDetailRequest {
-	private String typeBusCode;
-	private String routeCode;
+	private Long typeBusId;
+	private Long routeId;
 	private Double priceValue;
 	private Long priceId;
 }
