@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.iuh.busgoo.entity.Price;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -187,5 +188,28 @@ public class UserServiceImpl implements UserService {
 			return dataResponse;
 		}
 	}
-	
+
+	@Override
+	public DataResponse deleteUser(Long id) {
+		DataResponse response = new DataResponse();
+		try {
+			User user = userRepo.findById(id).get();
+			if (user == null) {
+				response.setResponseMsg("User is not exist");
+				response.setRespType(Constant.USER_NOT_EXIST);
+				return response;
+			} else {
+				user.setStatus(0);
+				userRepo.save(user);
+				response.setResponseMsg("Delete success!!!");
+				response.setRespType(Constant.HTTP_SUCCESS);
+				return response;
+			}
+		} catch (Exception e) {
+			response.setResponseMsg("System error");
+			response.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return response;
+		}
+	}
+
 }

@@ -21,4 +21,6 @@ public interface UserService {
 	DataResponse findUserByFilter(FilterUserRq filterUserRq);
 
 	DataResponse getUserById(Long userId);
+
+	DataResponse deleteUser(Long id);
 }
