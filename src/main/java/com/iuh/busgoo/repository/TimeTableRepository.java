@@ -16,11 +16,11 @@ import com.iuh.busgoo.entity.TimeTable;
 public interface TimeTableRepository extends JpaRepository<TimeTable,Long>{
 	List<TimeTable> findByRouteIdAndBusIdAndStatus(Long routeId,Long busId, Integer status);
 
-	@Query("select new com.iuh.busgoo.dto.TimeTableDTO (b.name as busName, tpb.name as busType, CONCAT(to.fullName,'-',from.fullName) as routeDescription, r.transferTime as timeTransfer, tb.startedTime as timeStarted ) from TimeTable tb "
+	@Query("select new com.iuh.busgoo.dto.TimeTableDTO (tb.id as id,tb.code as code,b.name as busName, tpb.name as busType, CONCAT(from.fullName,'-',to.fullName) as routeDescription, r.transferTime as timeTransfer, tb.startedTime as timeStarted, tb.status as status ) from TimeTable tb "
 			+ "INNER JOIN tb.route r "
 			+ "INNER JOIN tb.bus b "
-			+ "INNER JOIN r.to to "
 			+ "INNER JOIN r.from from "
+			+ "INNER JOIN r.to to "
 			+ "INNER JOIN b.typeBus tpb "
 			+ "where (:status is null or tb.status = :status ) "
 			+ "and (:fromId is null or from.id = :fromId ) "
