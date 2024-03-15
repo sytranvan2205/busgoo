@@ -41,11 +41,11 @@ public class PriceDetail extends AbstractEntity implements Serializable {
 	@JoinColumn(name = "price_id")
 	private Price price;
 	
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "route_id")
     private Route route;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "type_bus_id")
     private TypeBus typeBus;
 }
