@@ -96,7 +96,7 @@ public class PromotionController {
 		}
 	}
 	
-	@PostMapping("/create-promotionline")
+	@PostMapping("/create-update/promotionline")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse createPromotionLine(@RequestBody PromotionLineRq promotionLineRq) {
 		try {

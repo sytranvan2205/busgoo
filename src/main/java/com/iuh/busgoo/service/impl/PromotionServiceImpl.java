@@ -177,12 +177,37 @@ public class PromotionServiceImpl implements PromotionService {
 					dataResponse.setRespType(Constant.PROMOTION_IS_NOT_EXIST);
 					return dataResponse;
 				}else {
-					PromotionLine line = new PromotionLine();
+					PromotionLine line = lineRepo.findById(promotionLineRq.getPromotionLineId()).get();
+					if(line != null) {
+						if(!line.getPromotion().equals(checkExist)) {
+							throw new Exception();
+						}
+					}else {
+						line = new PromotionLine();
+					}
 					line.setLineName(promotionLineRq.getLineName());
-					line.setCode(promotionLineRq.getLineCode());
+					if(line.getCode() == null) {
+						line.setCode(promotionLineRq.getLineCode());
+					}
 					line.setPromotionType(promotionLineRq.getPromotionType());
-					line.setFromDate(promotionLineRq.getFromDate());
-					line.setToDate(promotionLineRq.getToDate());
+					if(promotionLineRq.getFromDate().isBefore(checkExist.getFromDate())) {
+						dataResponse.setResponseMsg("From date of the promotion line must be greater than the from date of the promotion !!!");
+						dataResponse.setRespType(Constant.PROMOTION_LINE_FROM_DATE_INVALID);
+						return dataResponse;
+					}else {
+						line.setFromDate(promotionLineRq.getFromDate());
+					}
+					if(promotionLineRq.getToDate().isAfter(checkExist.getToDate())) {
+						dataResponse.setResponseMsg("TO date of the promotion line must be less than the to date of the promotion !!!");
+						dataResponse.setRespType(Constant.PROMOTION_LINE_TO_DATE_INVALID);
+						return dataResponse;
+					}else if(promotionLineRq.getFromDate().isAfter(promotionLineRq.getToDate())) {
+						dataResponse.setResponseMsg("From date must be less than or equal to to date");
+						dataResponse.setRespType(Constant.FROM_DATE_AFTER__TO_DATE);
+						return dataResponse;
+					}else {
+						line.setToDate(promotionLineRq.getToDate());
+					}
 					line.setPromotion(checkExist);
 					lineRepo.save(line);
 					dataResponse.setResponseMsg("Create success !!!");
