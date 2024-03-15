@@ -49,4 +49,5 @@ public class Constant {
 	public static final Integer PROMOTION_UPDATE_FAILED = 145;
 	public static final Integer PROMOTION_LINE_FROM_DATE_INVALID = 146;
 	public static final Integer PROMOTION_LINE_TO_DATE_INVALID = 147;
+	public static final Integer DISCOUNT_INVALID = 148;
 }

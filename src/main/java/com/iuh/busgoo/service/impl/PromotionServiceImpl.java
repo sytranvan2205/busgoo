@@ -305,10 +305,15 @@ public class PromotionServiceImpl implements PromotionService {
 						promotionDetail.setCode(promotionDetailRequest.getDetailCode());
 					}
 					promotionDetail.setConditionApply(new BigDecimal(promotionDetailRequest.getConditionApply()));
-					promotionDetail.setDiscount(new BigDecimal(promotionDetailRequest.getDiscount()));
 					if(line.getPromotionType().equals(2)) {
 						promotionDetail.setMaxDiscount(new BigDecimal(promotionDetailRequest.getMaxDiscount()));
+						if(promotionDetailRequest.getDiscount()<0 && promotionDetailRequest.getDiscount()>100) {
+							dataResponse.setResponseMsg("The discount must be >0 and <100");
+							dataResponse.setRespType(Constant.DISCOUNT_INVALID);
+							return dataResponse;
+						}
 					}
+					promotionDetail.setDiscount(new BigDecimal(promotionDetailRequest.getDiscount()));
 					promotionDetail.setStatus(1);
 					promoDetailRepository.save(promotionDetail);
 					dataResponse.setResponseMsg("Create success!!!");
