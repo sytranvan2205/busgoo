@@ -5,6 +5,7 @@ import com.iuh.busgoo.filter.PromotionFilter;
 import com.iuh.busgoo.requestType.PromotionCreateRequest;
 import com.iuh.busgoo.requestType.PromotionDetailRequest;
 import com.iuh.busgoo.requestType.PromotionLineRq;
+import com.iuh.busgoo.requestType.PromotionUpdateRequest;
 
 public interface PromotionService {
 
@@ -25,5 +26,7 @@ public interface PromotionService {
 	DataResponse createPromotionDetail(PromotionDetailRequest promotionDetailRequest);
 
 	DataResponse deletePromotionDetail(Long promotionDetailId);
+
+	DataResponse updatePromotion(PromotionUpdateRequest promotionUpdateRequest);
 
 }

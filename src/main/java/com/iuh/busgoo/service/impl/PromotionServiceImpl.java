@@ -25,6 +25,7 @@ import com.iuh.busgoo.repository.PromotionRepository;
 import com.iuh.busgoo.requestType.PromotionCreateRequest;
 import com.iuh.busgoo.requestType.PromotionDetailRequest;
 import com.iuh.busgoo.requestType.PromotionLineRq;
+import com.iuh.busgoo.requestType.PromotionUpdateRequest;
 import com.iuh.busgoo.service.PromotionService;
 
 @Service
@@ -300,5 +301,50 @@ public class PromotionServiceImpl implements PromotionService {
 		dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
 		return dataResponse;
 	}}
+
+	@Override
+	public DataResponse updatePromotion(PromotionUpdateRequest promotionUpdateRequest) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			if(promotionUpdateRequest.getFromDate().isAfter(promotionUpdateRequest.getToDate())) {
+				dataResponse.setResponseMsg("From date must be less than or equal to to date");
+				dataResponse.setRespType(Constant.FROM_DATE_AFTER__TO_DATE);
+				return dataResponse;
+			}
+			LocalDate currDate = LocalDate.now();
+			Promotion promotion = promotionRepo.findById(promotionUpdateRequest.getPromotionId()).get();
+			if(promotion == null) {
+				throw new Exception();
+			}else {
+				promotion.setName(promotionUpdateRequest.getName());
+				promotion.setDescription(promotionUpdateRequest.getDescription());
+				if(promotion.getFromDate().isBefore(currDate)) {
+					dataResponse.setResponseMsg("Can't update promotion is active");
+					dataResponse.setRespType(Constant.PROMOTION_UPDATE_FAILED);
+					return dataResponse;
+				}else {
+					if(promotionUpdateRequest.getFromDate().isAfter(currDate)) {
+						promotionUpdateRequest.setFromDate(promotionUpdateRequest.getFromDate());
+						promotionUpdateRequest.setToDate(promotionUpdateRequest.getToDate());
+					}else {
+						dataResponse.setResponseMsg("From date must be greater than the current date");
+						dataResponse.setRespType(Constant.FROM_DATE_BEFORE_CURR_DATE);
+						return dataResponse;
+					}
+					promotionRepo.save(promotion);
+				}
+			}
+			dataResponse.setResponseMsg("Update success!!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data", promotion);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
 
 }

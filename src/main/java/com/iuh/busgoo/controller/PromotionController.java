@@ -16,6 +16,7 @@ import com.iuh.busgoo.filter.PromotionFilter;
 import com.iuh.busgoo.requestType.PromotionCreateRequest;
 import com.iuh.busgoo.requestType.PromotionDetailRequest;
 import com.iuh.busgoo.requestType.PromotionLineRq;
+import com.iuh.busgoo.requestType.PromotionUpdateRequest;
 import com.iuh.busgoo.service.PromotionService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -152,6 +153,19 @@ public class PromotionController {
 	public DataResponse deletePromotionDetail(@RequestParam Long promotionDetailId) {
 		try {
 			return promotionService.deletePromotionDetail(promotionDetailId);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+	@PostMapping("/update")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse updatePromotion(@RequestBody PromotionUpdateRequest promotionUpdateRequest) {
+		try {
+			return promotionService.updatePromotion(promotionUpdateRequest);
 		} catch (Exception e) {
 			DataResponse dataResponse = new DataResponse();
 			dataResponse.setResponseMsg("System error");
