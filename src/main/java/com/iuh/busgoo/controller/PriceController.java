@@ -10,6 +10,7 @@ import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.filter.PriceFilter;
 import com.iuh.busgoo.requestType.PriceCreateRequest;
 import com.iuh.busgoo.requestType.PriceDetailRequest;
+import com.iuh.busgoo.requestType.PriceUpdateRequest;
 import com.iuh.busgoo.service.PriceService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,6 +32,19 @@ public class PriceController {
 			}
 			return dataResponse = priceService.createPrice(priceCreateRequest);
 		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+	@PostMapping("/update")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse updatePrice(@RequestBody PriceUpdateRequest priceUpdateRequest) {
+		try {
+			return priceService.updatePrice(priceUpdateRequest);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
 			dataResponse.setResponseMsg("System error");
 			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
 			return dataResponse;

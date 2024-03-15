@@ -104,7 +104,7 @@ public class RouteServiceImpl implements RouteService{
 			}else {
 				Route route = new Route();
 				Long countRoute = routeRepository.count();
-				route.setCode("R"+countRoute);
+				route.setCode("R"+(countRoute++));
 				route.setFrom(from);
 				route.setTo(to);
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");

@@ -25,6 +25,7 @@ import com.iuh.busgoo.repository.RouteRepository;
 import com.iuh.busgoo.repository.TypeBusRepository;
 import com.iuh.busgoo.requestType.PriceCreateRequest;
 import com.iuh.busgoo.requestType.PriceDetailRequest;
+import com.iuh.busgoo.requestType.PriceUpdateRequest;
 import com.iuh.busgoo.service.PriceService;
 
 import jakarta.transaction.Transactional;
@@ -65,7 +66,7 @@ public class PriceServiceImpl implements PriceService {
 				response.setRespType(Constant.FROM_DATE_NOT_NULL);
 				return response;
 			}
-			if (priceCreateRequest.getToDate() != null && priceCreateRequest.getToDate().isBefore(curDate)) {
+			if (priceCreateRequest.getFromDate() != null && !priceCreateRequest.getFromDate().isAfter(curDate)) {
 				throw new Exception();
 			}
 			if (priceCreateRequest.getFromDate().isAfter(priceCreateRequest.getToDate())) {
@@ -89,7 +90,7 @@ public class PriceServiceImpl implements PriceService {
 				// create price
 				Price newPrice = new Price();
 				Long countPrice = priceRepository.count();
-				newPrice.setCode("P" + countPrice);
+				newPrice.setCode("P" + (countPrice+1));
 				newPrice.setStatus(1);
 				newPrice.setDescription((priceCreateRequest.getPriceDescription() == null) ? null
 						: priceCreateRequest.getPriceDescription());
@@ -291,7 +292,7 @@ public class PriceServiceImpl implements PriceService {
 				}
 				PriceDetail priceDetail = new PriceDetail();
 				Long countDetail = priceDetailRepository.count();
-				priceDetail.setDetailCode("PD" + countDetail);
+				priceDetail.setDetailCode("PD" + (countDetail+1));
 				priceDetail.setPrice(price);
 				priceDetail.setRoute(route);
 				priceDetail.setTypeBus(typeBus);
@@ -384,6 +385,42 @@ public class PriceServiceImpl implements PriceService {
 				return dataResponse;
 			}else {
 				throw new Exception();
+			}
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse updatePrice(PriceUpdateRequest priceUpdateRequest) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			LocalDate currDate = LocalDate.now();
+			Price priceUpdate = priceRepository.findById(priceUpdateRequest.getPriceId()).get();
+			if(priceUpdate == null) {
+				throw new Exception();
+			}else {
+				if(priceUpdateRequest.getFromDate().isAfter(priceUpdateRequest.getToDate())) {
+					dataResponse.setResponseMsg("From date must be less than or equal to to date");
+					dataResponse.setRespType(Constant.FROM_DATE_AFTER__TO_DATE);
+					return dataResponse;
+				}
+				if(!priceUpdate.getFromDate().isBefore(currDate)) {
+					priceUpdate.setFromDate(priceUpdateRequest.getFromDate());
+				}
+				if(!priceUpdate.getToDate().isBefore(currDate)) {
+					priceUpdate.setToDate(currDate);
+				}
+				priceUpdate.setDescription(priceUpdateRequest.getPriceDescription());
+				priceRepository.save(priceUpdate);
+				dataResponse.setResponseMsg("Update data success!!!");
+				dataResponse.setRespType(Constant.HTTP_SUCCESS);
+				Map<String, Object> reponseValue = new HashMap<>();
+				reponseValue.put("data", priceUpdate);
+				dataResponse.setValueReponse(reponseValue);
+				return dataResponse;
 			}
 		} catch (Exception e) {
 			dataResponse.setResponseMsg("System error");

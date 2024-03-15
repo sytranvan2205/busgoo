@@ -5,11 +5,9 @@ import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class PriceCreateRequest {
+public class PriceUpdateRequest {
+	private Long priceId;
 	private LocalDate toDate;
 	private LocalDate fromDate;
-//	private String typeBusCode;
-//	private String routeCode;
 	private String priceDescription;
-//	private Double priceValue;
 }

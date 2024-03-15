@@ -45,9 +45,9 @@ public class Price extends AbstractEntity implements Serializable {
 
     @Column(name = "description", length = 255)
     private String description;
-    
-    @OneToMany(mappedBy = "price", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PriceDetail> priceDetails;
+//    
+//    @OneToMany(mappedBy = "price", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<PriceDetail> priceDetails;
     
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "route_id")

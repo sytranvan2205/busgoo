@@ -4,6 +4,7 @@ import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.filter.PriceFilter;
 import com.iuh.busgoo.requestType.PriceCreateRequest;
 import com.iuh.busgoo.requestType.PriceDetailRequest;
+import com.iuh.busgoo.requestType.PriceUpdateRequest;
 
 public interface PriceService {
 	DataResponse createPrice(PriceCreateRequest priceCreateRequest );
@@ -23,5 +24,7 @@ public interface PriceService {
 	DataResponse findPriceDetailById(Long priceDetailId);
 
 	DataResponse deletePriceDetailById(Long priceDetailId);
+
+	DataResponse updatePrice(PriceUpdateRequest priceUpdateRequest);
 	
 }
