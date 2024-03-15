@@ -173,4 +173,17 @@ public class PromotionController {
 			return dataResponse;
 		}
 	}
+	
+	@GetMapping("/get-by-id")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse getPromotionById(@RequestParam Long promotionId) {
+		try {
+			return promotionService.findById(promotionId);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
 }

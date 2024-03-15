@@ -413,4 +413,26 @@ public class PromotionServiceImpl implements PromotionService {
 		}
 	}
 
+	@Override
+	public DataResponse findById(Long promotionId) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			if(promotionId == null) {
+				throw new Exception();
+			}else {
+				Promotion promotion = promotionRepo.findById(promotionId).get();
+				dataResponse.setResponseMsg("Get data success!!!");
+				dataResponse.setRespType(Constant.HTTP_SUCCESS);
+				Map<String, Object> respValue = new HashMap<>();
+				respValue.put("data", promotion);
+				dataResponse.setValueReponse(respValue);
+				return dataResponse;
+			}
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
 }

@@ -31,4 +31,6 @@ public interface PromotionService {
 
 	DataResponse findDetailByLineId(Long promotionLineId);
 
+	DataResponse findById(Long promotionId);
+
 }
