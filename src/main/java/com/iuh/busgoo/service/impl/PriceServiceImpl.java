@@ -413,7 +413,12 @@ public class PriceServiceImpl implements PriceService {
 				if(!priceUpdate.getToDate().isBefore(currDate)) {
 					priceUpdate.setToDate(priceUpdateRequest.getToDate());
 				}
-				priceUpdate.setDescription(priceUpdateRequest.getPriceDescription());
+				if(priceUpdateRequest.getPriceDescription().trim().length()==0) {
+					priceUpdate.setDescription(null);
+				}else {
+					priceUpdate.setDescription(priceUpdateRequest.getPriceDescription());
+				}
+				
 				priceRepository.save(priceUpdate);
 				dataResponse.setResponseMsg("Update data success!!!");
 				dataResponse.setRespType(Constant.HTTP_SUCCESS);
