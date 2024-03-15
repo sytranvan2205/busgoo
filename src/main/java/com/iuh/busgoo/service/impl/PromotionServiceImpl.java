@@ -37,6 +37,7 @@ public class PromotionServiceImpl implements PromotionService {
 	@Autowired
 	private PromotionLineRepository lineRepo;
 	
+	@Autowired
 	private PromotionDetailRepository promoDetailRepository;
 
 	@Override
@@ -183,7 +184,10 @@ public class PromotionServiceImpl implements PromotionService {
 						dataResponse.setRespType(Constant.PROMOTION_UPDATE_FAILED);
 						return dataResponse;
 					}
-					PromotionLine line = lineRepo.findById(promotionLineRq.getPromotionLineId()).get();
+					PromotionLine line = null;
+					if(promotionLineRq.getPromotionLineId() != null) {
+						line = lineRepo.findById(promotionLineRq.getPromotionLineId()).get();
+					}
 					if(line != null) {
 						if(!line.getPromotion().equals(checkExist)) {
 							throw new Exception();
@@ -289,7 +293,10 @@ public class PromotionServiceImpl implements PromotionService {
 						dataResponse.setRespType(Constant.PROMOTION_UPDATE_FAILED);
 						return dataResponse;
 					}
-					PromotionDetail checkExist = promoDetailRepository.findByPromotionLineIdAndStatus(promotionDetailRequest.getPromotionLineId(),1);
+					PromotionDetail checkExist = null;
+					if(promotionDetailRequest.getPromotionLineId() != null) {
+						checkExist = promoDetailRepository.findByPromotionLineIdAndStatus(promotionDetailRequest.getPromotionLineId(),1);
+					}
 					if(checkExist != null) {
 						dataResponse.setResponseMsg("You cannot have two promotional structures at the same time");
 						dataResponse.setRespType(Constant.PROMOTION_DETAIL_ALREADY_EXIST);
