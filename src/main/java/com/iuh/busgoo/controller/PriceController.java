@@ -3,12 +3,7 @@ package com.iuh.busgoo.controller;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
@@ -66,11 +61,11 @@ public class PriceController {
 		}
 	}
 
-	@GetMapping("/delete")
+	@DeleteMapping("/delete/{id}")
 	@SecurityRequirement(name = "bearerAuth")
-	public DataResponse deletePrice(@RequestParam Long priceId) {
+	public DataResponse deletePrice(@PathVariable Long id) {
 		try {
-			return priceService.deletePrice(priceId);
+			return priceService.deletePrice(id);
 		} catch (Exception e) {
 			DataResponse dataResponse = new DataResponse();
 			dataResponse.setResponseMsg("System error");

@@ -3,12 +3,7 @@ package com.iuh.busgoo.controller;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
@@ -62,11 +57,11 @@ public class RouteController {
 		}
 	}
 
-	@PostMapping("/delete")
+	@DeleteMapping("/delete/{id}")
 	@SecurityRequirement(name = "bearerAuth")
-	public DataResponse deleteRoute(@RequestBody Long routeId) {
+	public DataResponse deleteRoute(@PathVariable Long id) {
 		try {
-			return routeService.deleteRoute(routeId);
+			return routeService.deleteRoute(id);
 		} catch (Exception e) {
 			DataResponse dataResponse = new DataResponse();
 			dataResponse.setResponseMsg("System error");

@@ -3,12 +3,7 @@ package com.iuh.busgoo.controller;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
@@ -61,6 +56,18 @@ public class TimeTableController {
 			return dataResponse;
 		}
 
+	}
+	@DeleteMapping("/delete/{id}")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse deleteUserById(@PathVariable Long id) {
+		try {
+			return timeTableService.deleteTimeTable(id);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
 	}
 
 }

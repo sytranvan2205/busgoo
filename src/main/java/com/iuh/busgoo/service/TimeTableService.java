@@ -10,4 +10,6 @@ public interface TimeTableService {
 
 	DataResponse findTimeTableByFilter(TimeTableFilter filter);
 
+	DataResponse deleteTimeTable(Long id);
+
 }

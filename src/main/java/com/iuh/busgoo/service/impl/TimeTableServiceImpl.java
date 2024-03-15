@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.iuh.busgoo.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,11 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.dto.TimeTableDTO;
-import com.iuh.busgoo.entity.Bus;
-import com.iuh.busgoo.entity.Route;
-import com.iuh.busgoo.entity.Seat;
-import com.iuh.busgoo.entity.SeatOrder;
-import com.iuh.busgoo.entity.TimeTable;
 import com.iuh.busgoo.filter.TimeTableFilter;
 import com.iuh.busgoo.repository.BusRepository;
 import com.iuh.busgoo.repository.RouteRepository;
@@ -144,6 +140,29 @@ public class TimeTableServiceImpl implements TimeTableService {
 			respValue.put("data", data);
 			response.setValueReponse(respValue);
 			return response;
+		} catch (Exception e) {
+			response.setResponseMsg("System error");
+			response.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return response;
+		}
+	}
+
+	@Override
+	public DataResponse deleteTimeTable(Long id) {
+		DataResponse response = new DataResponse();
+		try {
+			TimeTable timeTable = timeTableRepository.findById(id).get();
+			if (timeTable == null) {
+				response.setResponseMsg("Schedule is not exist");
+				response.setRespType(Constant.USER_NOT_EXIST);
+				return response;
+			} else {
+				timeTable.setStatus(0);
+				timeTableRepository.save(timeTable);
+				response.setResponseMsg("Delete success!!!");
+				response.setRespType(Constant.HTTP_SUCCESS);
+				return response;
+			}
 		} catch (Exception e) {
 			response.setResponseMsg("System error");
 			response.setRespType(Constant.SYSTEM_ERROR_CODE);
