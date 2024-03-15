@@ -1,5 +1,6 @@
 package com.iuh.busgoo.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +15,10 @@ import org.springframework.stereotype.Service;
 
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
+import com.iuh.busgoo.dto.UserDTO;
 import com.iuh.busgoo.entity.RegionDetail;
 import com.iuh.busgoo.entity.User;
+import com.iuh.busgoo.mapper.UserMapper;
 import com.iuh.busgoo.repository.RegionDetailRepository;
 import com.iuh.busgoo.repository.UserRepository;
 import com.iuh.busgoo.requestType.UserCreateRequest;
@@ -29,6 +32,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	RegionDetailRepository regionDetailRepository;
+	
+	@Autowired
+	UserMapper userMapper;
 
 	@Override
 	public User findUserByCode(String code) {
@@ -153,12 +159,18 @@ public class UserServiceImpl implements UserService {
 			}else {
 				pageUsers = userRepo.findByStatusAndFullNameContaining(filterUserRq.getStatus(),filterUserRq.getQ(), page);
 			}
+			List<User> users = new ArrayList<User>();
+			if(pageUsers.getContent().size() > 0) {
+				users = pageUsers.getContent();
+			}
+			List<UserDTO> dtos = userMapper.toDto(users);
+			Page<UserDTO> userDtoPage = PageUtils.createPageFromList(dtos, page);
 //			Page<User> pageUsers = userRepo.findAll(page);
 //			Page<User> pageUser = userRepo.findAll(page);
 			dataResponse.setResponseMsg("Get data success !!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
 			Map<String, Object> respValue = new HashMap<>();
-			respValue.put("data", pageUsers);
+			respValue.put("data", userDtoPage);
 			dataResponse.setValueReponse(respValue);
 			return dataResponse;
 		} catch (Exception e) {
