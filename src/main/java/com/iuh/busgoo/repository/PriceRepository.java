@@ -18,7 +18,8 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
 	
 	@Query(value = "select * from price where status = 1 "
 			+ "and from_date >= :fromDate "
-			+ "and to_date <= :toDate ",nativeQuery = true)
+			+ "and to_date <= :toDate "
+			+ "and status = 1 ",nativeQuery = true)
 	List<Price> getLstByFromDateAndToDate(@Param("fromDate")LocalDate fromDate,@Param("toDate") LocalDate toDate);
 	
 	@Query(value = "select p from Price p where "

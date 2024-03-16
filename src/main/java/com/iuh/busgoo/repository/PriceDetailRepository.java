@@ -11,7 +11,7 @@ import com.iuh.busgoo.entity.PriceDetail;
 public interface PriceDetailRepository extends JpaRepository<PriceDetail, Long>{
 	List<PriceDetail> findByRouteCodeAndTypeBusCode(String roleCode, String typeBusCode);
 	
-	List<PriceDetail> findByRouteIdAndTypeBusIdAndStatus(Long routeId, Long typeBusId, Integer status);
+	List<PriceDetail> findByRouteIdAndTypeBusIdAndStatusAndPriceId(Long routeId, Long typeBusId, Integer status, Long priceId);
 	
 	List<PriceDetail> findByPriceId(Long priceId);
 }

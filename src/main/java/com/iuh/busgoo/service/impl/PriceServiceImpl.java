@@ -67,10 +67,14 @@ public class PriceServiceImpl implements PriceService {
 				return response;
 			}
 			if (priceCreateRequest.getFromDate() != null && !priceCreateRequest.getFromDate().isAfter(curDate)) {
-				throw new Exception();
+				response.setResponseMsg("From date must be greater than the current date");
+				response.setRespType(Constant.FROM_DATE_BEFORE_CURR_DATE);
+				return response;
 			}
 			if (priceCreateRequest.getFromDate().isAfter(priceCreateRequest.getToDate())) {
-				throw new Exception();
+				response.setResponseMsg("To date must be greater than or equal to from date.");
+				response.setRespType(Constant.FROM_DATE_AFTER__TO_DATE);
+				return response;
 			}
 //			Route route = routeRepository.findByCode(priceCreateRequest.getRouteCode());
 //			if (route == null) {
@@ -284,7 +288,7 @@ public class PriceServiceImpl implements PriceService {
 				return response;
 			} else {
 				List<PriceDetail> checkExsit = priceDetailRepository
-						.findByRouteIdAndTypeBusIdAndStatus(request.getRouteId(), request.getTypeBusId(),1);
+						.findByRouteIdAndTypeBusIdAndStatusAndPriceId(request.getRouteId(), request.getTypeBusId(),1,price.getId());
 				if (checkExsit != null && checkExsit.size()>0) {
 					response.setResponseMsg("PriceDetail is exist");
 					response.setRespType(Constant.PRICE_DETAIL_IS_EXIST);
@@ -419,14 +423,28 @@ public class PriceServiceImpl implements PriceService {
 				}else {
 					priceUpdate.setDescription(priceUpdateRequest.getPriceDescription());
 				}
+				List<Price> prices = priceRepository.getLstByFromDateAndToDate(priceUpdate.getFromDate(),
+						priceUpdate.getToDate());
 				
-				priceRepository.save(priceUpdate);
-				dataResponse.setResponseMsg("Update data success!!!");
-				dataResponse.setRespType(Constant.HTTP_SUCCESS);
-				Map<String, Object> reponseValue = new HashMap<>();
-				reponseValue.put("data", priceUpdate);
-				dataResponse.setValueReponse(reponseValue);
-				return dataResponse;
+				Integer checkErrorUpdate = 0;
+				for (Price price : prices) {
+					if (price.getToDate().isAfter(priceUpdate.getFromDate())) {
+						checkErrorUpdate = 1;
+					}
+				}
+				if (checkErrorUpdate == 1) {
+					dataResponse.setResponseMsg("The time range you're updating already has another price");
+					dataResponse.setRespType(Constant.PRICE_IS_EXIST);
+					return dataResponse;
+				}else {
+					priceRepository.save(priceUpdate);
+					dataResponse.setResponseMsg("Update data success!!!");
+					dataResponse.setRespType(Constant.HTTP_SUCCESS);
+					Map<String, Object> reponseValue = new HashMap<>();
+					reponseValue.put("data", priceUpdate);
+					dataResponse.setValueReponse(reponseValue);
+					return dataResponse;
+				}
 			}
 		} catch (Exception e) {
 			dataResponse.setResponseMsg("System error");
