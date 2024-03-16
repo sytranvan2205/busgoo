@@ -140,11 +140,11 @@ public class PriceController {
 		}
 	}
 	
-	@GetMapping("/delete-price-detail")
+	@DeleteMapping("/delete-price-detail/{id}")
 	@SecurityRequirement(name = "bearerAuth")
-	public DataResponse deletePriceDetail(@RequestParam Long priceDetailId) {
+	public DataResponse deletePriceDetail(@PathVariable Long id) {
 		try {
-			return priceService.deletePriceDetailById(priceDetailId);
+			return priceService.deletePriceDetailById(id);
 		} catch (Exception e) {
 			DataResponse dataResponse = new DataResponse();
 			dataResponse.setResponseMsg("System error");

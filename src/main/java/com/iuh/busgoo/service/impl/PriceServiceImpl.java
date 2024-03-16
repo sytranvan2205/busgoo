@@ -296,6 +296,7 @@ public class PriceServiceImpl implements PriceService {
 				priceDetail.setPrice(price);
 				priceDetail.setRoute(route);
 				priceDetail.setTypeBus(typeBus);
+				priceDetail.setStatus(1);
 				priceDetail.setValue(request.getPriceValue());
 				priceDetailRepository.save(priceDetail);
 				// trả về data
