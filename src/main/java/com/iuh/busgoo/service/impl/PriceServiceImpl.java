@@ -284,7 +284,7 @@ public class PriceServiceImpl implements PriceService {
 				return response;
 			} else {
 				List<PriceDetail> checkExsit = priceDetailRepository
-						.findByRouteIdAndTypeBusId(request.getRouteId(), request.getTypeBusId());
+						.findByRouteIdAndTypeBusIdAndStatus(request.getRouteId(), request.getTypeBusId(),1);
 				if (checkExsit != null && checkExsit.size()>0) {
 					response.setResponseMsg("PriceDetail is exist");
 					response.setRespType(Constant.PRICE_DETAIL_IS_EXIST);
