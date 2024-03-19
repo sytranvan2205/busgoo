@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -186,7 +187,9 @@ public class PromotionServiceImpl implements PromotionService {
 					}
 					PromotionLine line = null;
 					if(promotionLineRq.getPromotionLineId() != null) {
-						line = lineRepo.findById(promotionLineRq.getPromotionLineId()).get();
+						Optional<PromotionLine> lineTmp = lineRepo.findById(promotionLineRq.getPromotionLineId());
+						if(lineTmp != null)
+							line = lineTmp.get();
 					}
 					if(line != null) {
 						if(!line.getPromotion().equals(checkExist)) {

@@ -40,14 +40,14 @@ public class AppTesting implements CommandLineRunner{
 //		role.setName("ADMIN");
 //		role.setStatus(1);
 //		roleRepo.save(role);
-////		
+/////		
 //		Role roleUser = new Role();
 //		roleUser.setCode("USER");
 //		roleUser.setName("USER");
 //		roleUser.setStatus(1);
 //		roleRepo.save(roleUser);
-////		
-////		
+//////		
+//////		
 //		//create user test
 //		User user = new User();
 //		user.setUserCode("US01");
@@ -55,7 +55,7 @@ public class AppTesting implements CommandLineRunner{
 //		user.setPhone("0822159420");
 //		user.setStatus(1);
 //		userRepo.save(user);
-////		
+//////		
 //		//create account test
 //		Account account = new Account();
 //		account.setEmail("sytranvan2205@gmail.com");
@@ -63,7 +63,7 @@ public class AppTesting implements CommandLineRunner{
 //		account.setIsActive(1);
 //		account.setRole(role);
 //		account.setUser(user);
-////		
+//////		
 //		accountRepo.save(account);
 //		System.out.println(account);
 		
