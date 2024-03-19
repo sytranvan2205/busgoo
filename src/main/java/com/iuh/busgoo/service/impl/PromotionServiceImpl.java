@@ -222,6 +222,7 @@ public class PromotionServiceImpl implements PromotionService {
 						line.setToDate(promotionLineRq.getToDate());
 					}
 					line.setPromotion(checkExist);
+					line.setStatus(1);
 					lineRepo.save(line);
 					dataResponse.setResponseMsg("Create success !!!");
 					dataResponse.setRespType(Constant.HTTP_SUCCESS);
