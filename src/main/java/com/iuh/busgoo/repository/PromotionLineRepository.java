@@ -25,5 +25,5 @@ public interface PromotionLineRepository extends JpaRepository<PromotionLine, Lo
 	
 	List<PromotionLine> findByPromotionId(Long promotionId);
 
-	Promotion findByIdAndStatus(Long promotionLineId, int i);
+	PromotionLine findByIdAndStatus(Long promotionLineId, int i);
 }
