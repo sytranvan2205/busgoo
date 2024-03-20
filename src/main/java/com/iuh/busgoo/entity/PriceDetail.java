@@ -33,8 +33,10 @@ public class PriceDetail extends AbstractEntity implements Serializable {
 	@Column(name = "detail_code", length = 255)
 	private String detailCode;
 
+	@Column
 	private Double value;
 
+	@Column
 	private Integer status;
 
 	@ManyToOne

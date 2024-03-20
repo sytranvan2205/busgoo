@@ -9,4 +9,5 @@ public class PromotionDetailRequest {
 	private Double discount;
 	private Integer maxDiscount;
 	private Integer conditionApply;
+	private Long promotionDetailId;
 }

@@ -1,5 +1,6 @@
 package com.iuh.busgoo.service.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -15,8 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.iuh.busgoo.constant.Constant;
+import com.iuh.busgoo.dto.BustripDTO;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.dto.TimeTableDTO;
+import com.iuh.busgoo.filter.BustripFilter;
 import com.iuh.busgoo.filter.TimeTableFilter;
 import com.iuh.busgoo.repository.BusRepository;
 import com.iuh.busgoo.repository.RouteRepository;
@@ -163,6 +166,38 @@ public class TimeTableServiceImpl implements TimeTableService {
 				response.setRespType(Constant.HTTP_SUCCESS);
 				return response;
 			}
+		} catch (Exception e) {
+			response.setResponseMsg("System error");
+			response.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return response;
+		}
+	}
+
+	@Override
+	public DataResponse getBustripByFilter(BustripFilter filter) {
+		DataResponse response = new DataResponse();
+		try {
+			LocalDate currDate = LocalDate.now();
+			List<BustripDTO> lstData = timeTableRepository.findBusTripByFilter(filter.getFromId(),filter.getToId(),filter.getTimeStarted(),currDate);
+			for(BustripDTO data : lstData) {
+				List<SeatOrder> seatOrders = seatOrderRepository.findByTimeTable(data.getTimeTableId());
+				Long count = seatOrderRepository.countByIsAvailable(false);
+				if(seatOrders != null && (seatOrders.size() > 0 || count > 0)) {
+					HashMap<String, Object> seatOrderMap = new HashMap<>();
+					seatOrderMap.put("seatOrders", seatOrders);
+					data.setSeatOrder(seatOrderMap);
+					data.setCountEmptySeat(count);
+				}else {
+					lstData.remove(data);
+				}
+			}
+			response.setResponseMsg("Get bustrip success!!!");
+			response.setRespType(Constant.HTTP_SUCCESS);
+//			List<Price> prices = priceRepository.findAll();
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data", lstData);
+			response.setValueReponse(respValue);
+			return response;
 		} catch (Exception e) {
 			response.setResponseMsg("System error");
 			response.setRespType(Constant.SYSTEM_ERROR_CODE);

@@ -292,7 +292,7 @@ public class PromotionServiceImpl implements PromotionService {
 					throw new Exception();
 				}else {
 					Boolean isCreate = false;
-					if(line.getPromotion().getFromDate().isBefore(currDate)) {
+					if(!line.getPromotion().getFromDate().isAfter(currDate)) {
 						dataResponse.setResponseMsg("Can't update promotion is active");
 						dataResponse.setRespType(Constant.PROMOTION_UPDATE_FAILED);
 						return dataResponse;
