@@ -243,10 +243,10 @@ public class PromotionServiceImpl implements PromotionService {
 			if (promotionLineId == null) {
 				throw new Exception();
 			}
-			Promotion checkExist = lineRepo.findByIdAndStatus(promotionLineId, 1);
+			PromotionLine checkExist = lineRepo.findByIdAndStatus(promotionLineId, 1);
 			if (checkExist != null) {
 				checkExist.setStatus(0);
-				promotionRepo.save(checkExist);
+				lineRepo.save(checkExist);
 			}
 			dataResponse.setResponseMsg("Delete success !!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
