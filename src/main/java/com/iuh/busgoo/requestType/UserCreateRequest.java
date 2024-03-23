@@ -7,4 +7,5 @@ public class UserCreateRequest {
 	private String fullName;
 	private String phone;
 	private Long regeionDetailId;
+	private String addressDescription;
 }

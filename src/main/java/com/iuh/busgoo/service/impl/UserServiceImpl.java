@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.iuh.busgoo.entity.Price;
+import com.iuh.busgoo.entity.PromotionDetail;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -97,6 +99,9 @@ public class UserServiceImpl implements UserService {
 					}else {
 						throw new Exception();
 					}
+					if(userCreateRequest.getAddressDescription()!= null && userCreateRequest.getAddressDescription().length()>0) {
+						user.setAddressDescription(userCreateRequest.getAddressDescription());
+					}
 					user.setRegeionDetail(regionDetail);
 					user.setStatus(1);
 					userRepo.save(user);
@@ -165,6 +170,21 @@ public class UserServiceImpl implements UserService {
 				users = pageUsers.getContent();
 			}
 			List<UserDTO> dtos = userMapper.toDto(users);
+			for(UserDTO dto : dtos) {
+				StringBuilder address = new StringBuilder();
+				if(dto.getAddressDescription() != null && dto.getAddressDescription().length()>0) {
+					address.append(dto.getAddressDescription());
+					address.append(", ");
+				}
+				RegionDetail district = regionDetailRepository.findById(dto.getAddressId()).get();
+				address.append(district.getFullName());
+				if(district != null && district.getRegionParent() != null) {
+					RegionDetail province = regionDetailRepository.findById(district.getRegionParent().getId()).get();
+					address.append(", ");
+					address.append(province.getFullName());
+				}
+				dto.setAddress(address.toString());
+			}
 			Page<UserDTO> userDtoPage = PageUtils.createPageFromList(dtos, page);
 //			Page<User> pageUsers = userRepo.findAll(page);
 //			Page<User> pageUser = userRepo.findAll(page);

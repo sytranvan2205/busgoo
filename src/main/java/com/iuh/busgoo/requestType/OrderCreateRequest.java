@@ -1,10 +1,12 @@
 package com.iuh.busgoo.requestType;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
 public class OrderCreateRequest {
 	private Long userId;
-	private Long seatId;
-	
+	private List<Long> lstSeatOrderId;
+	private Long stationId;
 }

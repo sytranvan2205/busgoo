@@ -49,4 +49,7 @@ public class User extends AbstractEntity implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "address_id", unique = true)
 	private RegionDetail regeionDetail;
+	
+	@Column(name = "address_description",length = 1000)
+	private String addressDescription;
 }

@@ -10,4 +10,6 @@ public class UserDTO {
 	private String phone;
 	private Integer status;
 	private String address;
+	private Long addressId;
+	private String addressDescription;
 }

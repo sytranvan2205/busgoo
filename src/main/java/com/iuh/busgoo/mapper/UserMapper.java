@@ -9,6 +9,6 @@ import com.iuh.busgoo.entity.User;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper extends BaseMapper<User, UserDTO> {
-	@Mapping(target = "address", source = "regeionDetail.fullName")
+	@Mapping(target = "addressId", source = "regeionDetail.id")
     UserDTO toDto(User entity);
 }
