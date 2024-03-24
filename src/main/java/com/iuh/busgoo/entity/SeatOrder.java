@@ -36,7 +36,7 @@ public class SeatOrder extends AbstractEntity implements Serializable{
     private Long seatRow;
     
     @ManyToOne
-    @JoinColumn(name = "time_table")
+    @JoinColumn(name = "time_table_id")
     private TimeTable timeTable;
     
     @ManyToOne

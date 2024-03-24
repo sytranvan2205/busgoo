@@ -8,5 +8,6 @@ import lombok.Data;
 public class OrderCreateRequest {
 	private Long userId;
 	private List<Long> lstSeatOrderId;
-	private Long stationId;
+	private Long pickupPointId;
+//	private Long dropoffPointId;
 }

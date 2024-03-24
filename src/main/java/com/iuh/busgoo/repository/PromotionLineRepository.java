@@ -1,5 +1,7 @@
 package com.iuh.busgoo.repository;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -26,4 +28,13 @@ public interface PromotionLineRepository extends JpaRepository<PromotionLine, Lo
 	List<PromotionLine> findByPromotionId(Long promotionId);
 
 	PromotionLine findByIdAndStatus(Long promotionLineId, int i);
+	
+	@Query(value="select pl.* from promotion_line pl "
+			+ "INNER JOIN promotion p on pl.promotion_id = p.id and p.status =1 "
+			+ "INNER JOIN promotion_detail pd on pl.id = pd.promotion_line_id and pd.status =1 "
+			+ "Where pl.from_date <= :currDate "
+			+ "and pl.to_date >= :currDate "
+			+ "and pd.condition_apply <= :total "
+			+ "and pl.status =1 ", nativeQuery = true)
+	List<PromotionLine> findPromotionLineByCondition(LocalDate currDate, BigDecimal total );
 }

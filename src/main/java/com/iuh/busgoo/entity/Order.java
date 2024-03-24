@@ -42,14 +42,37 @@ public class Order extends AbstractEntity implements Serializable{
     @Column
     private Integer status;
     
-    @ManyToOne
-    @JoinColumn(name = "route_id")
-    private Route route;
+	/*
+	 * @ManyToOne
+	 * 
+	 * @JoinColumn(name = "route_id") private Route route;
+	 */
     
     @ManyToOne
     @JoinColumn(name = "promotion_detail_id")
     private PromotionDetail promotionDetail;
     
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<OrderDetail> orderDetails;
+    @Column(name="pick_up_point")
+    private Long pickUpPoint;
+    
+	/*
+	 * @Column(name="drop_off_point") private Long dropOffPoint;
+	 */
+    @Column(name = "total_tiket_price")
+    private Double totalTiketPrice;
+    
+    @Column(name ="total_discount")
+    private Double totalDiscount;
+    
+    @Column(name="total")
+    private Double total;
+    
+    @ManyToOne
+    @JoinColumn(name= "user_id")
+    private User user;
+    
+	/*
+	 * @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch =
+	 * FetchType.EAGER) private List<OrderDetail> orderDetails;
+	 */
 }
