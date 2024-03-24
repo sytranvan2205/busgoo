@@ -1,5 +1,6 @@
 package com.iuh.busgoo.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +20,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @RequestMapping("/api/station")
 public class StationController {
 	
+	@Autowired
 	private StationService stationService;
 	
 	@PostMapping("/create")
-	@SecurityRequirement(name="bearerToken")
+	@SecurityRequirement(name="bearerAuth")
 	public DataResponse createStation(@RequestBody StationCreateRequest stationCreateRequest) {
 		try {
 			return stationService.createStation(stationCreateRequest);

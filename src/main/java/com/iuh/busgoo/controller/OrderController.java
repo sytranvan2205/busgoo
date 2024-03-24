@@ -21,7 +21,7 @@ public class OrderController {
 	private OrderService orderService;
 	
 	@PostMapping("/create")
-	@SecurityRequirement(name="bearerToken")
+	@SecurityRequirement(name="bearerAuth")
 	public DataResponse createOrder(@RequestBody OrderCreateRequest orderCreateRequest) {
 		try {
 			return orderService.createOrder(orderCreateRequest);
