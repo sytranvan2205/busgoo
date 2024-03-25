@@ -1,16 +1,9 @@
 package com.iuh.busgoo.entity;
 
-import java.io.Serializable;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 
 @Entity
 @Table(name = "seat_order")
@@ -28,12 +21,6 @@ public class SeatOrder extends AbstractEntity implements Serializable{
 	
     @Column(name = "seat_type")
     private String seatType;
-    
-    @Column(name = "seat_colunm")
-    private String seatColunm;
-    
-    @Column(name ="seat_row")
-    private Long seatRow;
     
     @ManyToOne
     @JoinColumn(name = "time_table_id")
@@ -66,21 +53,6 @@ public class SeatOrder extends AbstractEntity implements Serializable{
 		this.seatType = seatType;
 	}
 
-	public String getSeatColunm() {
-		return seatColunm;
-	}
-
-	public void setSeatColunm(String seatColunm) {
-		this.seatColunm = seatColunm;
-	}
-
-	public Long getSeatRow() {
-		return seatRow;
-	}
-
-	public void setSeatRow(Long seatRow) {
-		this.seatRow = seatRow;
-	}
 
 	public TimeTable getTimeTable() {
 		return timeTable;
@@ -106,16 +78,14 @@ public class SeatOrder extends AbstractEntity implements Serializable{
 		this.isAvailable = isAvailable;
 	}
 	
-	public SeatOrder(String seatType, String seatColunm, Long seatRow, TimeTable timeTable,
+	public SeatOrder(String seatType, String seatName, TimeTable timeTable,
 			OrderDetail orderDetail, Boolean isAvailable) {
 		super();
 		this.seatType = seatType;
-		this.seatColunm = seatColunm;
-		this.seatRow = seatRow;
 		this.timeTable = timeTable;
 		this.orderDetail = orderDetail;
 		this.isAvailable = isAvailable;
-		this.seatName = seatColunm + seatType + seatRow ;
+		this.seatName = seatName ;
 	}
 
 	public SeatOrder() {

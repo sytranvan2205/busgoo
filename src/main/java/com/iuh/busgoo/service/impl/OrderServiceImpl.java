@@ -76,7 +76,7 @@ public class OrderServiceImpl implements OrderService{
 					if (seatOrder == null) {
 						throw new Exception();
 					}else {
-						if(seatOrder.getIsAvailable()) {
+						if(!seatOrder.getIsAvailable()) {
 							dataResponse.setResponseMsg("This seat has been reserved");
 							dataResponse.setRespType(Constant.SEAT_IS_NOT_AVAILABLE);
 							Map<String, Object> seatError = new HashMap<String, Object>();
@@ -84,7 +84,7 @@ public class OrderServiceImpl implements OrderService{
 							dataResponse.setValueReponse(seatError);
 							return dataResponse;
 						}else {
-							seatOrder.setIsAvailable(true);
+							seatOrder.setIsAvailable(false);
 							seatOrderRepository.save(seatOrder);
 							lstSeat.add(seatOrder);
 						}

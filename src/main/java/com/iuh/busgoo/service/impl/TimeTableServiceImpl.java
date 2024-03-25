@@ -103,7 +103,7 @@ public class TimeTableServiceImpl implements TimeTableService {
 			List<Seat> seats = seatRepository.findByBusIdAndStatus(bus.getId(),1);
 			//create seat order
 			for (Seat tmp : seats) {
-				SeatOrder seatOrder = new SeatOrder(tmp.getSeatType(),tmp.getSeatColunm(),tmp.getSeatRow(),timeTable,null,false);
+				SeatOrder seatOrder = new SeatOrder(tmp.getSeatType(),tmp.getSeatName(),timeTable,null,true);
 				seatOrderRepository.save(seatOrder);
 			}
 			dataResponse.setResponseMsg("Create success!!!");

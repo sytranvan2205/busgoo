@@ -33,12 +33,9 @@ public class Seat extends AbstractEntity implements Serializable {
     @Column(name = "seat_type", length = 255)
     private String seatType;
     
-    @Column(name = "seat_colunm")
-    private String seatColunm;
-    
-    @Column(name ="seat_row")
-    private Long seatRow;
-    
+    @Column(name = "seat_name")
+    private String seatName;
+
     @ManyToOne
     @JoinColumn(name = "bus_id")
     private Bus bus;
