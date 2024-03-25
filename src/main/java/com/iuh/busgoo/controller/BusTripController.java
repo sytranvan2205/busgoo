@@ -1,5 +1,6 @@
 package com.iuh.busgoo.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class BusTripController {
 	@GetMapping("/get")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse findTimeTable(@RequestParam Long fromId,
-			@RequestParam Long toId, @RequestParam LocalDateTime timeStarted) {
+			@RequestParam Long toId, @RequestParam LocalDate timeStarted) {
 		try {
 			BustripFilter filter = new BustripFilter();
 			filter.setFromId(fromId);

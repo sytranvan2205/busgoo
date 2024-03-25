@@ -36,5 +36,5 @@ public interface TimeTableRepository extends JpaRepository<TimeTable, Long> {
 			+ "(:fromId is null or from.id = :fromId ) " + "and (:toId is null or to.id = :toId ) "
 			+ "and (:timeStarted is null or tb.started_time >= :timeStarted) " + "and p.from_date <= :currDate "
 			+ "and p.to_date >= :currDate " + "order by tb.started_time asc ", nativeQuery = true)
-	List<BustripDTO> findBusTripByFilter(Long fromId, Long toId, LocalDateTime timeStarted, LocalDate currDate);
+	List<BustripDTO> findBusTripByFilter(Long fromId, Long toId, LocalDate timeStarted, LocalDate currDate);
 }

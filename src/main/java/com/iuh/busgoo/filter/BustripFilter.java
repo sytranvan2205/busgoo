@@ -1,5 +1,6 @@
 package com.iuh.busgoo.filter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import lombok.Data;
@@ -8,5 +9,5 @@ import lombok.Data;
 public class BustripFilter {
 	Long fromId;
 	Long toId;
-	LocalDateTime timeStarted;
+	LocalDate timeStarted;
 }
