@@ -1,12 +1,16 @@
 package com.iuh.busgoo.service.impl;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.iuh.busgoo.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +23,11 @@ import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.BustripDTO;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.dto.TimeTableDTO;
+import com.iuh.busgoo.entity.Bus;
+import com.iuh.busgoo.entity.Route;
+import com.iuh.busgoo.entity.Seat;
+import com.iuh.busgoo.entity.SeatOrder;
+import com.iuh.busgoo.entity.TimeTable;
 import com.iuh.busgoo.filter.BustripFilter;
 import com.iuh.busgoo.filter.TimeTableFilter;
 import com.iuh.busgoo.repository.BusRepository;
@@ -46,6 +55,9 @@ public class TimeTableServiceImpl implements TimeTableService {
 	
 	@Autowired
 	private SeatOrderRepository seatOrderRepository;
+	
+//	@Autowired
+//	private BusTripDTORepository busTripDTORepository;
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
@@ -178,9 +190,39 @@ public class TimeTableServiceImpl implements TimeTableService {
 		DataResponse response = new DataResponse();
 		try {
 			LocalDate currDate = LocalDate.now();
-			List<BustripDTO> lstData = timeTableRepository.findBusTripByFilter(filter.getFromId(),filter.getToId(),filter.getTimeStarted(),currDate);
+			List<Object[]> resultList  = timeTableRepository.findBusTripByFilter(filter.getFromId(),filter.getToId(),filter.getTimeStarted(),currDate);
+			List<BustripDTO> lstData = new ArrayList<>();
+			 for (Object[] result : resultList) {
+		            Long timeTableId = (Long) result[0];
+		            Timestamp timestamp = (Timestamp) result[1];
+		            LocalDateTime timeStated = timestamp.toLocalDateTime();
+//		            LocalDateTime timeStated = LocalDateTime.parse(strTimeStated, null);
+		            Long priceDetailId = (Long) result[2];
+		            Double priceValue = (Double) result[3];
+		            Long routeId = (Long) result[4];
+		            
+//		            LocalTime transferTime = (LocalTime) result[5];
+		            Time tpTransferTime =  (Time) result[5];
+		            LocalTime transferTime = tpTransferTime.toLocalTime();
+		            
+		            String fromName = (String) result[6];
+		            String toName = (String) result[7];
+
+		            BustripDTO busTripDTO = new BustripDTO();
+		            busTripDTO.setTimeTableId(timeTableId);
+		            busTripDTO.setTimeStated(timeStated);
+		            busTripDTO.setPriceDetailId(priceDetailId);
+		            busTripDTO.setPriceValue(priceValue);
+		            busTripDTO.setRouteId(routeId);
+		            busTripDTO.setTransferTime(transferTime);
+		            busTripDTO.setFromName(fromName);
+		            busTripDTO.setToName(toName);
+
+		            lstData.add(busTripDTO);
+		        }
+			
 			for(BustripDTO data : lstData) {
-				List<SeatOrder> seatOrders = seatOrderRepository.findByTimeTable(data.getTimeTableId());
+				List<SeatOrder> seatOrders = seatOrderRepository.findByTimeTableId(data.getTimeTableId());
 				Long count = seatOrderRepository.countByIsAvailable(false);
 				if(seatOrders != null && (seatOrders.size() > 0 || count > 0)) {
 					HashMap<String, Object> seatOrderMap = new HashMap<>();

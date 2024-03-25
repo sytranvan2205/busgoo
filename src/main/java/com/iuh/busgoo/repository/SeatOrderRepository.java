@@ -10,7 +10,7 @@ import com.iuh.busgoo.entity.SeatOrder;
 @Repository
 public interface SeatOrderRepository extends JpaRepository<SeatOrder, Long>{
 
-	List<SeatOrder> findByTimeTable(Long timeTableId);
+	List<SeatOrder> findByTimeTableId(Long timeTableId);
 
 	Long countByIsAvailable(boolean b);
 

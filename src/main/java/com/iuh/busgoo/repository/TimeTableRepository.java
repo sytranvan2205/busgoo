@@ -25,16 +25,16 @@ public interface TimeTableRepository extends JpaRepository<TimeTable, Long> {
 			+ "and (:departureDate is null or tb.startedTime >= :departureDate) ")
 	Page<TimeTableDTO> findByFilter(Long fromId, Long toId, Integer status, LocalDateTime departureDate, Pageable page);
 
-	@Query(value = "select tb.id as timeTableId, tb.started_time as timeStated, pd.id as priceDetailId, pd.value as priceValue, r.id as routeId, r.transfer_time as transferTime, from.fullName as fromName, to.fullName as toName "
-			+ "from TimeTable tb " + "INNER JOIN route r on tb.route_id =  r.id and r.status = 1 "
+	@Query(value = "select tb.id as timeTableId, tb.started_time as timeStated, pd.id as priceDetailId, pd.value as priceValue, r.id as routeId, r.transfer_time as transferTime, f.full_Name as fromName, t.full_Name as toName "
+			+ "from time_table tb " + "INNER JOIN route r on tb.route_id =  r.id and r.status = 1 "
 			+ "INNER JOIN bus b on tb.bus_id = b.id and b.status = 1  "
-			+ "INNER JOIN region_detail from on r.from_id = from.id and from.status = 1 "
-			+ "INNER JOIN region_detail to on r.to_id = to.id and to.status = 1 "
+			+ "INNER JOIN region_detail f on r.from_id = f.id and f.status = 1 "
+			+ "INNER JOIN region_detail t on r.to_id = t.id and t.status = 1 "
 			+ "INNER JOIN type_bus tpb on b.type_bus_id = tpb.id and tpb.status = 1 "
 			+ "INNER JOIN price_detail pd on pd.route_id = r.id and pd.type_bus_id = tpb.id and pd.status = 1 "
 			+ "INNER JOIN price p on pd.price_id = p.id and p.status = 1 " + "where  "
-			+ "(:fromId is null or from.id = :fromId ) " + "and (:toId is null or to.id = :toId ) "
+			+ "(:fromId is null or f.id = :fromId ) " + "and (:toId is null or t.id = :toId ) "
 			+ "and (:timeStarted is null or tb.started_time >= :timeStarted) " + "and p.from_date <= :currDate "
 			+ "and p.to_date >= :currDate " + "order by tb.started_time asc ", nativeQuery = true)
-	List<BustripDTO> findBusTripByFilter(Long fromId, Long toId, LocalDate timeStarted, LocalDate currDate);
+	List<Object[]> findBusTripByFilter(Long fromId, Long toId, LocalDate timeStarted, LocalDate currDate);
 }
