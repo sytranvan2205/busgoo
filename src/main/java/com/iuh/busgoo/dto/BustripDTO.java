@@ -25,6 +25,8 @@ public class BustripDTO implements Serializable{
 	private LocalTime transferTime;
 	private String fromName;
 	private String toName;
+	private String expanded;
+	private LocalDateTime endTime;
 	private List<SeatOrderDTO> seatOrder = new ArrayList<SeatOrderDTO>();
 	
 	public BustripDTO() {
