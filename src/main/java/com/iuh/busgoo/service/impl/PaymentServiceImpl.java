@@ -25,13 +25,13 @@ public class PaymentServiceImpl implements PaymentService {
 	public DataResponse verifyPayment(PaymentReturn paymentReturn) {
 		DataResponse dataResponse = new DataResponse();
 		
-		Map<String, Object> field = new HashMap<String, Object>();
-		field.put("vnp_Amount", paymentReturn.getVnp_Amount());
+		Map<String, String> field = new HashMap<String, String>();
+		field.put("vnp_Amount", paymentReturn.getVnp_Amount().toString());
 		field.put("vnp_BankCode", paymentReturn.getVnp_BankCode());
-		field.put("vnp_BankTranNo", paymentReturn.getVnp_Amount());
+		field.put("vnp_BankTranNo", paymentReturn.getVnp_Amount().toString());
 		field.put("vnp_CardType", paymentReturn.getVnp_OrderInfo());
 		field.put("vnp_OrderInfo", paymentReturn.getVnp_OrderInfo());
-		field.put("vnp_PayDate", paymentReturn.getVnp_PayDate());
+		field.put("vnp_PayDate", paymentReturn.getVnp_PayDate().toString());
 		field.put("vnp_ResponseCode", paymentReturn.getVnp_ResponseCode());
 		field.put("vnp_TmnCode", paymentReturn.getVnp_TmnCode());
 		field.put("vnp_TransactionNo", paymentReturn.getVnp_TransactionNo());
@@ -56,7 +56,7 @@ public class PaymentServiceImpl implements PaymentService {
 					checkOrderStatus = true;
 				}
 			}
-			if(checkOrderId) {
+//			if(checkOrderId) {
 				if(checkAmount) {
 					if(checkOrderStatus) {
 						if ("00".equals(paymentReturn.getVnp_ResponseCode()))
@@ -86,11 +86,10 @@ public class PaymentServiceImpl implements PaymentService {
 				dataResponse.setRespType(Constant.PAYMENT_FAILED);
 				return dataResponse;
 			}
-		}else {
-			dataResponse.setResponseMsg("Invalid Checksum");
-			dataResponse.setRespType(Constant.PAYMENT_FAILED);
-			return dataResponse;
-		}
+			/*
+			 * }else { dataResponse.setResponseMsg("Invalid Checksum");
+			 * dataResponse.setRespType(Constant.PAYMENT_FAILED); return dataResponse; }
+			 */
 		return null;
 	}
 

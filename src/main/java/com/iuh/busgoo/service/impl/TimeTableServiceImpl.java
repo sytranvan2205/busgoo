@@ -212,6 +212,7 @@ public class TimeTableServiceImpl implements TimeTableService {
 		            
 		            String fromName = (String) result[6];
 		            String toName = (String) result[7];
+		            String typeBusName = (String) result[8];
 
 		            BustripDTO busTripDTO = new BustripDTO();
 		            busTripDTO.setTimeTableId(timeTableId);
@@ -222,7 +223,7 @@ public class TimeTableServiceImpl implements TimeTableService {
 		            busTripDTO.setTransferTime(transferTime);
 		            busTripDTO.setFromName(fromName);
 		            busTripDTO.setToName(toName);
-
+		            busTripDTO.setTypeBusName(typeBusName);
 		            lstData.add(busTripDTO);
 		        }
 			

@@ -25,7 +25,7 @@ public interface TimeTableRepository extends JpaRepository<TimeTable, Long> {
 			+ "and (:departureDate is null or tb.startedTime >= :departureDate) ")
 	Page<TimeTableDTO> findByFilter(Long fromId, Long toId, Integer status, LocalDateTime departureDate, Pageable page);
 
-	@Query(value = "select tb.id as timeTableId, tb.started_time as timeStated, pd.id as priceDetailId, pd.value as priceValue, r.id as routeId, r.transfer_time as transferTime, f.full_Name as fromName, t.full_Name as toName "
+	@Query(value = "select tb.id as timeTableId, tb.started_time as timeStated, pd.id as priceDetailId, pd.value as priceValue, r.id as routeId, r.transfer_time as transferTime, f.full_Name as fromName, t.full_Name as toName, tpb.name as typeBusName "
 			+ "from time_table tb " + "INNER JOIN route r on tb.route_id =  r.id and r.status = 1 "
 			+ "INNER JOIN bus b on tb.bus_id = b.id and b.status = 1  "
 			+ "INNER JOIN region_detail f on r.from_id = f.id and f.status = 1 "
