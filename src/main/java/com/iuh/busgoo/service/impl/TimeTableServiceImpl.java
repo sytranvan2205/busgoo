@@ -1,5 +1,25 @@
 package com.iuh.busgoo.service.impl;
 
+import com.iuh.busgoo.constant.Constant;
+import com.iuh.busgoo.dto.BustripDTO;
+import com.iuh.busgoo.dto.DataResponse;
+import com.iuh.busgoo.dto.SeatOrderDTO;
+import com.iuh.busgoo.dto.TimeTableDTO;
+import com.iuh.busgoo.entity.*;
+import com.iuh.busgoo.filter.BustripFilter;
+import com.iuh.busgoo.filter.TimeTableFilter;
+import com.iuh.busgoo.mapper.SeatOrderMapper;
+import com.iuh.busgoo.repository.*;
+import com.iuh.busgoo.requestType.TimeTableCreateRequest;
+import com.iuh.busgoo.service.TimeTableService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -10,35 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.iuh.busgoo.constant.Constant;
-import com.iuh.busgoo.dto.BustripDTO;
-import com.iuh.busgoo.dto.DataResponse;
-import com.iuh.busgoo.dto.SeatOrderDTO;
-import com.iuh.busgoo.dto.TimeTableDTO;
-import com.iuh.busgoo.entity.Bus;
-import com.iuh.busgoo.entity.Route;
-import com.iuh.busgoo.entity.Seat;
-import com.iuh.busgoo.entity.SeatOrder;
-import com.iuh.busgoo.entity.TimeTable;
-import com.iuh.busgoo.filter.BustripFilter;
-import com.iuh.busgoo.filter.TimeTableFilter;
-import com.iuh.busgoo.mapper.SeatOrderMapper;
-import com.iuh.busgoo.repository.BusRepository;
-import com.iuh.busgoo.repository.RouteRepository;
-import com.iuh.busgoo.repository.SeatOrderRepository;
-import com.iuh.busgoo.repository.SeatRepository;
-import com.iuh.busgoo.repository.TimeTableRepository;
-import com.iuh.busgoo.requestType.TimeTableCreateRequest;
-import com.iuh.busgoo.service.TimeTableService;
 
 @Service
 public class TimeTableServiceImpl implements TimeTableService {
@@ -205,7 +196,7 @@ public class TimeTableServiceImpl implements TimeTableService {
 		            Long priceDetailId = (Long) result[2];
 		            Double priceValue = (Double) result[3];
 		            Long routeId = (Long) result[4];
-		            
+				 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 //		            LocalTime transferTime = (LocalTime) result[5];
 		            Time tpTransferTime =  (Time) result[5];
 		            LocalTime transferTime = tpTransferTime.toLocalTime();
@@ -214,6 +205,13 @@ public class TimeTableServiceImpl implements TimeTableService {
 		            String toName = (String) result[7];
 		            String typeBusName = (String) result[8];
 
+					 String[] parts = transferTime.toString().split(":");
+					 int hours = Integer.parseInt(parts[0]);
+					 int minutes = Integer.parseInt(parts[1]);
+
+
+					 // Tính thời gian kết thúc bằng cách cộng thời gian chạy vào thời gian bắt đầu
+				 	LocalDateTime endTime = timeStated.plusHours(hours).plusMinutes(minutes);
 		            BustripDTO busTripDTO = new BustripDTO();
 		            busTripDTO.setTimeTableId(timeTableId);
 		            busTripDTO.setTimeStated(timeStated);
@@ -222,6 +220,7 @@ public class TimeTableServiceImpl implements TimeTableService {
 		            busTripDTO.setRouteId(routeId);
 		            busTripDTO.setTransferTime(transferTime);
 		            busTripDTO.setFromName(fromName);
+				 	busTripDTO.setEndTime(endTime);
 		            busTripDTO.setToName(toName);
 		            busTripDTO.setTypeBusName(typeBusName);
 		            lstData.add(busTripDTO);
@@ -229,7 +228,7 @@ public class TimeTableServiceImpl implements TimeTableService {
 			
 			for(BustripDTO data : lstData) {
 				List<SeatOrder> seatOrders = seatOrderRepository.findByTimeTableId(data.getTimeTableId());
-				Long count = seatOrderRepository.countByIsAvailable(false);
+				Long count = seatOrderRepository.countByIsAvailable(true);
 				if(seatOrders != null && (seatOrders.size() > 0 || count > 0)) {
 					List<SeatOrderDTO> dtos = seatOrderMapper.toDto(seatOrders);
 					data.setSeatOrder(dtos);
