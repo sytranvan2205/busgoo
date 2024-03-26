@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.filter.BustripFilter;
+import com.iuh.busgoo.mapper.SeatOrderMapper;
 import com.iuh.busgoo.service.TimeTableService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -21,6 +22,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class BusTripController {
 	@Autowired
 	TimeTableService timeTableService;
+	
 
 	@GetMapping("/get")
 	@SecurityRequirement(name = "bearerAuth")

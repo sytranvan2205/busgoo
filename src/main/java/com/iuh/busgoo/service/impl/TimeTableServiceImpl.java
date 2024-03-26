@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.BustripDTO;
 import com.iuh.busgoo.dto.DataResponse;
+import com.iuh.busgoo.dto.SeatOrderDTO;
 import com.iuh.busgoo.dto.TimeTableDTO;
 import com.iuh.busgoo.entity.Bus;
 import com.iuh.busgoo.entity.Route;
@@ -30,6 +31,7 @@ import com.iuh.busgoo.entity.SeatOrder;
 import com.iuh.busgoo.entity.TimeTable;
 import com.iuh.busgoo.filter.BustripFilter;
 import com.iuh.busgoo.filter.TimeTableFilter;
+import com.iuh.busgoo.mapper.SeatOrderMapper;
 import com.iuh.busgoo.repository.BusRepository;
 import com.iuh.busgoo.repository.RouteRepository;
 import com.iuh.busgoo.repository.SeatOrderRepository;
@@ -55,6 +57,9 @@ public class TimeTableServiceImpl implements TimeTableService {
 	
 	@Autowired
 	private SeatOrderRepository seatOrderRepository;
+	
+	@Autowired
+	private SeatOrderMapper seatOrderMapper;
 	
 //	@Autowired
 //	private BusTripDTORepository busTripDTORepository;
@@ -225,9 +230,8 @@ public class TimeTableServiceImpl implements TimeTableService {
 				List<SeatOrder> seatOrders = seatOrderRepository.findByTimeTableId(data.getTimeTableId());
 				Long count = seatOrderRepository.countByIsAvailable(false);
 				if(seatOrders != null && (seatOrders.size() > 0 || count > 0)) {
-					HashMap<String, Object> seatOrderMap = new HashMap<>();
-					seatOrderMap.put("seatOrders", seatOrders);
-					data.setSeatOrder(seatOrderMap);
+					List<SeatOrderDTO> dtos = seatOrderMapper.toDto(seatOrders);
+					data.setSeatOrder(dtos);
 					data.setCountEmptySeat(count);
 				}else {
 					lstData.remove(data);

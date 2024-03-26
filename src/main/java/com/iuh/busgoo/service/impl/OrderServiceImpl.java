@@ -119,6 +119,8 @@ public class OrderServiceImpl implements OrderService{
 						totalTiketPrice += pd.getValue();
 						orderDetail.setPrice(pd.getValue());
 						orderDetailRepository.save(orderDetail);
+						seat.setOrderDetail(orderDetail);
+						seatOrderRepository.save(seat);
 						lstDetail.add(orderDetail);
 					}
 					

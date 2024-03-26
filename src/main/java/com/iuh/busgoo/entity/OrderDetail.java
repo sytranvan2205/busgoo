@@ -36,6 +36,7 @@ public class OrderDetail extends AbstractEntity implements Serializable {
     @JoinColumn(name = "seat_id")
     private SeatOrder seat;
 
+    @JoinColumn(name = "price")
     private Double price;	
     
     @ManyToOne

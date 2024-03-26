@@ -137,6 +137,7 @@ public class PaymentController {
 	}
 	
 	@PostMapping("/verify-payment")
+	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse verifyPayment(@RequestBody PaymentReturn paymentReturn) {
 		return paymentService.verifyPayment(paymentReturn);
 	}

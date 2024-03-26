@@ -1,16 +1,21 @@
 package com.iuh.busgoo.dto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class BustripDTO {
+public class BustripDTO implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long timeTableId;
 	private	LocalDateTime timeStated;
 	private Long priceDetailId;
@@ -20,7 +25,7 @@ public class BustripDTO {
 	private LocalTime transferTime;
 	private String fromName;
 	private String toName;
-	private Map<String, Object> seatOrder = new HashMap<>();
+	private List<SeatOrderDTO> seatOrder = new ArrayList<SeatOrderDTO>();
 	
 	public BustripDTO() {
 		super();
