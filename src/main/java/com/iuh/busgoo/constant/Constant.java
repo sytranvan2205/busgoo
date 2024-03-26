@@ -51,4 +51,5 @@ public class Constant {
 	public static final Integer PROMOTION_LINE_TO_DATE_INVALID = 147;
 	public static final Integer DISCOUNT_INVALID = 148;
 	public static final Integer SEAT_IS_NOT_AVAILABLE = 149;
+	public static final Integer PAYMENT_FAILED = 150;
 }

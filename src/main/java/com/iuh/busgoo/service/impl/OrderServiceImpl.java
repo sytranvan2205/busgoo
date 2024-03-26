@@ -227,4 +227,10 @@ public class OrderServiceImpl implements OrderService{
 		}
 	}
 
+	@SuppressWarnings("deprecation")
+	@Override
+	public Order findOrderById(Long orderId) {
+		return orderRepository.getById(orderId);
+	}
+
 }

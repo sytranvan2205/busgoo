@@ -1,6 +1,7 @@
 package com.iuh.busgoo.service;
 
 import com.iuh.busgoo.dto.DataResponse;
+import com.iuh.busgoo.entity.Order;
 import com.iuh.busgoo.requestType.OrderCreateRequest;
 
 public interface OrderService {
@@ -11,5 +12,7 @@ public interface OrderService {
 	DataResponse deleteOrder(Long orderId);
 	
 	DataResponse getAllOrder();
+
+	Order findOrderById(Long orderId);
 	
 }
