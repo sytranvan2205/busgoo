@@ -90,7 +90,7 @@ public class TimeTableServiceImpl implements TimeTableService {
 				timeFinish = timeFinish.plusMinutes(minutes);
 				timeFinish = timeFinish.plusSeconds(seconds);
 				if (timeTableCreateRequest.getStartTime().isBefore(timeFinish)
-						&& !timeTableCreateRequest.getStartTime().isBefore(tmp.getStartedTime())) {
+						&& !(timeTableCreateRequest.getStartTime().isBefore(tmp.getStartedTime()))) {
 					isError = true;
 				}
 			}
