@@ -12,6 +12,6 @@ public interface SeatOrderRepository extends JpaRepository<SeatOrder, Long>{
 
 	List<SeatOrder> findByTimeTableId(Long timeTableId);
 
-	Long countByIsAvailable(boolean b);
+	Long countByIsAvailableAndTimeTableId(boolean b,Long timeTableId);
 
 }
