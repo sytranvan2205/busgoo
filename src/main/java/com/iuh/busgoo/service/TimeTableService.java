@@ -15,4 +15,6 @@ public interface TimeTableService {
 
 	DataResponse getBustripByFilter(BustripFilter filter);
 
+	DataResponse getBustripByTimeTableId(Long timeTableId);
+
 }

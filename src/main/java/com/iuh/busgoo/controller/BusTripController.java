@@ -42,5 +42,18 @@ public class BusTripController {
 		}
 
 	}
+	
+	@GetMapping("/get-bus-trip")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse getBusTripDetail(@RequestParam Long timeTableId) {
+		try {
+			return timeTableService.getBustripByTimeTableId(timeTableId);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
 
 }

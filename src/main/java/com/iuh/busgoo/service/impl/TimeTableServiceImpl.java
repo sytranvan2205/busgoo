@@ -196,7 +196,7 @@ public class TimeTableServiceImpl implements TimeTableService {
 		            Long priceDetailId = (Long) result[2];
 		            Double priceValue = (Double) result[3];
 		            Long routeId = (Long) result[4];
-				 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+		            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 //		            LocalTime transferTime = (LocalTime) result[5];
 		            Time tpTransferTime =  (Time) result[5];
 		            LocalTime transferTime = tpTransferTime.toLocalTime();
@@ -250,6 +250,78 @@ public class TimeTableServiceImpl implements TimeTableService {
 			response.setRespType(Constant.SYSTEM_ERROR_CODE);
 			return response;
 		}
+	}
+
+	@Override
+	public DataResponse getBustripByTimeTableId(Long timeTableId) {
+		DataResponse response = new DataResponse();
+		try {
+			TimeTable timeTable = timeTableRepository.getById(timeTableId);
+			if (timeTable == null) {
+				throw new Exception();
+			}
+			List<Object[]> resultList = timeTableRepository.findBustipByTimeTableId(timeTableId);
+			if (resultList == null) {
+				throw new Exception();
+			}else {
+				Object[] result = resultList.get(0);
+				Long timeTableIdTmp = (Long) result[0];
+	            Timestamp timestamp = (Timestamp) result[1];
+	            LocalDateTime timeStated = timestamp.toLocalDateTime();
+//	            LocalDateTime timeStated = LocalDateTime.parse(strTimeStated, null);
+	            Long priceDetailId = (Long) result[2];
+	            Double priceValue = (Double) result[3];
+	            Long routeId = (Long) result[4];
+	            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+//	            LocalTime transferTime = (LocalTime) result[5];
+	            Time tpTransferTime =  (Time) result[5];
+	            LocalTime transferTime = tpTransferTime.toLocalTime();
+	            
+	            String fromName = (String) result[6];
+	            String toName = (String) result[7];
+	            String typeBusName = (String) result[8];
+
+				 String[] parts = transferTime.toString().split(":");
+				 int hours = Integer.parseInt(parts[0]);
+				 int minutes = Integer.parseInt(parts[1]);
+
+
+				 // Tính thời gian kết thúc bằng cách cộng thời gian chạy vào thời gian bắt đầu
+			 	LocalDateTime endTime = timeStated.plusHours(hours).plusMinutes(minutes);
+	            BustripDTO busTripDTO = new BustripDTO();
+	            busTripDTO.setTimeTableId(timeTableIdTmp);
+	            busTripDTO.setTimeStated(timeStated);
+	            busTripDTO.setPriceDetailId(priceDetailId);
+	            busTripDTO.setPriceValue(priceValue);
+	            busTripDTO.setRouteId(routeId);
+	            busTripDTO.setTransferTime(transferTime);
+	            busTripDTO.setFromName(fromName);
+			 	busTripDTO.setEndTime(endTime);
+	            busTripDTO.setToName(toName);
+	            busTripDTO.setTypeBusName(typeBusName);
+				List<SeatOrder> seatOrders = seatOrderRepository.findByTimeTableId(busTripDTO.getTimeTableId());
+				Long count = seatOrderRepository.countByIsAvailableAndTimeTableId(true,busTripDTO.getTimeTableId());
+				if(seatOrders != null && (seatOrders.size() > 0 && count > 0)) {
+					List<SeatOrderDTO> dtos = seatOrderMapper.toDto(seatOrders);
+					busTripDTO.setSeatOrder(dtos);
+					busTripDTO.setCountEmptySeat(count);
+				}
+				response.setResponseMsg("Get bustrip success!!!");
+				response.setRespType(Constant.HTTP_SUCCESS);
+//				List<Price> prices = priceRepository.findAll();
+				Map<String, Object> respValue = new HashMap<>();
+				respValue.put("data", busTripDTO);
+				response.setValueReponse(respValue);
+				return response;
+				
+			}
+			
+		} catch (Exception e) {
+			response.setResponseMsg("System error");
+			response.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return response;
+		}
+		
 	}
 
 }
