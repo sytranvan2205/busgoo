@@ -221,6 +221,7 @@ public class TimeTableServiceImpl implements TimeTableService {
 		            busTripDTO.setTransferTime(transferTime);
 		            busTripDTO.setFromName(fromName);
 				 	busTripDTO.setEndTime(endTime);
+				 	busTripDTO.setExpanded(false);
 		            busTripDTO.setToName(toName);
 		            busTripDTO.setTypeBusName(typeBusName);
 		            lstData.add(busTripDTO);
