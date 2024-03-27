@@ -228,8 +228,8 @@ public class TimeTableServiceImpl implements TimeTableService {
 			
 			for(BustripDTO data : lstData) {
 				List<SeatOrder> seatOrders = seatOrderRepository.findByTimeTableId(data.getTimeTableId());
-				Long count = seatOrderRepository.countByIsAvailableAndTimeTableId(false,data.getTimeTableId());
-				if(seatOrders != null && (seatOrders.size() > 0 || count > 0)) {
+				Long count = seatOrderRepository.countByIsAvailableAndTimeTableId(true,data.getTimeTableId());
+				if(seatOrders != null && (seatOrders.size() > 0 && count > 0)) {
 					List<SeatOrderDTO> dtos = seatOrderMapper.toDto(seatOrders);
 					data.setSeatOrder(dtos);
 					data.setCountEmptySeat(count);
