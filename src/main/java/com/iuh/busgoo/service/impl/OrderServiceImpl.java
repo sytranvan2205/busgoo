@@ -93,13 +93,18 @@ public class OrderServiceImpl implements OrderService{
 				if (lstSeat.size()>0) {
 					//create order
 					User user = userRepository.findById(orderCreateRequest.getUserId()).get();
-					Station pickupPoint = stationRepository.findById(orderCreateRequest.getPickupPointId()).get();
+					Station pickupPoint = stationRepository.getById(orderCreateRequest.getPickupPointId());
+					Station dropOffPoint = stationRepository.getById(orderCreateRequest.getDropoffPointId());
 					Order order = new Order();
 					order.setUser(user);
 					if(pickupPoint == null) {
 						throw new Exception();
 					}
+					if(dropOffPoint == null) {
+						throw new Exception();
+					}
 					order.setPickUpPoint(pickupPoint.getId());
+					order.setDropOffPoint(dropOffPoint.getId());
 					Long count = orderRepository.count();
 					order.setCode("ODR"+(count+1));
 					order.setIsPay(0);

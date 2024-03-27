@@ -54,7 +54,7 @@ public class StationController {
 	public DataResponse getStationByRegion(@RequestParam Long regionDetailId) {
 		DataResponse dataResponse = new DataResponse();
 		try {
-			return stationService.createStation(regionDetailId);
+			return stationService.getStation(regionDetailId);
 		} catch (Exception e) {
 			dataResponse.setResponseMsg("System error");
 			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);

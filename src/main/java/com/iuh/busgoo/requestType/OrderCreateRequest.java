@@ -9,5 +9,5 @@ public class OrderCreateRequest {
 	private Long userId;
 	private List<Long> lstSeatOrderId;
 	private Long pickupPointId;
-//	private Long dropoffPointId;
+	private Long dropoffPointId;
 }

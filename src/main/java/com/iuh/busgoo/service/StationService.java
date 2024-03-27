@@ -9,4 +9,6 @@ public interface StationService {
 
 	DataResponse createStation(Long regionDetailId);
 
+	DataResponse getStation(Long regionDetailId);
+
 }

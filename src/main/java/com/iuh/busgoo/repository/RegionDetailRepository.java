@@ -24,6 +24,6 @@ public interface RegionDetailRepository extends JpaRepository<RegionDetail, Long
 	
 	List<RegionDetail> findByStatusAndRegionStructureId(Integer status, Long regionStructureId);
 	
-	
+	List<RegionDetail> findByRegionParentId(Long parentId);
 	
 }

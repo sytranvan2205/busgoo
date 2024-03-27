@@ -55,9 +55,10 @@ public class Order extends AbstractEntity implements Serializable{
     @Column(name="pick_up_point")
     private Long pickUpPoint;
     
-	/*
-	 * @Column(name="drop_off_point") private Long dropOffPoint;
-	 */
+	
+	@Column(name="drop_off_point") 
+	private Long dropOffPoint;
+	 
     @Column(name = "total_tiket_price")
     private Double totalTiketPrice;
     
