@@ -9,9 +9,12 @@ import org.springframework.stereotype.Service;
 
 import com.iuh.busgoo.config.VNPayConfig;
 import com.iuh.busgoo.constant.Constant;
+import com.iuh.busgoo.controller.PaymentController;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.entity.Order;
+import com.iuh.busgoo.entity.PaymentHistory;
 import com.iuh.busgoo.repository.OrderRepository;
+import com.iuh.busgoo.repository.PaymentHistoryRepository;
 import com.iuh.busgoo.requestType.PaymentReturn;
 import com.iuh.busgoo.service.PaymentService;
 
@@ -20,6 +23,9 @@ public class PaymentServiceImpl implements PaymentService {
 
 	@Autowired
 	private OrderRepository orderRepository;
+	
+	@Autowired
+	private PaymentHistoryRepository paymentHistoryRepository;
 
 	@Override
 	public DataResponse verifyPayment(PaymentReturn paymentReturn) {
@@ -64,9 +70,34 @@ public class PaymentServiceImpl implements PaymentService {
                             order.setIsPay(1);
                             orderRepository.save(order);
                             //create history payment
+                            Long count = paymentHistoryRepository.count();
+            				PaymentHistory paymentHistory = new PaymentHistory();
+            				paymentHistory.setAmount(order.getTotal().longValue());
+            				paymentHistory.setCode("PMC"+(count+1));
+            				paymentHistory.setOrderId(order.getId());
+            				paymentHistory.setPaymentType(PaymentController.payVNP);
+            				paymentHistory.setTransactionStatus(1);
+            				paymentHistory.setBankCode(paymentReturn.getVnp_BankCode());
+            				paymentHistory.setBankTranNo(paymentReturn.getVnp_BankTranNo());
+            				paymentHistoryRepository.save(paymentHistory);
+            				dataResponse.setResponseMsg("Payment success !!!");
+            				dataResponse.setRespType(Constant.HTTP_SUCCESS);
+            				return dataResponse;
+                            
                         }
                         else
                         {
+                            //create history payment
+                            Long count = paymentHistoryRepository.count();
+            				PaymentHistory paymentHistory = new PaymentHistory();
+            				paymentHistory.setAmount(order.getTotal().longValue());
+            				paymentHistory.setCode("PMC"+(count+1));
+            				paymentHistory.setOrderId(order.getId());
+            				paymentHistory.setPaymentType(PaymentController.payVNP);
+            				paymentHistory.setTransactionStatus(0);
+            				paymentHistory.setBankCode(paymentReturn.getVnp_BankCode());
+            				paymentHistory.setBankTranNo(paymentReturn.getVnp_BankTranNo());
+            				paymentHistoryRepository.save(paymentHistory);
                         	dataResponse.setResponseMsg("Payment failed");
     						dataResponse.setRespType(Constant.PAYMENT_FAILED);
     						return dataResponse;
@@ -90,7 +121,34 @@ public class PaymentServiceImpl implements PaymentService {
 			 * }else { dataResponse.setResponseMsg("Invalid Checksum");
 			 * dataResponse.setRespType(Constant.PAYMENT_FAILED); return dataResponse; }
 			 */
-		return null;
+	}
+
+
+	@Override
+	public DataResponse createPaymentByCash(Long id) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			Order order = orderRepository.getById(id);
+			if(order == null) {
+				throw new Exception();
+			}else {
+				Long count = paymentHistoryRepository.count();
+				PaymentHistory paymentHistory = new PaymentHistory();
+				paymentHistory.setAmount(order.getTotal().longValue());
+				paymentHistory.setCode("PMC"+(count+1));
+				paymentHistory.setOrderId(order.getId());
+				paymentHistory.setPaymentType(PaymentController.payCash);
+				paymentHistory.setTransactionStatus(1);
+				paymentHistoryRepository.save(paymentHistory);
+				dataResponse.setResponseMsg("Payment success !!!");
+				dataResponse.setRespType(Constant.HTTP_SUCCESS);
+				return dataResponse;
+			}
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error !!!");
+			dataResponse.setRespType(Constant.PAYMENT_FAILED);
+			return dataResponse;
+		}
 	}
 
 }

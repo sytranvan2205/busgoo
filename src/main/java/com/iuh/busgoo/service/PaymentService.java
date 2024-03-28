@@ -7,4 +7,6 @@ public interface PaymentService {
 
 	DataResponse verifyPayment(PaymentReturn paymentReturn);
 
+	DataResponse createPaymentByCash(Long id);
+
 }
