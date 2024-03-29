@@ -192,8 +192,8 @@ public class TimeTableServiceImpl implements TimeTableService {
 			}else {
 				dateFilter = LocalDateTime.of(filter.getTimeStarted(),LocalTime.of(0, 0, 0));
 			}
-			
-			List<Object[]> resultList  = timeTableRepository.findBusTripByFilter(filter.getFromId(),filter.getToId(),dateFilter,currDate);
+			LocalDate timeBooking = dateFilter.toLocalDate();
+			List<Object[]> resultList  = timeTableRepository.findBusTripByFilter(filter.getFromId(),filter.getToId(),dateFilter,timeBooking);
 			List<BustripDTO> lstData = new ArrayList<>();
 			 for (Object[] result : resultList) {
 		            Long timeTableId = (Long) result[0];

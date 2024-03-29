@@ -36,9 +36,9 @@ public interface TimeTableRepository extends JpaRepository<TimeTable, Long> {
 			+ "(:fromId is null or f.id = :fromId ) " + "and (:toId is null or t.id = :toId ) "
 			+ "and (:timeStarted is null or tb.started_time >= :timeStarted) "
 			+ "and (:timeStarted is null or tb.started_time <= DATE_ADD(:timeStarted, INTERVAL 1 DAY)) " 
-			+ "and p.from_date <= :currDate "
-			+ "and p.to_date >= :currDate and tb.status = 1 " + "order by tb.started_time asc ", nativeQuery = true)
-	List<Object[]> findBusTripByFilter(Long fromId, Long toId, LocalDateTime timeStarted, LocalDate currDate);
+			+ "and p.from_date <= :dateStated "
+			+ "and p.to_date >= :dateStated and tb.status = 1 " + "order by tb.started_time asc ", nativeQuery = true)
+	List<Object[]> findBusTripByFilter(Long fromId, Long toId, LocalDateTime timeStarted, LocalDate dateStated);
 	
 	@Query(value = "select tb.id as timeTableId, tb.started_time as timeStated, pd.id as priceDetailId, pd.value as priceValue, r.id as routeId, r.transfer_time as transferTime, f.full_Name as fromName, t.full_Name as toName, tpb.name as typeBusName "
 			+ "from time_table tb " + "INNER JOIN route r on tb.route_id =  r.id and r.status = 1 "
