@@ -1,13 +1,19 @@
 package com.iuh.busgoo.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
+import com.iuh.busgoo.filter.OrderFilter;
+import com.iuh.busgoo.filter.PriceFilter;
 import com.iuh.busgoo.requestType.OrderCreateRequest;
 import com.iuh.busgoo.service.OrderService;
 
@@ -32,4 +38,30 @@ public class OrderController {
 			return dataResponse;
 		}
 	}
+	
+	@GetMapping("/find")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse getOrder(@RequestParam(required = false) Integer status,
+			@RequestParam(required = false) LocalDate fromDate, @RequestParam(required = false) LocalDate toDate,
+			@RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam(required = false) String sortBy,
+			@RequestParam(required = false) String orderBy) {
+		try {
+			OrderFilter orderFilter = new OrderFilter();
+			orderFilter.setFromDate(fromDate);
+			orderFilter.setItemPerPage(itemPerPage);
+			orderFilter.setOrderBy(orderBy);
+			orderFilter.setPage(page);
+			orderFilter.setSortBy(sortBy);
+			orderFilter.setStatus(status);
+			orderFilter.setToDate(toDate);
+			return orderService.getOrderByFilter(orderFilter);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+		
 }

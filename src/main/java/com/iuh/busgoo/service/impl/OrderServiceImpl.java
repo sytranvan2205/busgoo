@@ -10,11 +10,16 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.dto.OrderDTO;
+import com.iuh.busgoo.dto.OrderManagerDTO;
 import com.iuh.busgoo.dto.PromotionDTO;
 import com.iuh.busgoo.entity.Order;
 import com.iuh.busgoo.entity.OrderDetail;
@@ -25,6 +30,8 @@ import com.iuh.busgoo.entity.PromotionLine;
 import com.iuh.busgoo.entity.SeatOrder;
 import com.iuh.busgoo.entity.Station;
 import com.iuh.busgoo.entity.User;
+import com.iuh.busgoo.filter.OrderFilter;
+import com.iuh.busgoo.mapper.OrderMapper;
 import com.iuh.busgoo.repository.OrderDetailRepository;
 import com.iuh.busgoo.repository.OrderRepository;
 import com.iuh.busgoo.repository.PriceDetailRepository;
@@ -35,6 +42,7 @@ import com.iuh.busgoo.repository.StationRepository;
 import com.iuh.busgoo.repository.UserRepository;
 import com.iuh.busgoo.requestType.OrderCreateRequest;
 import com.iuh.busgoo.service.OrderService;
+import com.iuh.busgoo.utils.PageUtils;
 
 @Service
 public class OrderServiceImpl implements OrderService{
@@ -61,6 +69,9 @@ public class OrderServiceImpl implements OrderService{
 	
 	@Autowired
 	private PromotionDetailRepository promotionDetailRepository;
+	
+	@Autowired
+	private OrderMapper orderMapper;
 
 	@Override
 	public DataResponse createOrder(OrderCreateRequest orderCreateRequest) {
@@ -238,6 +249,40 @@ public class OrderServiceImpl implements OrderService{
 	@Override
 	public Order findOrderById(Long orderId) {
 		return orderRepository.getById(orderId);
+	}
+
+	@Override
+	public DataResponse getOrderByFilter(OrderFilter orderFilter) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			Pageable page;
+			Sort sort;
+			if(orderFilter.getSortBy() != null && orderFilter.getOrderBy() != null) {
+				if(orderFilter.getSortBy().toUpperCase().equals("ASC")) {
+					sort = Sort.by(orderFilter.getOrderBy()).ascending();
+				}else {
+					sort = Sort.by(orderFilter.getOrderBy()).descending();
+				}
+				page= PageRequest.of(orderFilter.getPage(), orderFilter.getItemPerPage(), sort);
+			}else {
+				page = PageRequest.of(orderFilter.getPage(), orderFilter.getItemPerPage());
+			}
+			Page<Order> orderPage = orderRepository.findPageFilter(orderFilter.getStatus(),orderFilter.getFromDate(),orderFilter.getToDate(),orderFilter.getQ(),page);
+			List<Order> orders = orderPage.getContent();
+			List<OrderManagerDTO> ordeDtos = orderMapper.toDto(orders);
+			Page<OrderManagerDTO> orderDTOPage = PageUtils.createPageFromList(ordeDtos, page);
+			
+			dataResponse.setResponseMsg("Get orders success !!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data",orderDTOPage);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
 	}
 
 }

@@ -126,10 +126,24 @@ public class UserServiceImpl implements UserService {
 		DataResponse dataResponse = new DataResponse();
 		try {
 			User user = userRepo.findByPhoneAndStatus(phone,1);
+			UserDTO userDTO = userMapper.toDto(user);
+			StringBuilder address = new StringBuilder();
+			if(userDTO.getAddressDescription() != null && userDTO.getAddressDescription().length()>0) {
+				address.append(userDTO.getAddressDescription());
+				address.append(", ");
+			}
+			RegionDetail district = regionDetailRepository.findById(userDTO.getAddressId()).get();
+			address.append(district.getFullName());
+			if(district != null && district.getRegionParent() != null) {
+				RegionDetail province = regionDetailRepository.findById(district.getRegionParent().getId()).get();
+				address.append(", ");
+				address.append(province.getFullName());
+			}
+			userDTO.setAddress(address.toString());
 			dataResponse.setResponseMsg("Get user success !!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
 			Map<String, Object> respValue = new HashMap<>();
-			respValue.put("data",user);
+			respValue.put("data",userDTO);
 			dataResponse.setValueReponse(respValue);
 			return dataResponse;
 		} catch (Exception e) {
