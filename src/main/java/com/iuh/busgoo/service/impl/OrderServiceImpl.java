@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.dto.OrderDTO;
+import com.iuh.busgoo.dto.OrderDetailDTO;
 import com.iuh.busgoo.dto.OrderManagerDTO;
 import com.iuh.busgoo.dto.PromotionDTO;
 import com.iuh.busgoo.entity.Order;
@@ -31,6 +32,7 @@ import com.iuh.busgoo.entity.SeatOrder;
 import com.iuh.busgoo.entity.Station;
 import com.iuh.busgoo.entity.User;
 import com.iuh.busgoo.filter.OrderFilter;
+import com.iuh.busgoo.mapper.OrderDetailMapper;
 import com.iuh.busgoo.mapper.OrderMapper;
 import com.iuh.busgoo.repository.OrderDetailRepository;
 import com.iuh.busgoo.repository.OrderRepository;
@@ -72,6 +74,8 @@ public class OrderServiceImpl implements OrderService{
 	
 	@Autowired
 	private OrderMapper orderMapper;
+	
+	@Autowired OrderDetailMapper orderDetailMapper;
 
 	@Override
 	public DataResponse createOrder(OrderCreateRequest orderCreateRequest) {
@@ -178,8 +182,9 @@ public class OrderServiceImpl implements OrderService{
 					orderDTO.setTotalDiscount(order.getTotalDiscount());
 					orderDTO.setTotalTiketPrice(totalTiketPrice);
 					orderDTO.setPromotionDTOs(promotionDTOs);
-					orderDTO.setOrderDetails(lstDetail);
-					
+//					orderDTO.setOrderDetails(lstDetail);
+					List<OrderDetailDTO> detailDTOs = orderDetailMapper.toDto(lstDetail);
+					orderDTO.setOrderDetails(detailDTOs);
 					
 					dataResponse.setResponseMsg("Reservation successful !!!");
 					dataResponse.setRespType(Constant.HTTP_SUCCESS);
