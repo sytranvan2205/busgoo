@@ -48,6 +48,8 @@ public interface TimeTableRepository extends JpaRepository<TimeTable, Long> {
 			+ "INNER JOIN type_bus tpb on b.type_bus_id = tpb.id and tpb.status = 1 "
 			+ "INNER JOIN price_detail pd on pd.route_id = r.id and pd.type_bus_id = tpb.id and pd.status = 1 "
 			+ "INNER JOIN price p on pd.price_id = p.id and p.status = 1 " + "where  "
-			+ "tb.status = 1 and tb.id = :timeTableId ", nativeQuery = true)
+			+ "tb.status = 1 and tb.id = :timeTableId "
+			+ "and p.from_date <= tb.started_time "
+			+ "and p.to_date >= tb.started_time ", nativeQuery = true)
 	List<Object[]> findBustipByTimeTableId(Long timeTableId);
 }
