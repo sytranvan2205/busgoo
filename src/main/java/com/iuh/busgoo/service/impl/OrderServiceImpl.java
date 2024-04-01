@@ -148,7 +148,7 @@ public class OrderServiceImpl implements OrderService{
 					Double discountPrice = Double.valueOf(0);
 					//Tìm các promotion lines với các detail thoải điều kiện
 					List<PromotionLine> lines = promotionLineRepository.findPromotionLineByCondition(currDate,new BigDecimal(totalTiketPrice));
-					List<PromotionDTO> promotionDTOs = new ArrayList<PromotionDTO>();
+					List<PromotionDTO> promotionDTOs = null ;
 					for(PromotionLine line: lines) {
 						PromotionDTO promotionDTO = new PromotionDTO();
 						PromotionDetail detail = promotionDetailRepository.findByPromotionLineIdAndStatus(line.getId(), 1);
@@ -159,18 +159,22 @@ public class OrderServiceImpl implements OrderService{
 							Double discountValueTmp = detail.getDiscount().doubleValue()*totalTiketPrice;
 							discountValue = (discountValueTmp<= detail.getMaxDiscount().doubleValue())? discountValue: detail.getMaxDiscount().doubleValue();
 						}
-						discountPrice += discountValue;
-						promotionDTO.setPromotionCode(line.getPromotion().getCode());
-						promotionDTO.setPromotionLineName(line.getLineName());
-						promotionDTO.setPromotionType(line.getPromotionType());
-						promotionDTO.setDiscount(new BigDecimal(discountValue));
-						promotionDTOs.add(promotionDTO);
+						if(discountPrice > discountValue) {
+							promotionDTOs = new ArrayList<PromotionDTO>();
+							discountPrice = discountValue;
+							promotionDTO.setPromotionCode(line.getPromotion().getCode());
+							promotionDTO.setPromotionLineName(line.getLineName());
+							promotionDTO.setPromotionType(line.getPromotionType());
+							promotionDTO.setDiscount(new BigDecimal(discountValue));
+							promotionDTOs.add(promotionDTO);
+						}
+
 					}
 					
 					// update order 
 					order.setTotalTiketPrice(totalTiketPrice);
 					order.setTotalDiscount(totalTiketPrice);
-					order.setTotal(totalTiketPrice - discountPrice);
+					order.setTotal((totalTiketPrice - discountPrice) > 0 ? (totalTiketPrice - discountPrice) : 0);
 					orderRepository.save(order);
 					
 					OrderDTO orderDTO = new OrderDTO();
@@ -181,7 +185,10 @@ public class OrderServiceImpl implements OrderService{
 					orderDTO.setStatus(order.getStatus());
 					orderDTO.setTotalDiscount(order.getTotalDiscount());
 					orderDTO.setTotalTiketPrice(totalTiketPrice);
-					orderDTO.setPromotionDTOs(promotionDTOs);
+					if(promotionDTOs != null) {
+						orderDTO.setPromotionDTO(promotionDTOs.get(0));;
+					}
+//					orderDTO.setPromotionDTOs(promotionDTOs);
 //					orderDTO.setOrderDetails(lstDetail);
 					List<OrderDetailDTO> detailDTOs = orderDetailMapper.toDto(lstDetail);
 					orderDTO.setOrderDetails(detailDTOs);
@@ -204,7 +211,7 @@ public class OrderServiceImpl implements OrderService{
 		}
 		
 	}
-
+	
 	@Override
 	public DataResponse getOrderDetail(Long orderId) {
 		return null;

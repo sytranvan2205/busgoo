@@ -22,7 +22,7 @@ public class OrderDTO {
 
 	private Double total;
 	
-	List<PromotionDTO> promotionDTOs = new ArrayList<PromotionDTO>();
+	PromotionDTO promotionDTO = new PromotionDTO();
 	
 	List<OrderDetailDTO> orderDetails = new ArrayList<OrderDetailDTO>();
 }
