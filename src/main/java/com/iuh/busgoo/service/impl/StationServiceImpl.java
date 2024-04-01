@@ -48,6 +48,7 @@ public class StationServiceImpl implements StationService{
 					station.setRegionDetail(regionDetail);
 					station.setCode("ST"+(count+1));
 					station.setAddressDescription(stationCreateRequest.getAddressDescription());
+					station.setStatus(1);
 					stationRepository.save(station);
 					
 					dataResponse.setResponseMsg("Create station success !!!");
