@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
+import com.iuh.busgoo.dto.PromotionDTO;
 import com.iuh.busgoo.entity.Promotion;
 import com.iuh.busgoo.entity.PromotionDetail;
 import com.iuh.busgoo.entity.PromotionLine;
@@ -444,6 +445,24 @@ public class PromotionServiceImpl implements PromotionService {
 				dataResponse.setValueReponse(respValue);
 				return dataResponse;
 			}
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse getCurrentPromotion(LocalDate currentDate) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			List<PromotionDTO> list = promoDetailRepository.findByCurrentDate(currentDate);
+			dataResponse.setResponseMsg("Get data success!!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data", list);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
 		} catch (Exception e) {
 			dataResponse.setResponseMsg("System error");
 			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);

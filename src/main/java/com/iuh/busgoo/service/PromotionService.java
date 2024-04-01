@@ -1,5 +1,7 @@
 package com.iuh.busgoo.service;
 
+import java.time.LocalDate;
+
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.filter.PromotionFilter;
 import com.iuh.busgoo.requestType.PromotionCreateRequest;
@@ -32,5 +34,7 @@ public interface PromotionService {
 	DataResponse findDetailByLineId(Long promotionLineId);
 
 	DataResponse findById(Long promotionId);
+
+	DataResponse getCurrentPromotion(LocalDate currentDate);
 
 }

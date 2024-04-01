@@ -181,4 +181,18 @@ public class PromotionController {
 			return dataResponse;
 		}
 	}
+	
+	@GetMapping("/get-current-promotion")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse getCurrentPromotion() {
+		try {
+			LocalDate curDate = LocalDate.now();
+			return promotionService.getCurrentPromotion(curDate);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
 }
