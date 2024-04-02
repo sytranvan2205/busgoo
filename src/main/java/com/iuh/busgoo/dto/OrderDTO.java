@@ -15,6 +15,8 @@ public class OrderDTO {
 	private Integer status;
 	
 	private User user;
+	
+	private UserDTO userDTO;
 
 	private Double totalTiketPrice;
 

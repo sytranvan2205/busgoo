@@ -22,6 +22,7 @@ import com.iuh.busgoo.dto.OrderDTO;
 import com.iuh.busgoo.dto.OrderDetailDTO;
 import com.iuh.busgoo.dto.OrderManagerDTO;
 import com.iuh.busgoo.dto.PromotionDTO;
+import com.iuh.busgoo.dto.UserDTO;
 import com.iuh.busgoo.entity.Order;
 import com.iuh.busgoo.entity.OrderDetail;
 import com.iuh.busgoo.entity.PriceDetail;
@@ -34,6 +35,7 @@ import com.iuh.busgoo.entity.User;
 import com.iuh.busgoo.filter.OrderFilter;
 import com.iuh.busgoo.mapper.OrderDetailMapper;
 import com.iuh.busgoo.mapper.OrderMapper;
+import com.iuh.busgoo.mapper.UserMapper;
 import com.iuh.busgoo.repository.OrderDetailRepository;
 import com.iuh.busgoo.repository.OrderRepository;
 import com.iuh.busgoo.repository.PriceDetailRepository;
@@ -75,7 +77,11 @@ public class OrderServiceImpl implements OrderService{
 	@Autowired
 	private OrderMapper orderMapper;
 	
-	@Autowired OrderDetailMapper orderDetailMapper;
+	@Autowired 
+	private OrderDetailMapper orderDetailMapper;
+	
+	@Autowired
+	private UserMapper userMapper;
 
 	@Override
 	public DataResponse createOrder(OrderCreateRequest orderCreateRequest) {
@@ -290,6 +296,58 @@ public class OrderServiceImpl implements OrderService{
 			respValue.put("data",orderDTOPage);
 			dataResponse.setValueReponse(respValue);
 			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse getOrderById(Long orderId) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			Order order = orderRepository.getById(orderId);
+			if(order == null) {
+				throw new Exception();
+			}else {
+				OrderDTO orderDTO = new OrderDTO();
+				orderDTO.setCode(order.getCode());
+				orderDTO.setOrderId(order.getId());
+				orderDTO.setIsPay(order.getIsPay());
+				orderDTO.setStatus(order.getStatus());
+				orderDTO.setTotal(order.getTotal());
+				orderDTO.setTotalDiscount(order.getTotalDiscount());
+				orderDTO.setTotalTiketPrice(order.getTotalTiketPrice());
+//				orderDTO.setUser(order.getUser());
+				UserDTO userDTO = userMapper.toDto(order.getUser());
+				orderDTO.setUserDTO(userDTO);
+				
+				List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(order.getId());
+				List<OrderDetailDTO> detailDTOs = orderDetailMapper.toDto(orderDetails);
+				orderDTO.setOrderDetails(detailDTOs);
+				if(order.getPromotionDetail() != null) {
+					PromotionDetail promotionDetail = order.getPromotionDetail();
+					PromotionLine promotionLine = promotionDetail.getPromotionLine();
+					Promotion promotion = promotionLine.getPromotion();
+					PromotionDTO promotionDTO = new PromotionDTO();
+					promotionDTO.setConditionApply(promotionDetail.getConditionApply());
+					promotionDTO.setDiscount(promotionDetail.getDiscount());
+					if(promotionDetail.getMaxDiscount() != null ) {
+						promotionDTO.setMaxDiscount(promotionDetail.getMaxDiscount());
+					}
+					promotionDTO.setPromotionLineName(promotionLine.getLineName());
+					promotionDTO.setPromotionType(promotionLine.getPromotionType());
+					promotionDTO.setPromotionCode(promotion.getCode());	
+					orderDTO.setPromotionDTO(promotionDTO);
+				}
+				dataResponse.setResponseMsg("Get order success !!!");
+				dataResponse.setRespType(Constant.HTTP_SUCCESS);
+				Map<String, Object> respValue = new HashMap<>();
+				respValue.put("data",orderDTO);
+				dataResponse.setValueReponse(respValue);
+				return dataResponse;
+			}
 		} catch (Exception e) {
 			dataResponse.setResponseMsg("System error");
 			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);

@@ -17,5 +17,7 @@ public interface OrderService {
 	Order findOrderById(Long orderId);
 
 	DataResponse getOrderByFilter(OrderFilter orderFilter);
+
+	DataResponse getOrderById(Long orderId);
 	
 }

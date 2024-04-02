@@ -63,5 +63,18 @@ public class OrderController {
 		}
 	}
 	
+	@GetMapping("/get")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse findById(@RequestParam Long orderId) {
+		try {
+			return orderService.getOrderById(orderId);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
 		
 }
