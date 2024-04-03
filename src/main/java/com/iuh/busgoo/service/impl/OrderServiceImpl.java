@@ -165,13 +165,14 @@ public class OrderServiceImpl implements OrderService{
 							Double discountValueTmp = detail.getDiscount().doubleValue()*totalTiketPrice;
 							discountValue = (discountValueTmp<= detail.getMaxDiscount().doubleValue())? discountValue: detail.getMaxDiscount().doubleValue();
 						}
-						if(discountPrice > discountValue) {
+						if(discountPrice < discountValue) {
 							promotionDTOs = new ArrayList<PromotionDTO>();
 							discountPrice = discountValue;
 							promotionDTO.setPromotionCode(line.getPromotion().getCode());
 							promotionDTO.setPromotionLineName(line.getLineName());
 							promotionDTO.setPromotionType(line.getPromotionType());
 							promotionDTO.setDiscount(new BigDecimal(discountValue));
+							promotionDTO.setPromotionDetailId(detail.getId());
 							promotionDTOs.add(promotionDTO);
 						}
 
@@ -181,6 +182,11 @@ public class OrderServiceImpl implements OrderService{
 					order.setTotalTiketPrice(totalTiketPrice);
 					order.setTotalDiscount(totalTiketPrice);
 					order.setTotal((totalTiketPrice - discountPrice) > 0 ? (totalTiketPrice - discountPrice) : 0);
+					//add promotion to order
+					if(promotionDTOs != null && promotionDTOs.size()>0) {
+						PromotionDetail promotionDetail = promotionDetailRepository.getById(promotionDTOs.get(0).getPromotionDetailId());
+						order.setPromotionDetail(promotionDetail);
+					}
 					orderRepository.save(order);
 					
 					OrderDTO orderDTO = new OrderDTO();
@@ -191,7 +197,7 @@ public class OrderServiceImpl implements OrderService{
 					orderDTO.setStatus(order.getStatus());
 					orderDTO.setTotalDiscount(order.getTotalDiscount());
 					orderDTO.setTotalTiketPrice(totalTiketPrice);
-					if(promotionDTOs != null) {
+					if(promotionDTOs != null && promotionDTOs.size()>0) {
 						orderDTO.setPromotionDTO(promotionDTOs.get(0));;
 					}
 //					orderDTO.setPromotionDTOs(promotionDTOs);

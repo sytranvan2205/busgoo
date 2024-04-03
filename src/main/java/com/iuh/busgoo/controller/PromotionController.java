@@ -195,4 +195,18 @@ public class PromotionController {
 			return dataResponse;
 		}
 	}
+	
+	@GetMapping("/get-by-frice")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse getPromotionByPrice(@RequestParam Double priceValue) {
+		try {
+			return promotionService.getPromotionByPrice(priceValue);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
 }

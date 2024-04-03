@@ -37,4 +37,6 @@ public interface PromotionService {
 
 	DataResponse getCurrentPromotion(LocalDate currentDate);
 
+	DataResponse getPromotionByPrice(Double priceValue);
+
 }

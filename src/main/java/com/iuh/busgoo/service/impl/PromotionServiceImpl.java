@@ -2,6 +2,7 @@ package com.iuh.busgoo.service.impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -461,6 +462,53 @@ public class PromotionServiceImpl implements PromotionService {
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
 			Map<String, Object> respValue = new HashMap<>();
 			respValue.put("data", list);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse getPromotionByPrice(Double priceValue) {
+		DataResponse dataResponse = new DataResponse();
+		LocalDate currDate = LocalDate.now();
+		try {
+			//apply promotion
+			Double discountPrice = Double.valueOf(0);
+			//Tìm các promotion lines với các detail thoải điều kiện
+			List<PromotionLine> lines = lineRepo.findPromotionLineByCondition(currDate,new BigDecimal(priceValue));
+			List<PromotionDTO> promotionDTOs = null ;
+			for(PromotionLine line: lines) {
+				PromotionDTO promotionDTO = new PromotionDTO();
+				PromotionDetail detail = promoDetailRepository.findByPromotionLineIdAndStatus(line.getId(), 1);
+				Double discountValue = Double.valueOf(0);
+				if (line.getPromotionType().equals(1)) {
+					discountValue = detail.getDiscount().doubleValue();
+				}else if(line.getPromotionType().equals(2)) {
+					Double discountValueTmp = detail.getDiscount().doubleValue()*priceValue;
+					discountValue = (discountValueTmp<= detail.getMaxDiscount().doubleValue())? discountValue: detail.getMaxDiscount().doubleValue();
+				}
+				if(discountPrice < discountValue) {
+					promotionDTOs = new ArrayList<PromotionDTO>();
+					discountPrice = discountValue;
+					promotionDTO.setPromotionCode(line.getPromotion().getCode());
+					promotionDTO.setPromotionLineName(line.getLineName());
+					promotionDTO.setPromotionType(line.getPromotionType());
+					promotionDTO.setDiscount(new BigDecimal(discountValue));
+					promotionDTO.setMaxDiscount(detail.getMaxDiscount());;
+					promotionDTOs.add(promotionDTO);
+				}
+			}
+			dataResponse.setResponseMsg("Get data success!!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			if (promotionDTOs!= null && promotionDTOs.size()>0) {
+				respValue.put("data", promotionDTOs.get(0));
+			}
+//			respValue.put("data", list);
 			dataResponse.setValueReponse(respValue);
 			return dataResponse;
 		} catch (Exception e) {

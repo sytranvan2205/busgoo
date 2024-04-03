@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PromotionDTO {
+	private Long promotionDetailId;
 	private String promotionCode;
 	private String promotionLineName;
 	private Integer promotionType;
