@@ -499,6 +499,7 @@ public class PromotionServiceImpl implements PromotionService {
 					promotionDTO.setPromotionType(line.getPromotionType());
 					promotionDTO.setDiscount(new BigDecimal(discountValue));
 					promotionDTO.setMaxDiscount(detail.getMaxDiscount());;
+					promotionDTO.setConditionApply(detail.getConditionApply());;
 					promotionDTOs.add(promotionDTO);
 				}
 			}
