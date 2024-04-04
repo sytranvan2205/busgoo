@@ -488,7 +488,7 @@ public class PromotionServiceImpl implements PromotionService {
 				if (line.getPromotionType().equals(1)) {
 					discountValue = detail.getDiscount().doubleValue();
 				}else if(line.getPromotionType().equals(2)) {
-					Double discountValueTmp = detail.getDiscount().doubleValue()*priceValue;
+					Double discountValueTmp = detail.getDiscount().doubleValue()*priceValue/100;
 					discountValue = (discountValueTmp<= detail.getMaxDiscount().doubleValue())? discountValue: detail.getMaxDiscount().doubleValue();
 				}
 				if(discountPrice < discountValue) {
