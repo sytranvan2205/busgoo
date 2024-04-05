@@ -1,5 +1,6 @@
 package com.iuh.busgoo.dto;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class OrderDTO {
 	private String code;
 	private Integer isPay;
 	private Integer status;
-	
+	private LocalDate orderCreateDate;
 	private User user;
 	
 	private UserDTO userDTO;

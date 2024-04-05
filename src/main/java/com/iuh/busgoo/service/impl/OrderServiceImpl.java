@@ -330,6 +330,7 @@ public class OrderServiceImpl implements OrderService{
 				orderDTO.setTotal(order.getTotal());
 				orderDTO.setTotalDiscount(order.getTotalDiscount());
 				orderDTO.setTotalTiketPrice(order.getTotalTiketPrice());
+				orderDTO.setOrderCreateDate(order.getCreatedDate());
 //				orderDTO.setUser(order.getUser());
 				UserDTO userDTO = userMapper.toDto(order.getUser());
 				
