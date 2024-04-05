@@ -134,7 +134,7 @@ public class PaymentServiceImpl implements PaymentService {
 			if (order == null) {
 				throw new Exception();
 			} else {
-				if(order.getIsPay()==0) {
+				if(order.getIsPay()==1) {
 					dataResponse.setResponseMsg("This order has been paid. !!!");
 					dataResponse.setRespType(Constant.PAYMENT_FAILED);
 					return dataResponse;
