@@ -134,6 +134,11 @@ public class PaymentServiceImpl implements PaymentService {
 			if (order == null) {
 				throw new Exception();
 			} else {
+				if(order.getIsPay()==0) {
+					dataResponse.setResponseMsg("This order has been paid. !!!");
+					dataResponse.setRespType(Constant.PAYMENT_FAILED);
+					return dataResponse;
+				}
 				Long count = paymentHistoryRepository.count();
 				PaymentHistory paymentHistory = new PaymentHistory();
 				paymentHistory.setAmount(order.getTotal().longValue());
@@ -142,6 +147,8 @@ public class PaymentServiceImpl implements PaymentService {
 				paymentHistory.setPaymentType(PaymentController.payCash);
 				paymentHistory.setTransactionStatus(1);
 				paymentHistoryRepository.save(paymentHistory);
+				order.setIsPay(1);
+				orderRepository.save(order);
 				dataResponse.setResponseMsg("Payment success !!!");
 				dataResponse.setRespType(Constant.HTTP_SUCCESS);
 				return dataResponse;
