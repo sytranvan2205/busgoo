@@ -29,6 +29,7 @@ import com.iuh.busgoo.entity.PriceDetail;
 import com.iuh.busgoo.entity.Promotion;
 import com.iuh.busgoo.entity.PromotionDetail;
 import com.iuh.busgoo.entity.PromotionLine;
+import com.iuh.busgoo.entity.RegionDetail;
 import com.iuh.busgoo.entity.SeatOrder;
 import com.iuh.busgoo.entity.Station;
 import com.iuh.busgoo.entity.User;
@@ -41,6 +42,7 @@ import com.iuh.busgoo.repository.OrderRepository;
 import com.iuh.busgoo.repository.PriceDetailRepository;
 import com.iuh.busgoo.repository.PromotionDetailRepository;
 import com.iuh.busgoo.repository.PromotionLineRepository;
+import com.iuh.busgoo.repository.RegionDetailRepository;
 import com.iuh.busgoo.repository.SeatOrderRepository;
 import com.iuh.busgoo.repository.StationRepository;
 import com.iuh.busgoo.repository.UserRepository;
@@ -82,6 +84,9 @@ public class OrderServiceImpl implements OrderService{
 	
 	@Autowired
 	private UserMapper userMapper;
+	
+	@Autowired
+	private RegionDetailRepository detailRepository;
 
 	@Override
 	public DataResponse createOrder(OrderCreateRequest orderCreateRequest) {
@@ -180,7 +185,7 @@ public class OrderServiceImpl implements OrderService{
 					
 					// update order 
 					order.setTotalTiketPrice(totalTiketPrice);
-					order.setTotalDiscount(totalTiketPrice);
+					order.setTotalDiscount(discountPrice);
 					order.setTotal((totalTiketPrice - discountPrice) > 0 ? (totalTiketPrice - discountPrice) : 0);
 					//add promotion to order
 					if(promotionDTOs != null && promotionDTOs.size()>0) {
@@ -327,6 +332,21 @@ public class OrderServiceImpl implements OrderService{
 				orderDTO.setTotalTiketPrice(order.getTotalTiketPrice());
 //				orderDTO.setUser(order.getUser());
 				UserDTO userDTO = userMapper.toDto(order.getUser());
+				
+				// set data full address
+				StringBuilder address = new StringBuilder();
+				if(userDTO.getAddressDescription() != null && userDTO.getAddressDescription().length()>0) {
+					address.append(userDTO.getAddressDescription());
+					address.append(", ");
+				}
+				RegionDetail district = detailRepository.findById(userDTO.getAddressId()).get();
+				address.append(district.getFullName());
+				if(district != null && district.getRegionParent() != null) {
+					RegionDetail province = detailRepository.findById(district.getRegionParent().getId()).get();
+					address.append(", ");
+					address.append(province.getFullName());
+				}
+				userDTO.setAddress(address.toString());
 				orderDTO.setUserDTO(userDTO);
 				
 				List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(order.getId());
