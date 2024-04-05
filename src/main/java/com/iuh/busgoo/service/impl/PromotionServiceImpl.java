@@ -317,14 +317,16 @@ public class PromotionServiceImpl implements PromotionService {
 					if(isCreate) {
 						promotionDetail.setCode(promotionDetailRequest.getDetailCode());
 					}
-					promotionDetail.setConditionApply(new BigDecimal(promotionDetailRequest.getConditionApply()));
+					if(promotionDetailRequest.getConditionApply() == null)
+						promotionDetail.setConditionApply(null);
+					else promotionDetail.setConditionApply(new BigDecimal(promotionDetailRequest.getConditionApply()));
 					if(line.getPromotionType().equals(2)) {
-						promotionDetail.setMaxDiscount(new BigDecimal(promotionDetailRequest.getMaxDiscount()));
 						if(promotionDetailRequest.getDiscount()<0 && promotionDetailRequest.getDiscount()>100) {
 							dataResponse.setResponseMsg("The discount must be >0 and <100");
 							dataResponse.setRespType(Constant.DISCOUNT_INVALID);
 							return dataResponse;
 						}
+						promotionDetail.setMaxDiscount(new BigDecimal(promotionDetailRequest.getMaxDiscount()));
 					}
 					promotionDetail.setDiscount(new BigDecimal(promotionDetailRequest.getDiscount()));
 					promotionDetail.setStatus(1);
@@ -488,7 +490,7 @@ public class PromotionServiceImpl implements PromotionService {
 				if (line.getPromotionType().equals(1)) {
 					discountValue = detail.getDiscount().doubleValue();
 				}else if(line.getPromotionType().equals(2)) {
-					Double discountValueTmp = detail.getDiscount().doubleValue()*priceValue;
+					Double discountValueTmp = detail.getDiscount().doubleValue()*priceValue/100;
 					discountValue = (discountValueTmp<= detail.getMaxDiscount().doubleValue())? discountValue: detail.getMaxDiscount().doubleValue();
 				}
 				if(discountPrice < discountValue) {
@@ -499,6 +501,7 @@ public class PromotionServiceImpl implements PromotionService {
 					promotionDTO.setPromotionType(line.getPromotionType());
 					promotionDTO.setDiscount(new BigDecimal(discountValue));
 					promotionDTO.setMaxDiscount(detail.getMaxDiscount());;
+					promotionDTO.setConditionApply(detail.getConditionApply());;
 					promotionDTOs.add(promotionDTO);
 				}
 			}
