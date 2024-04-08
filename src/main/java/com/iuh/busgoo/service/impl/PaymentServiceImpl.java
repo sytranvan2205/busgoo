@@ -86,6 +86,25 @@ public class PaymentServiceImpl implements PaymentService {
 				if ("00".equals(paymentReturn.getVnp_ResponseCode())) {
 					order.setIsPay(1);
 					orderRepository.save(order);
+					//create invoice
+					Invoice invoice = new Invoice();
+					Long countInv = invoiceRepository.count();
+					invoice.setCode("INVC"+(countInv +1));
+					invoice.setOrderId(order.getId());
+					invoice.setUserId(order.getUser().getUserId());
+					invoice.setTimeBooking(order.getCreatedDate());
+					invoice.setTotal(order.getTotal());
+					invoice.setTotalDiscount(order.getTotalDiscount());
+					invoice.setTotalTiketPrice(order.getTotalTiketPrice());
+					invoice.setStatus(1);
+					List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(order.getId());
+					if(orderDetails!= null && orderDetails.size()>0) {
+						OrderDetail orderDetail = orderDetails.get(0);
+						SeatOrder seatOrder = orderDetail.getSeat();
+						TimeTable timeTable = seatOrder.getTimeTable();
+						invoice.setTimeStarted(timeTable.getStartedTime());
+					}
+					invoiceRepository.save(invoice);
 					// create history payment
 					Long count = paymentHistoryRepository.count();
 					PaymentHistory paymentHistory = new PaymentHistory();
@@ -103,6 +122,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 				} else {
 					// create history payment
+					// thanh toán thất bại
 					Long count = paymentHistoryRepository.count();
 					PaymentHistory paymentHistory = new PaymentHistory();
 					paymentHistory.setAmount(order.getTotal().longValue());
@@ -179,6 +199,7 @@ public class PaymentServiceImpl implements PaymentService {
 					TimeTable timeTable = seatOrder.getTimeTable();
 					invoice.setTimeStarted(timeTable.getStartedTime());
 				}
+				invoiceRepository.save(invoice);
 				dataResponse.setResponseMsg("Payment success !!!");
 				dataResponse.setRespType(Constant.HTTP_SUCCESS);
 				return dataResponse;
