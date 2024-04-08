@@ -15,7 +15,7 @@ public interface PriceDetailRepository extends JpaRepository<PriceDetail, Long>{
 	
 	List<PriceDetail> findByRouteIdAndTypeBusIdAndStatusAndPriceId(Long routeId, Long typeBusId, Integer status, Long priceId);
 	
-	List<PriceDetail> findByPriceId(Long priceId);
+	List<PriceDetail> findByPriceIdAndStatus(Long priceId,Integer status);
 	
 	@Query(value=" select pd.* from price_detail pd "
 			+ "INNER JOIN price p on pd.price_id = p.id and p.status = 1 "
