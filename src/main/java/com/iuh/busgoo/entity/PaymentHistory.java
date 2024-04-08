@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "order_detail")
+@Table(name = "payment_history")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
