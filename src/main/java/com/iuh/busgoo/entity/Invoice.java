@@ -1,6 +1,8 @@
 package com.iuh.busgoo.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -25,34 +27,40 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper=false)
-public class Invoice extends AbstractEntity implements Serializable{
+@EqualsAndHashCode(callSuper = false)
+public class Invoice extends AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(name = "code", length = 255)
-    private String code;
+	@Column(name = "code", length = 255)
+	private String code;
 
-    @Column(name="station_id")
-    private Long stationId;
+	@Column(name = "order_id")
+	private Long orderId;
 
-    @Column(name = "status")
-    private Integer status;
-    
-    @Column(name = "route_id")
-    private Long routeId;
-    
-    @Column(name = "time_booking")
-    private Date timeBooking;
-    
-    @ManyToOne
-    @JoinColumn(name = "promotion_detail_id")
-    private PromotionApply promotionApply;
-    
-    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<InvoiceDetail> invoiceDetails;
+	@Column(name = "user_id")
+	private Long userId;
+
+	@Column(name = "time_booking")
+	private LocalDate timeBooking;
+	
+	@Column(name = "time_started")
+	private LocalDateTime timeStarted;
+
+	@Column(name = "total")
+	private Double total;
+
+	@Column(name = "total_discount")
+	private Double totalDiscount;
+
+	@Column(name = "total_tiket_price")
+	private Double totalTiketPrice;
+
+	@Column(name = "status")
+	private Integer status;
+
 }

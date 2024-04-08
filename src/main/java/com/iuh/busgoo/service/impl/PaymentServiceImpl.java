@@ -2,6 +2,7 @@ package com.iuh.busgoo.service.impl;
 
 import java.lang.constant.Constable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,14 @@ import com.iuh.busgoo.config.VNPayConfig;
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.controller.PaymentController;
 import com.iuh.busgoo.dto.DataResponse;
+import com.iuh.busgoo.entity.Invoice;
 import com.iuh.busgoo.entity.Order;
+import com.iuh.busgoo.entity.OrderDetail;
 import com.iuh.busgoo.entity.PaymentHistory;
+import com.iuh.busgoo.entity.SeatOrder;
+import com.iuh.busgoo.entity.TimeTable;
+import com.iuh.busgoo.repository.InvoiceRepository;
+import com.iuh.busgoo.repository.OrderDetailRepository;
 import com.iuh.busgoo.repository.OrderRepository;
 import com.iuh.busgoo.repository.PaymentHistoryRepository;
 import com.iuh.busgoo.requestType.PaymentReturn;
@@ -23,9 +30,15 @@ public class PaymentServiceImpl implements PaymentService {
 
 	@Autowired
 	private OrderRepository orderRepository;
+	
+	@Autowired
+	private InvoiceRepository invoiceRepository;
 
 	@Autowired
 	private PaymentHistoryRepository paymentHistoryRepository;
+	
+	@Autowired
+	private OrderDetailRepository orderDetailRepository;
 
 	@Override
 	public DataResponse verifyPayment(PaymentReturn paymentReturn) {
@@ -149,6 +162,23 @@ public class PaymentServiceImpl implements PaymentService {
 				paymentHistoryRepository.save(paymentHistory);
 				order.setIsPay(1);
 				orderRepository.save(order);
+				Invoice invoice = new Invoice();
+				Long countInv = invoiceRepository.count();
+				invoice.setCode("INVC"+(countInv +1));
+				invoice.setOrderId(order.getId());
+				invoice.setUserId(order.getUser().getUserId());
+				invoice.setTimeBooking(order.getCreatedDate());
+				invoice.setTotal(order.getTotal());
+				invoice.setTotalDiscount(order.getTotalDiscount());
+				invoice.setTotalTiketPrice(order.getTotalTiketPrice());
+				invoice.setStatus(1);
+				List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(order.getId());
+				if(orderDetails!= null && orderDetails.size()>0) {
+					OrderDetail orderDetail = orderDetails.get(0);
+					SeatOrder seatOrder = orderDetail.getSeat();
+					TimeTable timeTable = seatOrder.getTimeTable();
+					invoice.setTimeStarted(timeTable.getStartedTime());
+				}
 				dataResponse.setResponseMsg("Payment success !!!");
 				dataResponse.setRespType(Constant.HTTP_SUCCESS);
 				return dataResponse;

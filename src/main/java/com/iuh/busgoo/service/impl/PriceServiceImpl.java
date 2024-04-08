@@ -325,7 +325,7 @@ public class PriceServiceImpl implements PriceService {
 			if (priceId == null) {
 				throw new Exception();
 			} else {
-				List<PriceDetail> lstPriceDetail = priceDetailRepository.findByPriceId(priceId);
+				List<PriceDetail> lstPriceDetail = priceDetailRepository.findByPriceIdAndStatus(priceId,1);
 				// trả về data
 				response.setResponseMsg("Get list PriceDetail success!!!");
 				response.setRespType(Constant.HTTP_SUCCESS);
