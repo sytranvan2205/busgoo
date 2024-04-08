@@ -12,5 +12,6 @@ import lombok.EqualsAndHashCode;
 public class OrderFilter extends AbstractListRequest{
 	private LocalDate fromDate;
 	private LocalDate toDate;
-	private Integer status;
+//	private Integer status;
+	private Integer statusPaying;
 }

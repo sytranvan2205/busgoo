@@ -296,7 +296,7 @@ public class OrderServiceImpl implements OrderService{
 			}else {
 				page = PageRequest.of(orderFilter.getPage(), orderFilter.getItemPerPage());
 			}
-			Page<Order> orderPage = orderRepository.findPageFilter(orderFilter.getStatus(),orderFilter.getFromDate(),orderFilter.getToDate(),orderFilter.getQ(),page);
+			Page<Order> orderPage = orderRepository.findPageFilter(orderFilter.getStatusPaying(),orderFilter.getFromDate(),orderFilter.getToDate(),orderFilter.getQ(),page);
 			List<Order> orders = orderPage.getContent();
 			List<OrderManagerDTO> ordeDtos = orderMapper.toDto(orders);
 			Page<OrderManagerDTO> orderDTOPage = PageUtils.createPageFromList(ordeDtos, page);

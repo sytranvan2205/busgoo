@@ -15,7 +15,7 @@ import com.iuh.busgoo.entity.Order;
 public interface OrderRepository extends JpaRepository<Order, Long>{
 	List<Order> findByStatus(Integer status);
 
-	@Query("select o from Order o where (:status is null or o.status = :status) "
+	@Query("select o from Order o where (:status is null or o.isPay = :status) "
 			+ "and (:fromDate is null or o.createdDate >= :fromDate ) "
 			+ "and (:toDate is null or o.createdDate <= :toDate ) "
 			+ "and (:q is null or o.code like :q )")

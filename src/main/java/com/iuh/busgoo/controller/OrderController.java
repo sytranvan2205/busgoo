@@ -41,7 +41,7 @@ public class OrderController {
 	
 	@GetMapping("/find")
 	@SecurityRequirement(name = "bearerAuth")
-	public DataResponse getOrder(@RequestParam(required = false) Integer status,
+	public DataResponse getOrder(@RequestParam(required = false) Integer statusPaying,
 			@RequestParam(required = false) LocalDate fromDate, @RequestParam(required = false) LocalDate toDate,
 			@RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam(required = false) String sortBy,
 			@RequestParam(required = false) String orderBy) {
@@ -52,7 +52,7 @@ public class OrderController {
 			orderFilter.setOrderBy(orderBy);
 			orderFilter.setPage(page);
 			orderFilter.setSortBy(sortBy);
-			orderFilter.setStatus(status);
+			orderFilter.setStatusPaying(statusPaying);
 			orderFilter.setToDate(toDate);
 			return orderService.getOrderByFilter(orderFilter);
 		} catch (Exception e) {

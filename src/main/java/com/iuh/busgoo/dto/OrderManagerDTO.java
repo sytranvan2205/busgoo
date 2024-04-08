@@ -1,5 +1,7 @@
 package com.iuh.busgoo.dto;
 
+import java.time.LocalDate;
+
 import lombok.Data;
 
 @Data
@@ -11,4 +13,5 @@ public class OrderManagerDTO {
 	private String userCode;
 	private String userName;
 	private Double total;
+	private LocalDate createDate;
 }
