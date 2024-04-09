@@ -10,10 +10,7 @@ import com.iuh.busgoo.entity.Price;
 import com.iuh.busgoo.entity.PromotionDetail;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import com.iuh.busgoo.constant.Constant;
@@ -199,7 +196,7 @@ public class UserServiceImpl implements UserService {
 				}
 				dto.setAddress(address.toString());
 			}
-			Page<UserDTO> userDtoPage = PageUtils.createPageFromList(dtos, page);
+			Page<UserDTO> userDtoPage = new PageImpl<>(dtos, page, pageUsers.getTotalElements());
 //			Page<User> pageUsers = userRepo.findAll(page);
 //			Page<User> pageUser = userRepo.findAll(page);
 			dataResponse.setResponseMsg("Get data success !!!");

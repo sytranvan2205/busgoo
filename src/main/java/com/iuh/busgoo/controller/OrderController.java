@@ -50,7 +50,7 @@ public class OrderController {
 			orderFilter.setFromDate(fromDate);
 			orderFilter.setItemPerPage(itemPerPage);
 			orderFilter.setOrderBy(orderBy);
-			orderFilter.setPage(page);
+			orderFilter.setPage(page - 1);
 			orderFilter.setSortBy(sortBy);
 			orderFilter.setStatusPaying(statusPaying);
 			orderFilter.setToDate(toDate);

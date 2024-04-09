@@ -62,7 +62,7 @@ public class PriceController {
 			priceFilter.setFromDate(fromDate);
 			priceFilter.setItemPerPage(itemPerPage);
 			priceFilter.setOrderBy(orderBy);
-			priceFilter.setPage(page);
+			priceFilter.setPage(page - 1);
 			priceFilter.setSortBy(sortBy);
 			priceFilter.setStatus(status);
 			priceFilter.setToDate(toDate);

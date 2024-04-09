@@ -44,7 +44,7 @@ public class TimeTableController {
 			filter.setStatus(status);
 			filter.setToId(toId);
 			filter.setDepartureDate(departureDate);
-			filter.setPage(page);
+			filter.setPage(page - 1);
 			filter.setItemPerPage(itemPerPage);
 			filter.setOrderBy(orderBy);
 			filter.setSortBy(sortBy);

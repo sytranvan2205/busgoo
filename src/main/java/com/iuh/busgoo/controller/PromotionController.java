@@ -34,7 +34,7 @@ public class PromotionController {
 			promotionFilter.setFromDate(fromDate);
 			promotionFilter.setItemPerPage(itemPerPage);
 			promotionFilter.setOrderBy(orderBy);
-			promotionFilter.setPage(page);
+			promotionFilter.setPage(page - 1);
 			promotionFilter.setSortBy(sortBy);
 			promotionFilter.setStatus(status);
 			promotionFilter.setToDate(toDate);

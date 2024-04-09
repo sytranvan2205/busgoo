@@ -56,7 +56,7 @@ public class UserController {
 		FilterUserRq filterUserRq = new FilterUserRq();
 		filterUserRq.setStatus(status);
 		filterUserRq.setItemPerPage(itemPerPage);
-		filterUserRq.setPage(page);
+		filterUserRq.setPage(page - 1);
 		filterUserRq.setQ(q);
 		filterUserRq.setSortBy(sortBy);
 		filterUserRq.setOrderBy(orderBy);

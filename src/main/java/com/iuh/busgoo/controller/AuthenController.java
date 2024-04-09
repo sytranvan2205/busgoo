@@ -3,6 +3,8 @@ package com.iuh.busgoo.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.iuh.busgoo.entity.User;
+import com.iuh.busgoo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,9 +36,10 @@ public class AuthenController {
 	
 	@Autowired
 	private AccountService accountService;
-	
-//	@Autowired
-//	private UserService userService;
+
+
+	@Autowired
+	private UserService userService;
 	
 	@PostMapping("/login")
 	public DataResponse authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -49,12 +52,13 @@ public class AuthenController {
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			
 			String jwt = tokenProvider.generateToken((CustomUserDetail) authentication.getPrincipal());
-//			User user = userService.fundUserByEmail(loginRequest.getEmail());
+			User user = userService.findUserByEmail(loginRequest.getEmail());
 			
 			dataResponse.setResponseMsg("Login successful!!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
 			Map<String, Object> reponseValue = new HashMap<>();
 			reponseValue.put("token", jwt);
+			reponseValue.put("id", user.getUserId());
 			dataResponse.setValueReponse(reponseValue);
 			
 		} catch (Exception e) {

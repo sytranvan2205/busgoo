@@ -31,7 +31,7 @@ public class RouteController {
 			filter.setFromId(fromId);
 			filter.setToId(toId);
 			filter.setStatus(status);
-			filter.setPage(page);
+			filter.setPage(page - 1);
 			filter.setItemPerPage(itemPerPage);
 			filter.setOrderBy(orderBy);
 			filter.setSortBy(sortBy);
