@@ -302,12 +302,12 @@ public class PriceServiceImpl implements PriceService {
 				priceDetail.setTypeBus(typeBus);
 				priceDetail.setStatus(1);
 				priceDetail.setValue(request.getPriceValue());
-				priceDetailRepository.save(priceDetail);
+				PriceDetail newPrice = priceDetailRepository.save(priceDetail);
 				// trả về data
 				response.setResponseMsg("PriceDetail create success!!!");
 				response.setRespType(Constant.HTTP_SUCCESS);
 				Map<String, Object> reponseValue = new HashMap<>();
-				reponseValue.put("data", priceDetail);
+//				reponseValue.put("data", newPrice);
 				response.setValueReponse(reponseValue);
 				return response;
 			}
