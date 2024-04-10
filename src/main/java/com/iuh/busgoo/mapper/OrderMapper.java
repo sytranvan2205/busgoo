@@ -12,5 +12,6 @@ public interface OrderMapper extends BaseMapper<Order, OrderManagerDTO> {
 	
 	@Mapping(target = "userName", source = "user.fullName" )
 	@Mapping(target = "userCode",source = "user.userCode")
+	@Mapping(target ="createDate",source = "createdDate")
 	OrderManagerDTO toDto(Order order);
 }

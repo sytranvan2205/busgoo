@@ -131,7 +131,7 @@ public class PromotionServiceImpl implements PromotionService {
 			}
 			dataResponse.setResponseMsg("Get promotion line success!!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
-			List<PromotionLine> promotionLines = lineRepo.findByPromotionId(promotionId);
+			List<PromotionLine> promotionLines = lineRepo.findByPromotionIdAndStatus(promotionId,1);
 			Map<String, Object> respValue = new HashMap<>();
 			respValue.put("data", promotionLines);
 			dataResponse.setValueReponse(respValue);

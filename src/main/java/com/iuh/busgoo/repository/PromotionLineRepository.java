@@ -37,4 +37,6 @@ public interface PromotionLineRepository extends JpaRepository<PromotionLine, Lo
 			+ "and pd.condition_apply <= :total "
 			+ "and pl.status =1 ", nativeQuery = true)
 	List<PromotionLine> findPromotionLineByCondition(LocalDate currDate, BigDecimal total );
+
+	List<PromotionLine> findByPromotionIdAndStatus(Long promotionId, Integer i);
 }
