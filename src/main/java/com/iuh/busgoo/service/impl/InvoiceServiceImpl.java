@@ -1,5 +1,7 @@
 package com.iuh.busgoo.service.impl;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,7 @@ import com.iuh.busgoo.entity.Order;
 import com.iuh.busgoo.entity.OrderDetail;
 import com.iuh.busgoo.entity.RegionDetail;
 import com.iuh.busgoo.entity.Route;
+import com.iuh.busgoo.entity.SeatOrder;
 import com.iuh.busgoo.entity.TimeTable;
 import com.iuh.busgoo.entity.User;
 import com.iuh.busgoo.filter.InvoiceFilter;
@@ -31,7 +34,9 @@ import com.iuh.busgoo.repository.InvoiceRepository;
 import com.iuh.busgoo.repository.OrderDetailRepository;
 import com.iuh.busgoo.repository.OrderRepository;
 import com.iuh.busgoo.repository.RegionDetailRepository;
+import com.iuh.busgoo.repository.SeatOrderRepository;
 import com.iuh.busgoo.repository.UserRepository;
+import com.iuh.busgoo.requestType.ReturnRequest;
 import com.iuh.busgoo.service.InvoiceService;
 
 @Service
@@ -57,6 +62,9 @@ public class InvoiceServiceImpl implements InvoiceService{
 	
 	@Autowired
 	private OrderDetailMapper orderDetailMapper;
+	
+	@Autowired
+	private SeatOrderRepository seatOrderRepository;
 
 	@Override
 	public DataResponse getInvoiceByFilter(InvoiceFilter invoiceFilter) {
@@ -175,5 +183,56 @@ public class InvoiceServiceImpl implements InvoiceService{
 			return dataResponse;
 		}
 	}
+
+	@Override
+	public DataResponse returnInvoice(ReturnRequest returnRequest) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			LocalDate currDate = LocalDate.now();
+			Invoice invoice = invoiceRepository.getById(returnRequest.getInvoiceId());
+			if(invoice == null) {
+				throw new Exception();
+			}else {
+				LocalDate timeStarted = invoice.getTimeStarted().toLocalDate();
+				if(currDate.plusDays(2).isBefore(timeStarted)) {
+					if(returnRequest.getReason() == null || returnRequest.getReason().trim().length()==0) {
+						dataResponse.setResponseMsg("The reason for return cannot be left blank.");
+						dataResponse.setRespType(Constant.RETURN_INVOICE_FAILED);
+						return dataResponse;
+					}else {
+						invoice.setStatus(0);
+						invoice.setReason(returnRequest.getReason());
+						invoiceRepository.save(invoice);
+						//update lại trạng thái hóa đơn
+						Order order = orderRepository.getById(invoice.getOrderId());
+						order.setStatus(0);
+						orderRepository.save(order);
+						List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(order.getId());
+						for(OrderDetail orderDetail : orderDetails) {
+							//update lại ghế trống
+							SeatOrder seatOrder = orderDetail.getSeat();
+							seatOrder.setIsAvailable(true);
+							seatOrderRepository.save(seatOrder);
+							//update lại trạng thái chi tiết hóa đơn
+//							orderDetail.setSeat(null);
+//							orderDetailRepository.save(orderDetail);
+						}
+						dataResponse.setResponseMsg("Return order success !!!");
+						dataResponse.setRespType(Constant.HTTP_SUCCESS);
+						return dataResponse;
+					}
+				}else {
+					dataResponse.setResponseMsg("The invoice due date must be at least 2 days before the departure date.");
+					dataResponse.setRespType(Constant.RETURN_INVOICE_FAILED);
+					return dataResponse;
+				}
+			}
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
 
 }

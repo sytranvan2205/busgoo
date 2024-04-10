@@ -52,4 +52,5 @@ public class Constant {
 	public static final Integer DISCOUNT_INVALID = 148;
 	public static final Integer SEAT_IS_NOT_AVAILABLE = 149;
 	public static final Integer PAYMENT_FAILED = 150;
+	public static final Integer RETURN_INVOICE_FAILED = 151;
 }

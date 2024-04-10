@@ -18,6 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>{
 	@Query("select o from Order o where (:status is null or o.isPay = :status) "
 			+ "and (:fromDate is null or o.createdDate >= :fromDate ) "
 			+ "and (:toDate is null or o.createdDate <= :toDate ) "
-			+ "and (:q is null or o.code like :q )")
+			+ "and (:q is null or o.code like :q )"
+			+ "and status = 1")
 	Page<Order> findPageFilter(Integer status, LocalDate fromDate, LocalDate toDate, String q, Pageable page);
 }
