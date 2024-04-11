@@ -93,6 +93,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 				}else {
 					dto.setUserCode(user.getUserCode());
 					dto.setUserName(user.getFullName());
+					dto.setUserPhone(user.getPhone());
 				}
 				Order order = orderRepository.getById(dto.getOrderId());
 				if(order == null) {
@@ -146,6 +147,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 				}else {
 					invoiceDTO.setUserCode(user.getUserCode());
 					invoiceDTO.setUserName(user.getFullName());
+					invoiceDTO.setUserPhone(user.getPhone());
 				}
 				// set data full address
 				StringBuilder address = new StringBuilder();

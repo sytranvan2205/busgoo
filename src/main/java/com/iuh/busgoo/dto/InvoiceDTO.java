@@ -39,6 +39,7 @@ public class InvoiceDTO {
 	private Integer status;
 	
 	private String userAddress;
+	private String userPhone;
 	
 	private List<OrderDetailDTO> list;
 	
