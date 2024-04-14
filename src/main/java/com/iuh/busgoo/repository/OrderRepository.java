@@ -21,4 +21,8 @@ public interface OrderRepository extends JpaRepository<Order, Long>{
 			+ "and (:q is null or o.code like :q )"
 			+ "and status = 1")
 	Page<Order> findPageFilter(Integer status, LocalDate fromDate, LocalDate toDate, String q, Pageable page);
+
+	List<Order> findByUserId(Long userId);
+
+	List<Order> findByUserUserIdAndStatus(Long userId, Integer status);
 }

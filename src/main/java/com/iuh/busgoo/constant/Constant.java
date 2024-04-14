@@ -1,11 +1,15 @@
 package com.iuh.busgoo.constant;
 
 public class Constant {
-
+	
+	// template
+	public static final String RESOURCE_TEMPLATE_PATH = "template/report/";
+	public static final String SALE_TEMPLATE_REPORT = "Bao_cao_doanh_thu_hang_xe_theo_thoi_gian.xlsx";
+	
 	public static final String SYSTEM = "SYSTEM";
 	public static final String USER = "USER";
 	
-	//Cote system
+	//Code system
 	public static final Integer HTTP_SUCCESS = 200;
 	public static final Integer SYSTEM_ERROR_CODE = 500;
 	public static final Integer ACCOUNT_VERIFY_FAILD = 501;

@@ -1,6 +1,7 @@
 package com.iuh.busgoo.repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,5 +25,20 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long>{
 			+ "and (:toDate is null or o.createdDate <= :toDate ) "
 			+ "and (:q is null or o.code like :q )")
 	Page<Invoice> findPageFilter(Integer status, LocalDate fromDate, LocalDate toDate, String q, Pageable page);
+
+	
+	@Query(value = "select i.* from invoice i "
+			+ "inner join reservation o on i.order_id = o.id and o.status =1  "
+			+ "inner join order_detail od on o.id = od.order_id "
+			+ "inner join seat_order so on so.id = od.seat_id "
+			+ "inner join time_table tb on tb.id = so.time_table_id and tb.status =1 "
+			+ "inner join bus b on tb.bus_id = b.id and b.status = 1 "
+			+ "where b.id = :id "
+			+ "and (:fromDate is null or i.created_date >= :fromDate )"
+			+ "and (:toDate is null or i.created_date <= :toDate) ", nativeQuery = true)
+	List<Invoice> findByBusIdAndFromDateAndToDate(Long id, LocalDate fromDate, LocalDate toDate);
+
+
+	List<Invoice> findByUserId(Long userId);
 
 }

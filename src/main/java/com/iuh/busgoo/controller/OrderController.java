@@ -3,6 +3,8 @@ package com.iuh.busgoo.controller;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +17,7 @@ import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.filter.OrderFilter;
 import com.iuh.busgoo.filter.PriceFilter;
 import com.iuh.busgoo.requestType.OrderCreateRequest;
+import com.iuh.busgoo.secirity.CustomUserDetail;
 import com.iuh.busgoo.service.OrderService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -76,5 +79,38 @@ public class OrderController {
 		}
 	}
 	
+	@GetMapping("/mobile/find")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse findOrderForMobile(@RequestParam Long userId){
+		try {
+			return orderService.getListOrderByUserId(userId);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+//	@GetMapping("/mobile/get")
+//	@SecurityRequirement(name = "bearerAuth")
+//	public DataResponse getOrderDetailForMobile(@RequestParam Long orderId, Long userId) {
+//		try {
+//			String userCode;
+//			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//	        if (authentication != null && authentication.isAuthenticated()) {
+//	            CustomUserDetail currentUser =  (CustomUserDetail) authentication.getPrincipal();
+//	            userCode = currentUser.getAccount().getUser().getUserCode();
+//	        }else {
+//	        	throw new Exception();
+//	        }
+//			return orderService.getOrderByCurrentUser(userCode);
+//		} catch (Exception e) {
+//			DataResponse dataResponse = new DataResponse();
+//			dataResponse.setResponseMsg("System error");
+//			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+//			return dataResponse;
+//		}
+//	}
 		
 }

@@ -379,4 +379,34 @@ public class OrderServiceImpl implements OrderService{
 		}
 	}
 
+	@Override
+	public DataResponse getOrderByCurrentUser(String userCode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DataResponse getListOrderByUserId(Long userId) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			User user = userRepository.getById(userId);
+			if(user == null) {
+				throw new Exception();
+			}else {
+				List<Order> orders = orderRepository.findByUserUserIdAndStatus(userId,1);
+				List<OrderManagerDTO> ordeDtos = orderMapper.toDto(orders);
+				dataResponse.setResponseMsg("Get orders success !!!");
+				dataResponse.setRespType(Constant.HTTP_SUCCESS);
+				Map<String, Object> respValue = new HashMap<>();
+				respValue.put("data",ordeDtos);
+				dataResponse.setValueReponse(respValue);
+				return dataResponse;
+			}
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
 }

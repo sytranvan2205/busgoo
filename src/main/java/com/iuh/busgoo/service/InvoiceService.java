@@ -10,4 +10,6 @@ public interface InvoiceService {
 	DataResponse getInvoiceById(Long invoiceId);
 
 	DataResponse returnInvoice(ReturnRequest returnRequest);
+
+	DataResponse getInvoiceForMobileId(Long userId);
 }

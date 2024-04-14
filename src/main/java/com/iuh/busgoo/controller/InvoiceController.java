@@ -74,5 +74,18 @@ public class InvoiceController {
 			return dataResponse;
 		}
 	}
+	
+	@GetMapping("/mobile/find")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse findInvoiceForMobile(Long userId) {
+		try {
+			return invoiceService.getInvoiceForMobileId(userId);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
 		
 }

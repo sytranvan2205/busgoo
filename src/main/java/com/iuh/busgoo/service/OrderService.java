@@ -19,5 +19,9 @@ public interface OrderService {
 	DataResponse getOrderByFilter(OrderFilter orderFilter);
 
 	DataResponse getOrderById(Long orderId);
+
+	DataResponse getOrderByCurrentUser(String userCode);
+
+	DataResponse getListOrderByUserId(Long userId);
 	
 }

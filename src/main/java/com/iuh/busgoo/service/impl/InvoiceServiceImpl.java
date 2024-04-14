@@ -236,5 +236,59 @@ public class InvoiceServiceImpl implements InvoiceService{
 		}
 	}
 
+	@Override
+	public DataResponse getInvoiceForMobileId(Long userId) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			User user = userRepository.getById(userId);
+			if (user == null) {
+				throw new Exception();
+			}else {
+				List<Invoice> invoices = invoiceRepository.findByUserId(userId);
+				List<InvoiceDTO> invoiceDTOs = invoiceMapper.toDto(invoices);
+				for(InvoiceDTO dto: invoiceDTOs) {
+					if(user == null) {
+						throw new Exception();
+					}else {
+						dto.setUserCode(user.getUserCode());
+						dto.setUserName(user.getFullName());
+						dto.setUserPhone(user.getPhone());
+					}
+					Order order = orderRepository.getById(dto.getOrderId());
+					if(order == null) {
+						throw new Exception();
+					}else {
+						List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(order.getId());
+						StringBuilder strSeatName = new StringBuilder();
+						for(OrderDetail detail:orderDetails) {
+							strSeatName.append(detail.getSeat().getSeatName());
+							strSeatName.append(", ");
+						}
+						String seatName = strSeatName.toString().trim();
+						if (seatName.length()>0) {
+							seatName = seatName.substring(0,(seatName.length()-1));
+						}
+						dto.setStrLstSeatName(seatName);
+						TimeTable timeTable = orderDetails.get(0).getSeat().getTimeTable();
+						Route route = timeTable.getRoute();
+						String bustrip = route.getFrom().getFullName()+" - "+ route.getTo().getFullName();
+						dto.setBusTrip(bustrip);
+						
+					}
+				}
+				dataResponse.setResponseMsg("Get invoices success !!!");
+				dataResponse.setRespType(Constant.HTTP_SUCCESS);
+				Map<String, Object> respValue = new HashMap<>();
+				respValue.put("data",invoiceDTOs);
+				dataResponse.setValueReponse(respValue);
+				return dataResponse;
+			}
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
 
 }
