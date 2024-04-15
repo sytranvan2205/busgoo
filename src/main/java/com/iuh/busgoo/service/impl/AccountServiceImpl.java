@@ -81,19 +81,29 @@ public class AccountServiceImpl implements AccountService {
 				return response;
 			}
 			User checkPhoneExist = userRepo.findByPhone(accountCreateRequest.getPhone());
+			User userTmp;
 			if(checkPhoneExist != null) {
-				response.setRespType(Constant.PHONE_IS_EXIST);
-				response.setResponseMsg("Phone has exist");
-				return response;
+				Account checkAccountExist = accountRepository.findAccountByUserUserId(checkPhoneExist.getUserId());
+				if (checkAccountExist != null) {
+					response.setRespType(Constant.PHONE_IS_EXIST);
+					response.setResponseMsg("Phone has exist");
+					return response;
+				}else {
+					userTmp = checkPhoneExist;
+					userTmp.setFullName(accountCreateRequest.getFullName());
+					userTmp = userRepo.save(userTmp);
+				}
+			}else {
+				// create new user
+				userTmp = new User();
+				userTmp.setFullName(accountCreateRequest.getFullName());
+				userTmp.setPhone(accountCreateRequest.getPhone());
+				Long countUser = userRepo.count();
+				userTmp.setUserCode("US" + (countUser++).toString());
+				userTmp.setStatus(1);
+				userTmp = userRepo.save(userTmp);
 			}
-			// create new user
-			User userTmp = new User();
-			userTmp.setFullName(accountCreateRequest.getFullName());
-			userTmp.setPhone(accountCreateRequest.getPhone());
-			Long countUser = userRepo.count();
-			userTmp.setUserCode("US"+(countUser++).toString());
-			userTmp.setStatus(1);
-			User user = userRepo.save(userTmp);
+			
 			
 			// authorization
 			Role role = roleRepository.findByCodeAndStatus(Constant.USER,1);
@@ -105,7 +115,7 @@ public class AccountServiceImpl implements AccountService {
 			accountTmp.setEmail(accountCreateRequest.getEmail());
 			accountTmp.setRole(role);
 			accountTmp.setIsActive(0);
-			accountTmp.setUser(user);
+			accountTmp.setUser(userTmp);
 			accountTmp.setPassword(passwordEncoder.encode(accountCreateRequest.getPassword()));
 			Account account = accountRepository.save(accountTmp);
 			

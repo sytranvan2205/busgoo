@@ -52,7 +52,7 @@ public class AbstractEntity implements Serializable{
     
     public String getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
+        if (authentication != null && authentication.isAuthenticated() && !authentication.getPrincipal().equals("anonymousUser")) {
             CustomUserDetail currentUser =  (CustomUserDetail) authentication.getPrincipal();
             return currentUser.getAccount().getUser().getUserCode();
         }

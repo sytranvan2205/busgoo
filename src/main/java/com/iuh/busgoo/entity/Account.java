@@ -42,11 +42,11 @@ public class Account extends AbstractEntity implements Serializable {
     @Column(name = "is_active")
     private Integer isActive;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
     
