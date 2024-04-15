@@ -59,6 +59,8 @@ public class AuthenController {
 			Map<String, Object> reponseValue = new HashMap<>();
 			reponseValue.put("token", jwt);
 			reponseValue.put("id", user.getUserId());
+			reponseValue.put("name", user.getFullName());
+			reponseValue.put("email", loginRequest.getEmail());
 			dataResponse.setValueReponse(reponseValue);
 			
 		} catch (Exception e) {
