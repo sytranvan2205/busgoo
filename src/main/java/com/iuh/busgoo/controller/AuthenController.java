@@ -122,4 +122,18 @@ public class AuthenController {
 		}
 	}
 	
+	@PostMapping("/api/logout")
+    public DataResponse logout() {
+		DataResponse dataResponse = new DataResponse();
+		try {
+	        SecurityContextHolder.clearContext();
+	        dataResponse.setResponseMsg("Logout successful !!!");
+	        dataResponse.setRespType(Constant.HTTP_SUCCESS);
+		} catch (Exception e) {
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			dataResponse.setResponseMsg("System is error");
+		}
+		return dataResponse;
+    }
+	
 }

@@ -68,7 +68,13 @@ public class SecurityConfig {
 						.requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll().anyRequest().authenticated());
 		http.authenticationProvider(authenticationProvider());
 		http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-		
+		// Cấu hình đăng xuất
+		http.logout(logout -> logout
+	            .logoutUrl("/api/logout") // URL endpoint đăng xuất
+//	            .logoutSuccessUrl("/auth/login") // URL điều hướng sau khi đăng xuất thành công
+	            .invalidateHttpSession(true) // Vô hiệu hóa phiên làm việc
+	            .deleteCookies("JSESSIONID") // Xóa cookie phiên làm việc
+	        );
 		return http.build();
 	}
 	@Bean
