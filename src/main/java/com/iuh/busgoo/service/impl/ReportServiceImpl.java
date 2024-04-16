@@ -9,10 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +27,8 @@ import com.iuh.busgoo.entity.Bus;
 import com.iuh.busgoo.entity.Invoice;
 import com.iuh.busgoo.repository.BusRepository;
 import com.iuh.busgoo.repository.InvoiceRepository;
+import com.iuh.busgoo.repository.OrderRepository;
+import com.iuh.busgoo.repository.UserRepository;
 import com.iuh.busgoo.service.ReportService;
 
 import net.sf.jxls.exception.ParsePropertyException;
@@ -41,6 +42,12 @@ public class ReportServiceImpl implements ReportService {
 	
 	@Autowired
 	private InvoiceRepository invoiceRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
+	private OrderRepository orderRepository;
 	
 	@Override
 	public DataResponse salesByBusExport(LocalDate fromDate, LocalDate toDate) throws IOException {
@@ -107,6 +114,50 @@ public class ReportServiceImpl implements ReportService {
 			if(os != null) {
 				os.close();
 			}
+		}
+	}
+
+	@Override
+	public DataResponse getDataForDashBoard() {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			LocalDate currentDate = LocalDate.now();
+			LocalDate firstDayOfMonth = currentDate.with(TemporalAdjusters.firstDayOfMonth());
+			LocalDate firstDayOfPreviousMonth = currentDate.with(TemporalAdjusters.firstDayOfMonth()).minusMonths(1);
+			LocalDate lastDayOfPreviousMonth = currentDate.with(TemporalAdjusters.firstDayOfMonth()).minusDays(1);
+			Long countInvoiceInCurrMonth = invoiceRepository.countDataForDashboard(firstDayOfMonth,currentDate);
+			Long countNewUserInCurrMonth = userRepository.countDataForDashboard(firstDayOfMonth,currentDate);
+			Double sumTotalInvoiceInMonth = invoiceRepository.sumTotalInvoiceInMonth(firstDayOfMonth,currentDate);
+			Long countOrderInprogress = orderRepository.countOrderInprogress(firstDayOfMonth,currentDate);
+			
+			Long countInvoiceLastMonth = invoiceRepository.countDataForDashboard(firstDayOfPreviousMonth,lastDayOfPreviousMonth);
+			Long countNewUserLastMonth = userRepository.countDataForDashboard(firstDayOfPreviousMonth,lastDayOfPreviousMonth);
+			Double sumTotalInvoiceLastMonth = invoiceRepository.sumTotalInvoiceInMonth(firstDayOfPreviousMonth,lastDayOfPreviousMonth);
+			Long countOrderInprogressLastMonth = orderRepository.countOrderInprogress(firstDayOfPreviousMonth,lastDayOfPreviousMonth);
+			
+//			Double percentInvoiceNew = (1- (countInvoiceLastMonth*1.0/countInvoiceInCurrMonth))*100;
+//			Double percentUserNew = (1- (countNewUserLastMonth*1.0/countNewUserInCurrMonth))*100;
+//			Double percentIncome = (1- (sumTotalInvoiceLastMonth*1.0/sumTotalInvoiceInMonth))*100;
+//			Double percentOrderInprogress = (1- (countOrderInprogressLastMonth*1.0/countOrderInprogress))*100;
+			
+			dataResponse.setResponseMsg("Get data success !!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("countInvoice",countInvoiceInCurrMonth);
+			respValue.put("countUser", countNewUserInCurrMonth);
+			respValue.put("income", sumTotalInvoiceInMonth);
+			respValue.put("countOrderInprogress", countOrderInprogress);
+//			respValue.put("percentInvoiceNew", percentInvoiceNew);
+//			respValue.put("percentUserNew", percentUserNew);
+//			respValue.put("percentIncome", percentIncome);
+//			respValue.put("percentOrderInprogress", percentOrderInprogress);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
+		} catch (Exception e) {
+			e.printStackTrace();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
 		}
 	}
 

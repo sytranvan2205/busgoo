@@ -25,4 +25,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>{
 //	List<Order> findByUserId(Long userId);
 
 	List<Order> findByUserUserIdAndStatus(Long userId, Integer status);
+
+	@Query("select count(o) from Order o where o.createdDate >= :firstDayOfMonth and o.createdDate<= :currentDate and o.isPay = 0 ")
+	Long countOrderInprogress(LocalDate firstDayOfMonth, LocalDate currentDate);
 }

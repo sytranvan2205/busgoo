@@ -1,5 +1,6 @@
 package com.iuh.busgoo.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -32,5 +33,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Page<User> findByFullNameContaining(String fullName, Pageable pageable );
 	
 	Page<User> findByStatus(Integer status, Pageable pageable );
+
+	@Query("select count(u) from User u where u.createdDate >= :firstDayOfMonth and u.createdDate <= :currentDate ")
+	Long countDataForDashboard(LocalDate firstDayOfMonth, LocalDate currentDate);
 	
 }

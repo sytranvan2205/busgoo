@@ -41,4 +41,10 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long>{
 
 	List<Invoice> findByUserId(Long userId);
 
+	@Query("select count(i) from Invoice i where i.createdDate >= :firstDayOfMonth and i.createdDate <= :currentDate ")
+	Long countDataForDashboard(LocalDate firstDayOfMonth, LocalDate currentDate);
+
+	@Query("select sum(i.total) from Invoice i where i.createdDate >= :firstDayOfMonth and i.createdDate <= :currentDate ")
+	Double sumTotalInvoiceInMonth(LocalDate firstDayOfMonth, LocalDate currentDate);
+
 }

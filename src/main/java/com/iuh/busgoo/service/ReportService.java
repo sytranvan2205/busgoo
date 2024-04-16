@@ -9,4 +9,6 @@ public interface ReportService {
 
 	DataResponse salesByBusExport(LocalDate fromDate, LocalDate toDate)  throws IOException ;
 
+	DataResponse getDataForDashBoard();
+
 }

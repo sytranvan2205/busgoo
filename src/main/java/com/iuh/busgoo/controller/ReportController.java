@@ -36,4 +36,18 @@ public class ReportController {
 		
 	}
 	
+	@GetMapping("/dashboard")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse getDataForDashBoard() {
+		try {
+			return reportService.getDataForDashBoard();
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+		
+	}
+	
 }
