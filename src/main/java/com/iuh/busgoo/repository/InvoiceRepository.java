@@ -47,4 +47,10 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long>{
 	@Query("select sum(i.total) from Invoice i where i.createdDate >= :firstDayOfMonth and i.createdDate <= :currentDate ")
 	Double sumTotalInvoiceInMonth(LocalDate firstDayOfMonth, LocalDate currentDate);
 
+	@Query("select o from Invoice o where ( o.status = 0) "
+			+ "and (:fromDate is null or o.createdDate >= :fromDate ) "
+			+ "and (:toDate is null or o.createdDate <= :toDate ) "
+			+ "and (:q is null or o.code like :q )")
+	Page<Invoice> findPageFilterReturn(LocalDate fromDate, LocalDate toDate, String q, Pageable page);
+
 }

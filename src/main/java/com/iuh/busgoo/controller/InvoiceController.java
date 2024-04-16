@@ -87,5 +87,29 @@ public class InvoiceController {
 			return dataResponse;
 		}
 	}
+	
+	@GetMapping("/find-invoice-return")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse getInvoiceReturn(@RequestParam(required = false) Integer status,
+			@RequestParam(required = false) LocalDate fromDate, @RequestParam(required = false) LocalDate toDate,
+			@RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam(required = false) String sortBy,
+			@RequestParam(required = false) String orderBy) {
+		try {
+			InvoiceFilter invoiceFilter = new InvoiceFilter();
+			invoiceFilter.setFromDate(fromDate);
+			invoiceFilter.setItemPerPage(itemPerPage);
+			invoiceFilter.setOrderBy(orderBy);
+			invoiceFilter.setPage(page - 1);
+			invoiceFilter.setSortBy(sortBy);
+			invoiceFilter.setStatus(status);
+			invoiceFilter.setToDate(toDate);
+			return invoiceService.getInvoiceReturnByFilter(invoiceFilter);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
 		
 }

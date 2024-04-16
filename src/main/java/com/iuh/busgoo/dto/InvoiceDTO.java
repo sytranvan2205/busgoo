@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data
@@ -46,4 +47,6 @@ public class InvoiceDTO {
 	private LocalDate dateStarted;
 	
 	private LocalTime startedTime;
+	
+	private String reason;
 }

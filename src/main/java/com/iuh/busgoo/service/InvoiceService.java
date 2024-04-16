@@ -12,4 +12,6 @@ public interface InvoiceService {
 	DataResponse returnInvoice(ReturnRequest returnRequest);
 
 	DataResponse getInvoiceForMobileId(Long userId);
+
+	DataResponse getInvoiceReturnByFilter(InvoiceFilter invoiceFilter);
 }

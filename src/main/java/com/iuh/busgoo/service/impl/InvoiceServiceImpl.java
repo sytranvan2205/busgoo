@@ -290,5 +290,69 @@ public class InvoiceServiceImpl implements InvoiceService{
 		}
 	}
 
+	@Override
+	public DataResponse getInvoiceReturnByFilter(InvoiceFilter invoiceFilter) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			Pageable page;
+			Sort sort;
+			if(invoiceFilter.getSortBy() != null && invoiceFilter.getOrderBy() != null) {
+				if(invoiceFilter.getSortBy().toUpperCase().equals("ASC")) {
+					sort = Sort.by(invoiceFilter.getOrderBy()).ascending();
+				}else {
+					sort = Sort.by(invoiceFilter.getOrderBy()).descending();
+				}
+				page= PageRequest.of(invoiceFilter.getPage(), invoiceFilter.getItemPerPage(), sort);
+			}else {
+				page = PageRequest.of(invoiceFilter.getPage(), invoiceFilter.getItemPerPage());
+			}
+			Page<Invoice> invoicePage = invoiceRepository.findPageFilterReturn(invoiceFilter.getFromDate(),invoiceFilter.getToDate(),invoiceFilter.getQ(),page);
+			List<Invoice> invoices = invoicePage.getContent();
+			List<InvoiceDTO> invoiceDTOs = invoiceMapper.toDto(invoices);
+			for(InvoiceDTO dto: invoiceDTOs) {
+				User user = userRepository.getById(dto.getUserId());
+				if(user == null) {
+					throw new Exception();
+				}else {
+					dto.setUserCode(user.getUserCode());
+					dto.setUserName(user.getFullName());
+					dto.setUserPhone(user.getPhone());
+				}
+				Order order = orderRepository.getById(dto.getOrderId());
+				if(order == null) {
+					throw new Exception();
+				}else {
+					List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(order.getId());
+					StringBuilder strSeatName = new StringBuilder();
+					for(OrderDetail detail:orderDetails) {
+						strSeatName.append(detail.getSeat().getSeatName());
+						strSeatName.append(", ");
+					}
+					String seatName = strSeatName.toString().trim();
+					if (seatName.length()>0) {
+						seatName = seatName.substring(0,(seatName.length()-1));
+					}
+					dto.setStrLstSeatName(seatName);
+					TimeTable timeTable = orderDetails.get(0).getSeat().getTimeTable();
+					Route route = timeTable.getRoute();
+					String bustrip = route.getFrom().getFullName()+" - "+ route.getTo().getFullName();
+					dto.setBusTrip(bustrip);
+				}
+			}
+			Page<InvoiceDTO> invoiceDTOPage = new PageImpl<>(invoiceDTOs, page, invoicePage.getTotalElements());
+			
+			dataResponse.setResponseMsg("Get invoice return success !!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data",invoiceDTOPage);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
 
 }
