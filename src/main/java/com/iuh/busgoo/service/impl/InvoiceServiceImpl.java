@@ -244,7 +244,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 			if (user == null) {
 				throw new Exception();
 			}else {
-				List<Invoice> invoices = invoiceRepository.findByUserId(userId);
+				List<Invoice> invoices = invoiceRepository.findByUserIdOrderByCreatedDateDescIdDesc(userId);
 				List<InvoiceDTO> invoiceDTOs = invoiceMapper.toDto(invoices);
 				for(InvoiceDTO dto: invoiceDTOs) {
 					if(user == null) {

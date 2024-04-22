@@ -39,7 +39,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long>{
 	List<Invoice> findByBusIdAndFromDateAndToDate(Long id, LocalDate fromDate, LocalDate toDate);
 
 
-	List<Invoice> findByUserId(Long userId);
+	List<Invoice> findByUserIdOrderByCreatedDateDescIdDesc(Long userId);
 
 	@Query("select count(i) from Invoice i where i.createdDate >= :firstDayOfMonth and i.createdDate <= :currentDate ")
 	Long countDataForDashboard(LocalDate firstDayOfMonth, LocalDate currentDate);

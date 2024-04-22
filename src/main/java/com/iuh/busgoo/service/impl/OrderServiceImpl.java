@@ -393,7 +393,7 @@ public class OrderServiceImpl implements OrderService{
 			if(user == null) {
 				throw new Exception();
 			}else {
-				List<Order> orders = orderRepository.findByUserUserIdAndStatus(userId,1);
+				List<Order> orders = orderRepository.findByUserUserIdAndStatusOrderByCreatedDateDescIdDesc(userId,1);
 				List<OrderManagerDTO> ordeDtos = orderMapper.toDto(orders);
 				dataResponse.setResponseMsg("Get orders success !!!");
 				dataResponse.setRespType(Constant.HTTP_SUCCESS);
