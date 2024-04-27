@@ -7,4 +7,8 @@ public class ReportDTO {
 	private String busType;
 	private String busName;
 	private Long revenue;
+	private Long ticketPrice;
+	private Long discount;
+	private String busCode;
+	private String typeBusCode;
 }
