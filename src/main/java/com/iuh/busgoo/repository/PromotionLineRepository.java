@@ -40,6 +40,6 @@ public interface PromotionLineRepository extends JpaRepository<PromotionLine, Lo
 
 	List<PromotionLine> findByPromotionIdAndStatus(Long promotionId, Integer i);
 
-	@Query("select pl from PromotionLine pl where (:promotionCode is null or pl.code = :promotionCode) and :fromDate <= pl.fromDate and :toDate >= pl.toDate")
+	@Query("select pl from PromotionLine pl where (:promotionCode is null or pl.code like( :promotionCode)) and :fromDate <= pl.fromDate and :toDate >= pl.toDate and pl.status = 1 ")
 	List<PromotionLine> findPromotionLineForReport(String promotionCode, LocalDate fromDate, LocalDate toDate);
 }

@@ -59,6 +59,39 @@ public class ReportController {
 		}
 	}
 	
+	@GetMapping("/sale-of-customer")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse reportSaleByUser(@RequestParam(required = false) String userCode,@RequestParam LocalDate fromDate, @RequestParam LocalDate toDate) {
+		try {
+			return reportService.reportSaleByUser(userCode,fromDate,toDate);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+	@GetMapping("/sale-of-customer/page")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse reportSaleByUserPage(@RequestParam(required = false) String userCode, @RequestParam LocalDate fromDate, @RequestParam LocalDate toDate, @RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam(required = false) String sortBy,
+			@RequestParam(required = false) String orderBy) {
+		try {
+			PageRequest pageRequest = new PageRequest();
+			pageRequest.setItemPerPage(itemPerPage);
+			pageRequest.setOrderBy(orderBy);
+			pageRequest.setPage(page -1);
+			pageRequest.setSortBy(sortBy);
+			return reportService.reportSaleByUserPage(userCode,fromDate,toDate,pageRequest);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+		
+	}
+	
 	@GetMapping("/promotion-export/page")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse reportPromotionPage(@RequestParam(required = false) String promotionCode, @RequestParam LocalDate fromDate, @RequestParam LocalDate toDate, @RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam(required = false) String sortBy,

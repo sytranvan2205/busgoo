@@ -36,5 +36,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	@Query("select count(u) from User u where u.createdDate >= :firstDayOfMonth and u.createdDate <= :currentDate ")
 	Long countDataForDashboard(LocalDate firstDayOfMonth, LocalDate currentDate);
+
+	@Query("select u from User u where (:userCode is null or u.userCode like (userCode) ) and u.status = 1 ")
+	List<User> findUserByReport(String userCode);
 	
 }

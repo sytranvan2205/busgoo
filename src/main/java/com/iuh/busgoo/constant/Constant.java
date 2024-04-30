@@ -6,8 +6,10 @@ public class Constant {
 	public static final String RESOURCE_TEMPLATE_PATH = "template/report/";
 	public static final String SALE_TEMPLATE_REPORT = "Bao_cao_doanh_thu_hang_xe_theo_thoi_gian.xlsx";
 	public static final String PROMOTION_TEMPLATE_REPORT = "Bao_cao_tong_ket_khuyen_mai.xlsx";
+	public static final String CUSTOMER_SALE_TEMPLATE_REPORT = "Bao_cao_doanh_thu_theo_khach_hang.xlsx";
 	public static final String SALE_BY_BUS_FILE_NAME = "Bao_cao_doanh_thu_hang_xe";
 	public static final String REPORT_PROMOTION = "Bao_cao_tong_ket_chuong_trinh_khuyen_mai";
+	public static final String SALE_BY_CUSTOMER = "Bao_cao_doanh_thu_theo_khach_hang";
 	public static final String EXCEL_EXTENSION = ".xlsx";
 	
 	public static final String SYSTEM = "SYSTEM";

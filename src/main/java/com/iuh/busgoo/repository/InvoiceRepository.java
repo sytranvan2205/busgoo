@@ -30,7 +30,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long>{
 			+ "inner join time_table tb on tb.id = so.time_table_id and tb.status =1 "
 			+ "inner join bus b on tb.bus_id = b.id and b.status = 1 " + "where b.id = :id "
 			+ "and (:fromDate is null or i.created_date >= :fromDate )"
-			+ "and (:toDate is null or i.created_date <= :toDate) ", nativeQuery = true)
+			+ "and (:toDate is null or i.created_date <= :toDate) "
+			+ "and i.status = 1 ", nativeQuery = true)
 	List<Invoice> findByBusIdAndFromDateAndToDate(Long id, LocalDate fromDate, LocalDate toDate);
 
 	List<Invoice> findByUserIdOrderByCreatedDateDescIdDesc(Long userId);
@@ -45,7 +46,10 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long>{
 			+ "and (:toDate is null or o.createdDate <= :toDate ) " + "and (:q is null or o.code like :q )")
 	Page<Invoice> findPageFilterReturn(LocalDate fromDate, LocalDate toDate, String q, Pageable page);
 
-	@Query(nativeQuery = true, value = "select i.* from promotion_detail pd join reservation od on pd.id = od.promotion_detail_id join invoice i on i.order_id = od.id where promotion_line_id = :id")
+	@Query(nativeQuery = true, value = "select i.* from promotion_detail pd join reservation od on pd.id = od.promotion_detail_id join invoice i on i.order_id = od.id where promotion_line_id = :id and i.status = 1 ")
 	List<Invoice> findInvoiceByPromotionReport(Long id);
+
+	@Query("select i from Invoice i where i.userId = :userId and i.createdDate >= :fromDate and i.createdDate <= :toDate and i.status =1 ")
+	List<Invoice> findInvoiceByUserReport(Long userId, LocalDate fromDate, LocalDate toDate);
 
 }

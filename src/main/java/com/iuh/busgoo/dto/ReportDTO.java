@@ -18,5 +18,10 @@ public class ReportDTO {
 	private String promotionType;
 	private LocalDate promotionFDate;
 	private LocalDate promotionTDate;
+	private String address;
+	private String cusCode;
+	private String cusName;
+	private String district;
+	private String province;
 //	private Long discount;
 }
