@@ -14,4 +14,9 @@ public interface ReportService {
 
 	DataResponse salesByBusExportPage(LocalDate fromDate, LocalDate toDate, PageRequest pageRequest);
 
+	DataResponse reportPromotion(String promotionCode, LocalDate fromDate, LocalDate toDate) throws IOException;
+
+	DataResponse reportPromotionPage(String promotionCode, LocalDate fromDate, LocalDate toDate,
+			PageRequest pageRequest);
+
 }

@@ -32,9 +32,11 @@ import com.iuh.busgoo.dto.OrderManagerDTO;
 import com.iuh.busgoo.dto.ReportDTO;
 import com.iuh.busgoo.entity.Bus;
 import com.iuh.busgoo.entity.Invoice;
+import com.iuh.busgoo.entity.PromotionLine;
 import com.iuh.busgoo.repository.BusRepository;
 import com.iuh.busgoo.repository.InvoiceRepository;
 import com.iuh.busgoo.repository.OrderRepository;
+import com.iuh.busgoo.repository.PromotionLineRepository;
 import com.iuh.busgoo.repository.UserRepository;
 import com.iuh.busgoo.requestType.PageRequest;
 import com.iuh.busgoo.service.ReportService;
@@ -63,6 +65,9 @@ public class ReportServiceImpl implements ReportService {
 	
 	@Autowired
     private ServletContext servletContext;
+	
+	@Autowired
+	private PromotionLineRepository promotionLineRepository;
 	
 	@Override
 	public DataResponse salesByBusExport(LocalDate fromDate, LocalDate toDate) throws IOException {
@@ -257,4 +262,136 @@ public class ReportServiceImpl implements ReportService {
 		}
 	}
 
+	@Override
+	public DataResponse reportPromotion(String promotionCode, LocalDate fromDate, LocalDate toDate) throws IOException {
+		DataResponse dataResponse = new DataResponse();
+		Workbook resultWorkbook = null;
+		InputStream inputStream = null;
+		OutputStream os = null;
+		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+//			classLoader.getResource(null)
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			String strFromDate = fromDate.format(formatter);
+			String strToDate = toDate.format(formatter);
+			String templateName = Constant.RESOURCE_TEMPLATE_PATH + Constant.PROMOTION_TEMPLATE_REPORT;
+			Map<String, Object> beans = new HashMap<String, Object>();
+			beans.put("fromDate", strFromDate);
+			beans.put("toDate", strToDate);
+			List<ReportDTO> dtos = new ArrayList<ReportDTO>();
+			List<PromotionLine> lstLine = promotionLineRepository.findPromotionLineForReport(promotionCode, fromDate,
+					toDate);
+			for (PromotionLine line : lstLine) {
+				ReportDTO data = new ReportDTO();
+				data.setPromotionCode(line.getCode());
+				data.setPromotionName(line.getLineName());
+				data.setPromotionFDate(line.getFromDate());
+				data.setPromotionTDate(line.getToDate());
+				Long totalDiscount = Long.valueOf(0);
+				List<Invoice> lstInvoice = invoiceRepository.findInvoiceByPromotionReport(line.getId());
+				for (Invoice invoice : lstInvoice) {
+					totalDiscount += invoice.getTotalDiscount().longValue();
+				}
+				data.setDiscount(totalDiscount);
+				dtos.add(data);
+			}
+			beans.put("lstData", dtos);
+			Long total = 0L;
+			for (ReportDTO dto : dtos) {
+				total += dto.getDiscount();
+			}
+			beans.put("total", total);
+			inputStream = new BufferedInputStream(new FileInputStream(classLoader.getResource(templateName).getFile()));
+			XLSTransformer transformer = new XLSTransformer();
+			resultWorkbook = transformer.transformXLS(inputStream, beans);
+
+			String timestamp = String.valueOf(Instant.now().toEpochMilli());
+
+			String fileName = Constant.REPORT_PROMOTION + "_" + timestamp + Constant.EXCEL_EXTENSION;
+			String realPath = servletContext.getRealPath("/");
+			// Tạo thư mục nếu chưa tồn tại
+			File directory = new File(realPath + basePath);
+			if (!directory.exists()) {
+				directory.mkdirs();
+			}
+			os = new BufferedOutputStream(new FileOutputStream(realPath + basePath + fileName));
+
+			resultWorkbook.write(os);
+			os.flush();
+			dataResponse.setResponseMsg("Export report success !!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			String fileExportUrl = realPath + basePath + fileName;
+			fileExportUrl = fileExportUrl.replaceAll("\\\\", "/");
+			respValue.put("outputPath", fileExportUrl);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
+		} catch (ParsePropertyException | InvalidFormatException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			dataResponse.setResponseMsg("Failed to upload file.");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		} finally {
+			if (inputStream != null) {
+				inputStream.close();
+			}
+			if (os != null) {
+				os.close();
+			}
+		}
+
+	}
+
+	@Override
+	public DataResponse reportPromotionPage(String promotionCode, LocalDate fromDate, LocalDate toDate,
+			PageRequest pageRequest) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			Pageable page;
+			Sort sort;
+			if (pageRequest.getSortBy() != null && pageRequest.getOrderBy() != null) {
+				if (pageRequest.getSortBy().toUpperCase().equals("ASC")) {
+					sort = Sort.by(pageRequest.getOrderBy()).ascending();
+				} else {
+					sort = Sort.by(pageRequest.getOrderBy()).descending();
+				}
+				page = org.springframework.data.domain.PageRequest.of(pageRequest.getPage(),
+						pageRequest.getItemPerPage(), sort);
+			} else {
+				page = org.springframework.data.domain.PageRequest.of(pageRequest.getPage(),
+						pageRequest.getItemPerPage());
+			}
+			
+			List<ReportDTO> dtos = new ArrayList<ReportDTO>();
+			List<PromotionLine> lstLine = promotionLineRepository.findPromotionLineForReport(promotionCode, fromDate, toDate);
+			for (PromotionLine line : lstLine) {
+				ReportDTO data = new ReportDTO();
+				data.setPromotionCode(line.getCode());
+				data.setPromotionName(line.getLineName());
+				data.setPromotionFDate(line.getFromDate());
+				data.setPromotionTDate(line.getToDate());
+				Long totalDiscount = Long.valueOf(0);
+				List<Invoice> lstInvoice = invoiceRepository.findInvoiceByPromotionReport(line.getId());
+				for (Invoice invoice : lstInvoice) {
+					totalDiscount += invoice.getTotalDiscount().longValue();
+				}
+				data.setDiscount(totalDiscount);
+				dtos.add(data);
+			}
+			Page<ReportDTO> reportDTOPage = new PageImpl<>(dtos, page, dtos.size());
+			dataResponse.setResponseMsg("Get data report success !!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data",reportDTOPage);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
+
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
 }
