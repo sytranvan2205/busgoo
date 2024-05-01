@@ -419,8 +419,10 @@ public class ReportServiceImpl implements ReportService {
 				data.setCusCode(user.getUserCode());
 				data.setCusName(user.getFullName());
 				data.setAddress(user.getAddressDescription());
-				data.setDistrict(user.getRegeionDetail().getFullName());
-				data.setProvince(user.getRegeionDetail().getRegionParent().getFullName());
+				if(user.getRegeionDetail() != null ) {
+					data.setDistrict(user.getRegeionDetail().getFullName());
+					data.setProvince(user.getRegeionDetail().getRegionParent().getFullName());
+				}
 				List<Invoice> invoices = invoiceRepository.findInvoiceByUserReport(user.getUserId(),fromDate,toDate);
 				if(invoices == null || invoices.size() ==0) {
 					data.setRevenue(0L);
@@ -516,8 +518,10 @@ public class ReportServiceImpl implements ReportService {
 				data.setCusCode(user.getUserCode());
 				data.setCusName(user.getFullName());
 				data.setAddress(user.getAddressDescription());
-				data.setDistrict(user.getRegeionDetail().getFullName());
-				data.setProvince(user.getRegeionDetail().getRegionParent().getFullName());
+				if(user.getRegeionDetail() != null) {
+					data.setDistrict(user.getRegeionDetail().getFullName());
+					data.setProvince(user.getRegeionDetail().getRegionParent().getFullName());
+				}
 				List<Invoice> invoices = invoiceRepository.findInvoiceByUserReport(user.getUserId(),fromDate,toDate);
 				if(invoices == null || invoices.size() ==0) {
 					data.setRevenue(0L);
