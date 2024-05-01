@@ -106,7 +106,7 @@ public class ReportServiceImpl implements ReportService {
 					Long discount = 0L;
 					for(Invoice invoice : invoices) {
 						value += invoice.getTotal().longValue();
-						tiketPrice += invoice.getTotalTiketPrice() != null ? invoice.getTotalDiscount().longValue(): 0L ;
+						tiketPrice += invoice.getTotalTiketPrice() != null ? invoice.getTotalTiketPrice().longValue(): 0L ;
 						discount += invoice.getTotalDiscount()!= null ? invoice.getTotalDiscount().longValue() : 0L ;
 					}
 					reportDTO.setRevenue(value);
@@ -241,7 +241,7 @@ public class ReportServiceImpl implements ReportService {
 					Long discount = 0L;
 					for(Invoice invoice : invoices) {
 						value += invoice.getTotal().longValue();
-						tiketPrice += invoice.getTotalTiketPrice() != null ? invoice.getTotalDiscount().longValue(): 0L ;
+						tiketPrice += invoice.getTotalTiketPrice() != null ? invoice.getTotalTiketPrice().longValue(): 0L ;
 						discount += invoice.getTotalDiscount()!= null ? invoice.getTotalDiscount().longValue() : 0L ;
 					}
 					reportDTO.setRevenue(value);
@@ -432,7 +432,7 @@ public class ReportServiceImpl implements ReportService {
 					Long discount = 0L;
 					for(Invoice invoice : invoices) {
 						value += invoice.getTotal().longValue();
-						tiketPrice += invoice.getTotalTiketPrice() != null ? invoice.getTotalDiscount().longValue(): 0L ;
+						tiketPrice += invoice.getTotalTiketPrice() != null ? invoice.getTotalTiketPrice().longValue(): 0L ;
 						discount += invoice.getTotalDiscount()!= null ? invoice.getTotalDiscount().longValue() : 0L ;
 					}
 					data.setRevenue(value);
@@ -529,7 +529,7 @@ public class ReportServiceImpl implements ReportService {
 					Long discount = 0L;
 					for(Invoice invoice : invoices) {
 						value += invoice.getTotal().longValue();
-						tiketPrice += invoice.getTotalTiketPrice() != null ? invoice.getTotalDiscount().longValue(): 0L ;
+						tiketPrice += invoice.getTotalTiketPrice() != null ? invoice.getTotalTiketPrice().longValue(): 0L ;
 						discount += invoice.getTotalDiscount()!= null ? invoice.getTotalDiscount().longValue() : 0L ;
 					}
 					data.setRevenue(value);
