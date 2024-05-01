@@ -52,4 +52,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long>{
 	@Query("select i from Invoice i where i.userId = :userId and i.createdDate >= :fromDate and i.createdDate <= :toDate and i.status =1 ")
 	List<Invoice> findInvoiceByUserReport(Long userId, LocalDate fromDate, LocalDate toDate);
 
+	@Query("select i from Invoice i where i.status = 0 and i.lastModifiedDate >= :fromDate and i.lastModifiedDate <= :toDate order by i.lastModifiedDate ")
+	List<Invoice> findInvoiceReturnForReport(LocalDate fromDate, LocalDate toDate);
+
 }

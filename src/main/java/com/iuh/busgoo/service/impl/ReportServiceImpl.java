@@ -32,12 +32,15 @@ import com.iuh.busgoo.dto.OrderManagerDTO;
 import com.iuh.busgoo.dto.ReportDTO;
 import com.iuh.busgoo.entity.Bus;
 import com.iuh.busgoo.entity.Invoice;
+import com.iuh.busgoo.entity.OrderDetail;
 import com.iuh.busgoo.entity.PromotionLine;
 import com.iuh.busgoo.entity.User;
 import com.iuh.busgoo.repository.BusRepository;
 import com.iuh.busgoo.repository.InvoiceRepository;
+import com.iuh.busgoo.repository.OrderDetailRepository;
 import com.iuh.busgoo.repository.OrderRepository;
 import com.iuh.busgoo.repository.PromotionLineRepository;
+import com.iuh.busgoo.repository.TimeTableRepository;
 import com.iuh.busgoo.repository.UserRepository;
 import com.iuh.busgoo.requestType.PageRequest;
 import com.iuh.busgoo.service.ReportService;
@@ -69,6 +72,9 @@ public class ReportServiceImpl implements ReportService {
 	
 	@Autowired
 	private PromotionLineRepository promotionLineRepository;
+	
+	@Autowired
+	private TimeTableRepository timeTableRepository;
 	
 	
 	@Override
@@ -455,7 +461,7 @@ public class ReportServiceImpl implements ReportService {
 
 			String timestamp = String.valueOf(Instant.now().toEpochMilli());
 
-			String fileName = Constant.REPORT_PROMOTION + "_" + timestamp + Constant.EXCEL_EXTENSION;
+			String fileName = Constant.SALE_BY_CUSTOMER + "_" + timestamp + Constant.EXCEL_EXTENSION;
 			String realPath = servletContext.getRealPath("/");
 			// Tạo thư mục nếu chưa tồn tại
 			File directory = new File(realPath + basePath);
@@ -550,6 +556,129 @@ public class ReportServiceImpl implements ReportService {
 			dataResponse.setValueReponse(respValue);
 			return dataResponse;
 
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public DataResponse reportInvoiceReturn(LocalDate fromDate, LocalDate toDate) throws IOException {
+		DataResponse dataResponse = new DataResponse();
+		Workbook resultWorkbook = null;
+		InputStream inputStream = null;
+		OutputStream os = null;
+		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+		try {
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			String strFromDate = fromDate.format(formatter);
+			String strToDate = toDate.format(formatter);
+			String templateName = Constant.RESOURCE_TEMPLATE_PATH + Constant.REPORT_INVOICE_RETURN_TEMPLATE;
+			Map<String, Object> beans = new HashMap<String, Object>();
+			beans.put("fromDate", strFromDate);
+			beans.put("toDate", strToDate);
+			List<ReportDTO> dtos = new ArrayList<ReportDTO>();
+			List<Invoice> lstInvoiceReturn = invoiceRepository.findInvoiceReturnForReport(fromDate,toDate);
+			for (Invoice invoice : lstInvoiceReturn) {
+				ReportDTO data = new ReportDTO();
+				User user = userRepository.getById(invoice.getUserId());
+				if(user != null) {
+					data.setCusCode(user.getUserCode());
+					data.setCusName(user.getFullName());
+				}
+				data.setInvoiceCode(invoice.getCode());
+				data.setInvoiceCreatedDate(invoice.getCreatedDate());
+				data.setInvoiceReturnCode("RT_"+invoice.getCode());
+				data.setInvoiceReturnDate(invoice.getLastModifiedDate());
+				data.setReason(invoice.getReason());
+				data.setDiscount(invoice.getTotalDiscount() != null ? invoice.getTotalDiscount().longValue() : 0L);
+				dtos.add(data);
+			}
+			beans.put("lstData", dtos);
+			Long total = 0L;
+			for (ReportDTO dto : dtos) {
+				total += dto.getDiscount();
+			}
+			beans.put("total", total);
+			inputStream = new BufferedInputStream(new FileInputStream(classLoader.getResource(templateName).getFile()));
+			XLSTransformer transformer = new XLSTransformer();
+			resultWorkbook = transformer.transformXLS(inputStream, beans);
+
+			String timestamp = String.valueOf(Instant.now().toEpochMilli());
+
+			String fileName = Constant.REPORT_INVOICE_RETURN + "_" + timestamp + Constant.EXCEL_EXTENSION;
+			String realPath = servletContext.getRealPath("/");
+			// Tạo thư mục nếu chưa tồn tại
+			File directory = new File(realPath + basePath);
+			if (!directory.exists()) {
+				directory.mkdirs();
+			}
+			os = new BufferedOutputStream(new FileOutputStream(realPath + basePath + fileName));
+
+			resultWorkbook.write(os);
+			os.flush();
+			dataResponse.setResponseMsg("Export report success !!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			String fileExportUrl = realPath + basePath + fileName;
+			fileExportUrl = fileExportUrl.replaceAll("\\\\", "/");
+			respValue.put("outputPath", fileExportUrl);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse reportInvoiceReturnPage(LocalDate fromDate, LocalDate toDate, PageRequest pageRequest) {
+		DataResponse dataResponse = new DataResponse();
+		try {
+			Pageable page;
+			Sort sort;
+			if (pageRequest.getSortBy() != null && pageRequest.getOrderBy() != null) {
+				if (pageRequest.getSortBy().toUpperCase().equals("ASC")) {
+					sort = Sort.by(pageRequest.getOrderBy()).ascending();
+				} else {
+					sort = Sort.by(pageRequest.getOrderBy()).descending();
+				}
+				page = org.springframework.data.domain.PageRequest.of(pageRequest.getPage(),
+						pageRequest.getItemPerPage(), sort);
+			} else {
+				page = org.springframework.data.domain.PageRequest.of(pageRequest.getPage(),
+						pageRequest.getItemPerPage());
+			}
+			
+			List<ReportDTO> dtos = new ArrayList<ReportDTO>();
+			List<Invoice> lstInvoiceReturn = invoiceRepository.findInvoiceReturnForReport(fromDate,toDate);
+			for (Invoice invoice : lstInvoiceReturn) {
+				ReportDTO data = new ReportDTO();
+				User user = userRepository.getById(invoice.getUserId());
+				if(user != null) {
+					data.setCusCode(user.getUserCode());
+					data.setCusName(user.getFullName());
+				}
+				data.setInvoiceCode(invoice.getCode());
+				data.setInvoiceCreatedDate(invoice.getCreatedDate());
+				data.setInvoiceReturnCode("RT_"+invoice.getCode());
+				data.setInvoiceReturnDate(invoice.getLastModifiedDate());
+				data.setReason(invoice.getReason());
+				data.setDiscount(invoice.getTotalDiscount() != null ? invoice.getTotalDiscount().longValue() : 0L);
+				dtos.add(data);
+			}
+			
+			Page<ReportDTO> reportDTOPage = new PageImpl<>(dtos, page, dtos.size());
+			dataResponse.setResponseMsg("Get data report success !!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data",reportDTOPage);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
 		} catch (Exception e) {
 			dataResponse.setResponseMsg("System error");
 			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);

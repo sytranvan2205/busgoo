@@ -146,4 +146,37 @@ public class ReportController {
 		
 	}
 	
+	@GetMapping("/return-invoice-report")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse reportInvoiceReturn(@RequestParam LocalDate fromDate, @RequestParam LocalDate toDate) {
+		try {
+			return reportService.reportInvoiceReturn(fromDate,toDate);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+	@GetMapping("/return-invoice-report/page")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse reportInvoiceReturnPage(@RequestParam LocalDate fromDate, @RequestParam LocalDate toDate, @RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam(required = false) String sortBy,
+			@RequestParam(required = false) String orderBy) {
+		try {
+			PageRequest pageRequest = new PageRequest();
+			pageRequest.setItemPerPage(itemPerPage);
+			pageRequest.setOrderBy(orderBy);
+			pageRequest.setPage(page -1);
+			pageRequest.setSortBy(sortBy);
+			return reportService.reportInvoiceReturnPage(fromDate,toDate,pageRequest);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+		
+	}
+	
 }

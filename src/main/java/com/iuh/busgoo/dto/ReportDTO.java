@@ -23,5 +23,11 @@ public class ReportDTO {
 	private String cusName;
 	private String district;
 	private String province;
+	private String invoiceCode;
+	private LocalDate invoiceCreatedDate;
+	private String invoiceReturnCode;
+	private LocalDate invoiceReturnDate;
+	private String reason;
+	private String timeTableCode;
 //	private Long discount;
 }
