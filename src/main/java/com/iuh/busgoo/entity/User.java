@@ -38,7 +38,7 @@ public class User extends AbstractEntity implements Serializable {
 
 	private Integer status;
 
-	@Column(name = "phone", length = 10)
+	@Column(name = "phone", length = 10, unique = true)
 	private String phone;
 
 //	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
@@ -47,7 +47,7 @@ public class User extends AbstractEntity implements Serializable {
 	private Integer type;
 
 	@ManyToOne
-	@JoinColumn(name = "address_id", unique = true)
+	@JoinColumn(name = "address_id")
 	private RegionDetail regeionDetail;
 	
 	@Column(name = "address_description",length = 1000)
