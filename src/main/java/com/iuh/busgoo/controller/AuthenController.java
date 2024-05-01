@@ -90,8 +90,8 @@ public class AuthenController {
 		return dataResponse;
 	}
 	
-	@PostMapping("/createToken")
-	public DataResponse createToken(@RequestBody String email) {
+	@GetMapping("/createToken")
+	public DataResponse createToken(@RequestParam String email) {
 		DataResponse dataResponse = new DataResponse();
 		try {
 			if(email == null) {
