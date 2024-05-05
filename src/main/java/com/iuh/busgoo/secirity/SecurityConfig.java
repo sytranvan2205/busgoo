@@ -65,6 +65,7 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll()
 						.requestMatchers("/api/**").hasAnyAuthority("ADMIN","STAFF", "USER")
+						.requestMatchers("/upload/report/**").permitAll()
 						.requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll().anyRequest().authenticated());
 		http.authenticationProvider(authenticationProvider());
 		http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

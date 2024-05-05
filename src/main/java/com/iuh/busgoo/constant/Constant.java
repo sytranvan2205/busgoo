@@ -13,6 +13,7 @@ public class Constant {
 	public static final String SALE_BY_CUSTOMER = "Bao_cao_doanh_thu_theo_khach_hang";
 	public static final String REPORT_INVOICE_RETURN = "Thong_ke_hoa_don_tra";
 	public static final String EXCEL_EXTENSION = ".xlsx";
+	public static final String EXPORT_REPORT_PATH = "upload/report/";
 	
 	public static final String SYSTEM = "SYSTEM";
 	public static final String USER = "USER";
