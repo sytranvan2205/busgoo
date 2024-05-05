@@ -1,8 +1,17 @@
 package com.iuh.busgoo.controller;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,8 +23,6 @@ import com.iuh.busgoo.requestType.PageRequest;
 import com.iuh.busgoo.service.ReportService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.HttpServletRequest;
 
 @RestController()
 @RequestMapping("/api/report")
@@ -45,6 +52,43 @@ public class ReportController {
 		}
 		
 	}
+	
+//	@GetMapping("/download/{fileName}")
+//	public ResponseEntity<Resource> downloadFileExcel(@PathVariable String fileName) throws MalformedURLException {
+//		Resource resource = new UrlResource(Paths.get(fileName).toUri());
+//		if(resource.exists() && resource.isReadable()) {
+//            return ResponseEntity.ok()
+//                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+//                    .body(resource);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//	}
+	
+    @GetMapping("/download")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<Resource> downloadFile(@RequestParam String fileName) throws IOException {
+//        String fileName = "Bao_cao_doanh_thu_hang_xe_1714925318619.xlsx";
+        String filePath = "upload/report/" + fileName;
+        Path path = Paths.get(filePath);
+
+        Resource resource = null;
+        try {
+            resource = new UrlResource(path.toUri());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        if (resource.exists() && resource.isReadable()) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                    .body(resource);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 	
 	@GetMapping("/promotion-export")
 	@SecurityRequirement(name = "bearerAuth")
