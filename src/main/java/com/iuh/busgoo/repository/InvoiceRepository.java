@@ -55,4 +55,15 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long>{
 	@Query("select i from Invoice i where i.status = 0 and i.lastModifiedDate >= :fromDate and i.lastModifiedDate <= :toDate order by i.lastModifiedDate ")
 	List<Invoice> findInvoiceReturnForReport(LocalDate fromDate, LocalDate toDate);
 
+	@Query(value = "select i.* from invoice i "
+			+ "join reservation o on i.order_id = o.id "
+			+ "join order_detail od on o.id = od.order_id "
+			+ "join seat_order so on so.id = od.seat_id "
+			+ "join time_table tb on tb.id = so.time_table_id "
+			+ "join route r on tb.route_id = r.id "
+			+ "where i.status = 1 "
+			+ "and i.created_date >= :fromDate and i.created_date <= :toDate "
+			+ "and r.id = :routeId ", nativeQuery = true)
+	List<Invoice> findInvoiceForReportByRoute(Long routeId, LocalDate fromDate, LocalDate toDate);
+
 }

@@ -27,4 +27,8 @@ public interface ReportService {
 
 	DataResponse reportInvoiceReturnPage(LocalDate fromDate, LocalDate toDate, PageRequest pageRequest);
 
+	DataResponse salesReportByRoute(String routeCode, LocalDate fromDate, LocalDate toDate) throws IOException;
+
+	DataResponse salesReportByRoutePage(String routeCode, LocalDate fromDate, LocalDate toDate, PageRequest pageRequest);
+
 }

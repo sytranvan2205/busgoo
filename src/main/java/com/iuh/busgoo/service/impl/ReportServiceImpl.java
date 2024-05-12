@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +36,16 @@ import com.iuh.busgoo.entity.Bus;
 import com.iuh.busgoo.entity.Invoice;
 import com.iuh.busgoo.entity.OrderDetail;
 import com.iuh.busgoo.entity.PromotionLine;
+import com.iuh.busgoo.entity.RegionDetail;
+import com.iuh.busgoo.entity.Route;
 import com.iuh.busgoo.entity.User;
 import com.iuh.busgoo.repository.BusRepository;
 import com.iuh.busgoo.repository.InvoiceRepository;
 import com.iuh.busgoo.repository.OrderDetailRepository;
 import com.iuh.busgoo.repository.OrderRepository;
 import com.iuh.busgoo.repository.PromotionLineRepository;
+import com.iuh.busgoo.repository.RegionDetailRepository;
+import com.iuh.busgoo.repository.RouteRepository;
 import com.iuh.busgoo.repository.TimeTableRepository;
 import com.iuh.busgoo.repository.UserRepository;
 import com.iuh.busgoo.requestType.PageRequest;
@@ -65,6 +71,9 @@ public class ReportServiceImpl implements ReportService {
 	private OrderRepository orderRepository;
 	
 	@Autowired
+	private RouteRepository routeRepository;
+	
+	@Autowired
     private String basePath;
 	
 	@Autowired
@@ -75,6 +84,11 @@ public class ReportServiceImpl implements ReportService {
 	
 	@Autowired
 	private TimeTableRepository timeTableRepository;
+	
+	@Autowired
+	RegionDetailRepository regionDetailRepository;
+	
+	 private static final Logger LOGGER = LogManager.getLogger(ReportServiceImpl.class);
 	
 	
 	@Override
@@ -127,33 +141,31 @@ public class ReportServiceImpl implements ReportService {
 				total += dto.getRevenue();
 			}
 			beans.put("total", total);
-			inputStream = new BufferedInputStream(new FileInputStream(classLoader.getResource(templateName).getFile()));
+			inputStream = getClass().getClassLoader().getResourceAsStream(templateName);
 			XLSTransformer transformer = new XLSTransformer();
 			resultWorkbook = transformer.transformXLS(inputStream, beans);
 			
 			String timestamp = String.valueOf(Instant.now().toEpochMilli());
-			
 			String fileName = Constant.SALE_BY_BUS_FILE_NAME+"_"+timestamp+Constant.EXCEL_EXTENSION;
-			String realPath = servletContext.getRealPath("/");
+			String reportPath = Constant.EXPORT_REPORT_PATH;
 			// Tạo thư mục nếu chưa tồn tại
-			File directory = new File(realPath + basePath);
+			File directory = new File(reportPath);
             if (!directory.exists()) {
                 directory.mkdirs();
             }
-			os = new BufferedOutputStream(new FileOutputStream(realPath +basePath + fileName));
+			os = new BufferedOutputStream(new FileOutputStream(reportPath + fileName));
 
 			resultWorkbook.write(os);
 			os.flush();
 			dataResponse.setResponseMsg("Export report success !!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
 			Map<String, Object> respValue = new HashMap<>();
-			String fileExportUrl = realPath + basePath + fileName;
-			fileExportUrl = fileExportUrl.replaceAll("\\\\", "/");
-			respValue.put("outputPath",fileExportUrl);
+			respValue.put("fileName",fileName);
 			dataResponse.setValueReponse(respValue);
 			return dataResponse;
 		} catch (ParsePropertyException | InvalidFormatException | IOException e) {
 			// TODO Auto-generated catch block
+			LOGGER.error("An error occurred",e);
 			e.printStackTrace();
 			dataResponse.setResponseMsg("Failed to upload file.");
 			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
@@ -309,27 +321,27 @@ public class ReportServiceImpl implements ReportService {
 				total += dto.getDiscount();
 			}
 			beans.put("total", total);
-			inputStream = new BufferedInputStream(new FileInputStream(classLoader.getResource(templateName).getFile()));
+			inputStream = getClass().getClassLoader().getResourceAsStream(templateName);
 			XLSTransformer transformer = new XLSTransformer();
 			resultWorkbook = transformer.transformXLS(inputStream, beans);
 
 			String timestamp = String.valueOf(Instant.now().toEpochMilli());
 
 			String fileName = Constant.REPORT_PROMOTION + "_" + timestamp + Constant.EXCEL_EXTENSION;
-			String realPath = servletContext.getRealPath("/");
+			String reportPath = Constant.EXPORT_REPORT_PATH;
 			// Tạo thư mục nếu chưa tồn tại
-			File directory = new File(realPath + basePath);
+			File directory = new File(reportPath);
 			if (!directory.exists()) {
 				directory.mkdirs();
 			}
-			os = new BufferedOutputStream(new FileOutputStream(realPath + basePath + fileName));
+			os = new BufferedOutputStream(new FileOutputStream(reportPath + fileName));
 
 			resultWorkbook.write(os);
 			os.flush();
 			dataResponse.setResponseMsg("Export report success !!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
 			Map<String, Object> respValue = new HashMap<>();
-			String fileExportUrl = realPath + basePath + fileName;
+			String fileExportUrl = fileName;
 			fileExportUrl = fileExportUrl.replaceAll("\\\\", "/");
 			respValue.put("outputPath", fileExportUrl);
 			dataResponse.setValueReponse(respValue);
@@ -431,9 +443,7 @@ public class ReportServiceImpl implements ReportService {
 				}
 				List<Invoice> invoices = invoiceRepository.findInvoiceByUserReport(user.getUserId(),fromDate,toDate);
 				if(invoices == null || invoices.size() ==0) {
-					data.setRevenue(0L);
-					data.setDiscount(0L);
-					data.setTicketPrice(0L);
+					
 				}else {
 					Long value = 0L;
 					Long tiketPrice = 0L;
@@ -446,36 +456,36 @@ public class ReportServiceImpl implements ReportService {
 					data.setRevenue(value);
 					data.setDiscount(discount);
 					data.setTicketPrice(tiketPrice);
+					dtos.add(data);
 				}
-				dtos.add(data);
 			}
 			beans.put("lstData", dtos);
 			Long total = 0L;
 			for (ReportDTO dto : dtos) {
-				total += dto.getDiscount();
+				total += dto.getRevenue();
 			}
 			beans.put("total", total);
-			inputStream = new BufferedInputStream(new FileInputStream(classLoader.getResource(templateName).getFile()));
+			inputStream = getClass().getClassLoader().getResourceAsStream(templateName);
 			XLSTransformer transformer = new XLSTransformer();
 			resultWorkbook = transformer.transformXLS(inputStream, beans);
 
 			String timestamp = String.valueOf(Instant.now().toEpochMilli());
 
 			String fileName = Constant.SALE_BY_CUSTOMER + "_" + timestamp + Constant.EXCEL_EXTENSION;
-			String realPath = servletContext.getRealPath("/");
+			String reportPath = Constant.EXPORT_REPORT_PATH;
 			// Tạo thư mục nếu chưa tồn tại
-			File directory = new File(realPath + basePath);
+			File directory = new File(reportPath);
 			if (!directory.exists()) {
 				directory.mkdirs();
 			}
-			os = new BufferedOutputStream(new FileOutputStream(realPath + basePath + fileName));
+			os = new BufferedOutputStream(new FileOutputStream(reportPath + fileName));
 
 			resultWorkbook.write(os);
 			os.flush();
 			dataResponse.setResponseMsg("Export report success !!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
 			Map<String, Object> respValue = new HashMap<>();
-			String fileExportUrl = realPath + basePath + fileName;
+			String fileExportUrl = fileName;
 			fileExportUrl = fileExportUrl.replaceAll("\\\\", "/");
 			respValue.put("outputPath", fileExportUrl);
 			dataResponse.setValueReponse(respValue);
@@ -530,9 +540,6 @@ public class ReportServiceImpl implements ReportService {
 				}
 				List<Invoice> invoices = invoiceRepository.findInvoiceByUserReport(user.getUserId(),fromDate,toDate);
 				if(invoices == null || invoices.size() ==0) {
-					data.setRevenue(0L);
-					data.setDiscount(0L);
-					data.setTicketPrice(0L);
 				}else {
 					Long value = 0L;
 					Long tiketPrice = 0L;
@@ -545,8 +552,8 @@ public class ReportServiceImpl implements ReportService {
 					data.setRevenue(value);
 					data.setDiscount(discount);
 					data.setTicketPrice(tiketPrice);
+					dtos.add(data);
 				}
-				dtos.add(data);
 			}
 			Page<ReportDTO> reportDTOPage = new PageImpl<>(dtos, page, dtos.size());
 			dataResponse.setResponseMsg("Get data report success !!!");
@@ -603,27 +610,27 @@ public class ReportServiceImpl implements ReportService {
 				total += dto.getDiscount();
 			}
 			beans.put("total", total);
-			inputStream = new BufferedInputStream(new FileInputStream(classLoader.getResource(templateName).getFile()));
+			inputStream = getClass().getClassLoader().getResourceAsStream(templateName);
 			XLSTransformer transformer = new XLSTransformer();
 			resultWorkbook = transformer.transformXLS(inputStream, beans);
 
 			String timestamp = String.valueOf(Instant.now().toEpochMilli());
 
 			String fileName = Constant.REPORT_INVOICE_RETURN + "_" + timestamp + Constant.EXCEL_EXTENSION;
-			String realPath = servletContext.getRealPath("/");
+			String reportPath = Constant.EXPORT_REPORT_PATH;
 			// Tạo thư mục nếu chưa tồn tại
-			File directory = new File(realPath + basePath);
+			File directory = new File(reportPath);
 			if (!directory.exists()) {
 				directory.mkdirs();
 			}
-			os = new BufferedOutputStream(new FileOutputStream(realPath + basePath + fileName));
+			os = new BufferedOutputStream(new FileOutputStream(reportPath + fileName));
 
 			resultWorkbook.write(os);
 			os.flush();
 			dataResponse.setResponseMsg("Export report success !!!");
 			dataResponse.setRespType(Constant.HTTP_SUCCESS);
 			Map<String, Object> respValue = new HashMap<>();
-			String fileExportUrl = realPath + basePath + fileName;
+			String fileExportUrl =fileName;
 			fileExportUrl = fileExportUrl.replaceAll("\\\\", "/");
 			respValue.put("outputPath", fileExportUrl);
 			dataResponse.setValueReponse(respValue);
@@ -684,6 +691,137 @@ public class ReportServiceImpl implements ReportService {
 			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
 			return dataResponse;
 		}
+	}
+
+	@Override
+	public DataResponse salesReportByRoute(String routeCode, LocalDate fromDate, LocalDate toDate) throws IOException {
+		DataResponse dataResponse = new DataResponse();
+		Workbook resultWorkbook = null;
+		InputStream inputStream = null;
+		OutputStream os = null;
+		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			String strFromDate = fromDate.format(formatter);
+			String strToDate = toDate.format(formatter);
+			String templateName = Constant.RESOURCE_TEMPLATE_PATH + Constant.REPORT_SALE_BY_ROUTE;
+			Map<String, Object> beans = new HashMap<String, Object>();
+			beans.put("fromDate", strFromDate);
+			beans.put("toDate", strToDate);
+			List<Route> routes = routeRepository.findRouteActiveForReport(routeCode);
+			List<ReportDTO> dtos = new ArrayList<ReportDTO>();
+			for(Route route: routes) {
+				List<Invoice> lstInvoice = invoiceRepository.findInvoiceForReportByRoute(route.getId(),fromDate,toDate);
+				if(lstInvoice != null && !lstInvoice.isEmpty()) {
+					ReportDTO data = new ReportDTO();
+					data.setRouteCode(route.getCode());
+					data.setRegionFrom(route.getFrom().getFullName());
+					data.setRegionTo(route.getTo().getFullName());
+					Long value = 0L;
+					Long tiketPrice = 0L;
+					Long discount = 0L;
+					for(Invoice invoice : lstInvoice) {
+						value += invoice.getTotal().longValue();
+						tiketPrice += invoice.getTotalTiketPrice() != null ? invoice.getTotalTiketPrice().longValue(): 0L ;
+						discount += invoice.getTotalDiscount()!= null ? invoice.getTotalDiscount().longValue() : 0L ;
+					}
+					data.setRevenue(value);
+					data.setDiscount(discount);
+					data.setTicketPrice(tiketPrice);
+					dtos.add(data);
+				}
+			}
+			beans.put("lstData", dtos);
+			Long total = 0L;
+			for (ReportDTO dto : dtos) {
+				total += dto.getRevenue();
+			}
+			beans.put("total", total);
+			inputStream = getClass().getClassLoader().getResourceAsStream(templateName);
+			XLSTransformer transformer = new XLSTransformer();
+			resultWorkbook = transformer.transformXLS(inputStream, beans);
+
+			String timestamp = String.valueOf(Instant.now().toEpochMilli());
+
+			String fileName = Constant.REPORT_SALE_BY_ROUTE_NAME + "_" + timestamp + Constant.EXCEL_EXTENSION;
+			String reportPath = Constant.EXPORT_REPORT_PATH;
+			// Tạo thư mục nếu chưa tồn tại
+			File directory = new File(reportPath);
+			if (!directory.exists()) {
+				directory.mkdirs();
+			}
+			os = new BufferedOutputStream(new FileOutputStream(reportPath + fileName));
+
+			resultWorkbook.write(os);
+			os.flush();
+			dataResponse.setResponseMsg("Export report success !!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			String fileExportUrl =fileName;
+			fileExportUrl = fileExportUrl.replaceAll("\\\\", "/");
+			respValue.put("outputPath", fileExportUrl);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+
+	@Override
+	public DataResponse salesReportByRoutePage(String routeCode,LocalDate fromDate, LocalDate toDate, PageRequest pageRequest) {
+
+		DataResponse dataResponse = new DataResponse();
+		try {
+			Pageable page;
+			Sort sort;
+			if(pageRequest.getSortBy() != null && pageRequest.getOrderBy() != null) {
+				if(pageRequest.getSortBy().toUpperCase().equals("ASC")) {
+					sort = Sort.by(pageRequest.getOrderBy()).ascending();
+				}else {
+					sort = Sort.by(pageRequest.getOrderBy()).descending();
+				}
+				page= org.springframework.data.domain.PageRequest.of(pageRequest.getPage(), pageRequest.getItemPerPage(), sort);
+			}else {
+				page = org.springframework.data.domain.PageRequest.of(pageRequest.getPage(), pageRequest.getItemPerPage());
+			}
+			List<ReportDTO> dtos = new ArrayList<ReportDTO>();
+			List<Route> routes = routeRepository.findRouteActiveForReport(routeCode);
+			for(Route route: routes) {
+				List<Invoice> lstInvoice = invoiceRepository.findInvoiceForReportByRoute(route.getId(),fromDate,toDate);
+				if(lstInvoice != null && !lstInvoice.isEmpty()) {
+					ReportDTO data = new ReportDTO();
+					data.setRouteCode(route.getCode());
+					data.setRegionFrom(route.getFrom().getFullName());
+					data.setRegionTo(route.getTo().getFullName());
+					Long value = 0L;
+					Long tiketPrice = 0L;
+					Long discount = 0L;
+					for(Invoice invoice : lstInvoice) {
+						value += invoice.getTotal().longValue();
+						tiketPrice += invoice.getTotalTiketPrice() != null ? invoice.getTotalTiketPrice().longValue(): 0L ;
+						discount += invoice.getTotalDiscount()!= null ? invoice.getTotalDiscount().longValue() : 0L ;
+					}
+					data.setRevenue(value);
+					data.setDiscount(discount);
+					data.setTicketPrice(tiketPrice);
+					dtos.add(data);
+				}
+			}
+			Page<ReportDTO> reportDTOPage = new PageImpl<>(dtos, page, dtos.size());
+			dataResponse.setResponseMsg("Get data report success !!!");
+			dataResponse.setRespType(Constant.HTTP_SUCCESS);
+			Map<String, Object> respValue = new HashMap<>();
+			respValue.put("data",reportDTOPage);
+			dataResponse.setValueReponse(respValue);
+			return dataResponse;
+		} catch (Exception e) {
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	
 	}
 	
 }

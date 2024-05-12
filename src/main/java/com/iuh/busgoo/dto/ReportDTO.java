@@ -29,5 +29,8 @@ public class ReportDTO {
 	private LocalDate invoiceReturnDate;
 	private String reason;
 	private String timeTableCode;
+	private String routeCode;
+	private String regionFrom;
+	private String regionTo;
 //	private Long discount;
 }

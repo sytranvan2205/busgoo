@@ -46,5 +46,11 @@ public interface RouteRepository extends JpaRepository<Route, Long>{
 			+ "and (:fromId is null or from.id = :fromId) "
 			+ "and (:toId is null or to.id = :toId )")
 	Page<Route> findRouteByFilter(Integer status, Long fromId, Long toId, Pageable page);
+
+	@Query("Select r from Route r "
+			+ "where r.status = 1 "
+			+ " and (:routeCode is null or r.code = :routeCode )"
+			+ " order by r.code ")
+	List<Route> findRouteActiveForReport(String routeCode);
 	
 }

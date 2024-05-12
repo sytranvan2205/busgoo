@@ -53,6 +53,40 @@ public class ReportController {
 		
 	}
 	
+	@GetMapping("/sales-by-route")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse salesReportByRoute(@RequestParam(required = false) String routeCode, @RequestParam LocalDate fromDate, @RequestParam LocalDate toDate) {
+		try {
+			return reportService.salesReportByRoute(routeCode,fromDate,toDate);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+		
+	}
+	
+	@GetMapping("/sales-by-bus/page")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse salesReportByRoutePage(@RequestParam(required = false) String routeCode,@RequestParam LocalDate fromDate, @RequestParam LocalDate toDate, @RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam(required = false) String sortBy,
+			@RequestParam(required = false) String orderBy) {
+		try {
+			PageRequest pageRequest = new PageRequest();
+			pageRequest.setItemPerPage(itemPerPage);
+			pageRequest.setOrderBy(orderBy);
+			pageRequest.setPage(page -1);
+			pageRequest.setSortBy(sortBy);
+			return reportService.salesReportByRoutePage(routeCode,fromDate,toDate,pageRequest);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+		
+	}
+	
 //	@GetMapping("/download/{fileName}")
 //	public ResponseEntity<Resource> downloadFileExcel(@PathVariable String fileName) throws MalformedURLException {
 //		Resource resource = new UrlResource(Paths.get(fileName).toUri());
