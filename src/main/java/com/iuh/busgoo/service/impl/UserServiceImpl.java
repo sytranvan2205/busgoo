@@ -187,14 +187,17 @@ public class UserServiceImpl implements UserService {
 					address.append(dto.getAddressDescription());
 					address.append(", ");
 				}
-				RegionDetail district = regionDetailRepository.findById(dto.getAddressId()).get();
-				address.append(district.getFullName());
-				if(district != null && district.getRegionParent() != null) {
-					RegionDetail province = regionDetailRepository.findById(district.getRegionParent().getId()).get();
-					address.append(", ");
-					address.append(province.getFullName());
+				if(dto.getAddressId() != null) {
+					RegionDetail district = regionDetailRepository.findById(dto.getAddressId()).get();
+					address.append(district.getFullName());
+					if (district != null && district.getRegionParent() != null) {
+						RegionDetail province = regionDetailRepository.findById(district.getRegionParent().getId())
+								.get();
+						address.append(", ");
+						address.append(province.getFullName());
+					}
+					dto.setAddress(address.toString());
 				}
-				dto.setAddress(address.toString());
 			}
 			Page<UserDTO> userDtoPage = new PageImpl<>(dtos, page, pageUsers.getTotalElements());
 //			Page<User> pageUsers = userRepo.findAll(page);

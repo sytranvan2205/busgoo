@@ -308,17 +308,23 @@ public class ReportServiceImpl implements ReportService {
 				data.setPromotionFDate(line.getFromDate());
 				data.setPromotionTDate(line.getToDate());
 				Long totalDiscount = Long.valueOf(0);
+				Long tiketPrice = 0L;
+				Long value = 0L;
 				List<Invoice> lstInvoice = invoiceRepository.findInvoiceByPromotionReport(line.getId());
 				for (Invoice invoice : lstInvoice) {
 					totalDiscount += invoice.getTotalDiscount().longValue();
+					tiketPrice += invoice.getTotalTiketPrice() != null ? invoice.getTotalTiketPrice().longValue(): 0L ;
+					value += invoice.getTotal().longValue();
 				}
+				data.setTicketPrice(tiketPrice);
+				data.setRevenue(value);
 				data.setDiscount(totalDiscount);
 				dtos.add(data);
 			}
 			beans.put("lstData", dtos);
 			Long total = 0L;
 			for (ReportDTO dto : dtos) {
-				total += dto.getDiscount();
+				total += dto.getRevenue();
 			}
 			beans.put("total", total);
 			inputStream = getClass().getClassLoader().getResourceAsStream(templateName);
@@ -392,9 +398,13 @@ public class ReportServiceImpl implements ReportService {
 				data.setPromotionFDate(line.getFromDate());
 				data.setPromotionTDate(line.getToDate());
 				Long totalDiscount = Long.valueOf(0);
+				Long tiketPrice = Long.valueOf(0);
+				Long value = Long.valueOf(0);
 				List<Invoice> lstInvoice = invoiceRepository.findInvoiceByPromotionReport(line.getId());
 				for (Invoice invoice : lstInvoice) {
 					totalDiscount += invoice.getTotalDiscount().longValue();
+					tiketPrice += invoice.getTotalTiketPrice() != null ? invoice.getTotalTiketPrice().longValue(): 0L ;
+					value += invoice.getTotal().longValue();
 				}
 				data.setDiscount(totalDiscount);
 				dtos.add(data);

@@ -67,7 +67,7 @@ public class ReportController {
 		
 	}
 	
-	@GetMapping("/sales-by-bus/page")
+	@GetMapping("/sales-by-rute/page")
 	@SecurityRequirement(name = "bearerAuth")
 	public DataResponse salesReportByRoutePage(@RequestParam(required = false) String routeCode,@RequestParam LocalDate fromDate, @RequestParam LocalDate toDate, @RequestParam Integer itemPerPage, @RequestParam Integer page, @RequestParam(required = false) String sortBy,
 			@RequestParam(required = false) String orderBy) {

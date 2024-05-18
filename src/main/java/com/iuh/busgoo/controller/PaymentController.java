@@ -3,15 +3,14 @@ package com.iuh.busgoo.controller;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -89,13 +88,15 @@ public class PaymentController {
 			        vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl);
 			        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
-			        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-			        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-			        String vnp_CreateDate = formatter.format(cld.getTime());
+			        LocalDateTime createdTime = LocalDateTime.now();
+			        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+			        System.out.println(createdTime);
+			        String vnp_CreateDate = createdTime.format(formatter);
 			        vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 			        
-			        cld.add(Calendar.MINUTE, 15);
-			        String vnp_ExpireDate = formatter.format(cld.getTime());
+			        LocalDateTime expireTime = createdTime.plusMinutes(30);
+			        System.out.println(expireTime);
+			        String vnp_ExpireDate = expireTime.format(formatter);
 			        vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 			        
 			        List fieldNames = new ArrayList(vnp_Params.keySet());
