@@ -4,7 +4,9 @@ import org.springframework.data.domain.Pageable;
 
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.entity.User;
+import com.iuh.busgoo.requestType.ChangePassRequest;
 import com.iuh.busgoo.requestType.UserCreateRequest;
+import com.iuh.busgoo.requestType.UserUpdateRequest;
 import com.iuh.busgoo.service.impl.FilterUserRq;
 
 public interface UserService {
@@ -23,4 +25,8 @@ public interface UserService {
 	DataResponse getUserById(Long userId);
 
 	DataResponse deleteUser(Long id);
+
+	DataResponse changePass(ChangePassRequest changePassRequest);
+
+	DataResponse changeInfo(UserUpdateRequest userUpdateRequest);
 }

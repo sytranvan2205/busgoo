@@ -1,11 +1,22 @@
 package com.iuh.busgoo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
+import com.iuh.busgoo.requestType.ChangePassRequest;
 import com.iuh.busgoo.requestType.UserCreateRequest;
+import com.iuh.busgoo.requestType.UserUpdateRequest;
 import com.iuh.busgoo.service.UserService;
 import com.iuh.busgoo.service.impl.FilterUserRq;
 
@@ -86,6 +97,46 @@ public class UserController {
 	public DataResponse deleteUserById(@PathVariable Long userId) {
 		try {
 			return userService.deleteUser(userId);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+	@PostMapping("/change-pass")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse changePassword(@RequestBody ChangePassRequest changePassRequest) {
+		try {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if (auth.getPrincipal() == null) {
+				DataResponse dataResponse = new DataResponse();
+				dataResponse.setResponseMsg("System error");
+				dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+				return dataResponse;
+			}
+			return userService.changePass(changePassRequest);
+		} catch (Exception e) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setResponseMsg("System error");
+			dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return dataResponse;
+		}
+	}
+	
+	@PostMapping("/change-info")
+	@SecurityRequirement(name = "bearerAuth")
+	public DataResponse changeInfo(@RequestBody UserUpdateRequest userUpdateRequest) {
+		try {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if (auth.getPrincipal() == null || userUpdateRequest.getUserId() == null) {
+				DataResponse dataResponse = new DataResponse();
+				dataResponse.setResponseMsg("System error");
+				dataResponse.setRespType(Constant.SYSTEM_ERROR_CODE);
+				return dataResponse;
+			}
+			return userService.changeInfo(userUpdateRequest);
 		} catch (Exception e) {
 			DataResponse dataResponse = new DataResponse();
 			dataResponse.setResponseMsg("System error");

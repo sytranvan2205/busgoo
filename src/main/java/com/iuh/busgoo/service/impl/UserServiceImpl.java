@@ -6,22 +6,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.iuh.busgoo.entity.Price;
-import com.iuh.busgoo.entity.PromotionDetail;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.iuh.busgoo.constant.Constant;
 import com.iuh.busgoo.dto.DataResponse;
 import com.iuh.busgoo.dto.UserDTO;
+import com.iuh.busgoo.entity.Account;
 import com.iuh.busgoo.entity.RegionDetail;
 import com.iuh.busgoo.entity.User;
 import com.iuh.busgoo.mapper.UserMapper;
+import com.iuh.busgoo.repository.AccountRepository;
 import com.iuh.busgoo.repository.RegionDetailRepository;
 import com.iuh.busgoo.repository.UserRepository;
+import com.iuh.busgoo.requestType.ChangePassRequest;
 import com.iuh.busgoo.requestType.UserCreateRequest;
+import com.iuh.busgoo.requestType.UserUpdateRequest;
 import com.iuh.busgoo.service.UserService;
 import com.iuh.busgoo.utils.PageUtils;
 
@@ -35,6 +42,15 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	UserMapper userMapper;
+	
+	@Autowired
+	private AccountRepository accountRepository;
+	
+	@Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	@Override
 	public User findUserByCode(String code) {
@@ -257,5 +273,63 @@ public class UserServiceImpl implements UserService {
 			return response;
 		}
 	}
+
+	@Override
+	public DataResponse changePass(ChangePassRequest changePassRequest) {
+		DataResponse response = new DataResponse();
+		try {
+			if (changePassRequest.getEmail() == null || changePassRequest.getEmail().length()==0) {
+				throw new Exception();
+			}
+			Account account = accountRepository.findAccountByEmail(changePassRequest.getEmail());
+			if(bCryptPasswordEncoder.matches(changePassRequest.getPassword(), account.getPassword())) {
+				if(bCryptPasswordEncoder.matches(changePassRequest.getNewPassword(), account.getPassword())) {
+					response.setResponseMsg("The new password cannot be the same as the old password!");
+					response.setRespType(Constant.CHANGE_PASS_FAIL);
+					return response;
+				}else {
+					account.setPassword(passwordEncoder.encode(changePassRequest.getNewPassword()));
+				}
+				accountRepository.save(account);
+				response.setResponseMsg("Change password success!!!");
+				response.setRespType(Constant.HTTP_SUCCESS);
+				return response;
+			}else {
+				response.setResponseMsg("The new password cannot be the same as the old password!");
+				response.setRespType(Constant.CHANGE_PASS_FAIL);
+				return response;
+			}
+		} catch (Exception e) {
+			response.setResponseMsg("System error");
+			response.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return response;
+		}
+	}
+
+	@Override
+	public DataResponse changeInfo(UserUpdateRequest userUpdateRequest) {
+		DataResponse response = new DataResponse();
+		try {
+			User user = userRepo.getById(userUpdateRequest.getUserId());
+			RegionDetail regionDetail = regionDetailRepository.getById(userUpdateRequest.getAddressId());
+			if (user == null || regionDetail == null) {
+				throw new Exception();
+			}else {
+				user.setFullName(userUpdateRequest.getUserName());
+				user.setAddressDescription(userUpdateRequest.getAddressDesciption());
+				user.setRegeionDetail(regionDetail);
+				userRepo.save(user);
+				response.setResponseMsg("Information updated success!!!");
+				response.setRespType(Constant.HTTP_SUCCESS);
+				return response;
+			}
+		} catch (Exception e) {
+			response.setResponseMsg("System error");
+			response.setRespType(Constant.SYSTEM_ERROR_CODE);
+			return response;
+		}
+	}
+	
+	
 
 }
