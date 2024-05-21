@@ -299,15 +299,15 @@ public class PromotionServiceImpl implements PromotionService {
 						dataResponse.setRespType(Constant.PROMOTION_UPDATE_FAILED);
 						return dataResponse;
 					}
-					PromotionDetail checkExist = null;
-					if(promotionDetailRequest.getPromotionLineId() != null) {
-						checkExist = promoDetailRepository.findByPromotionLineIdAndStatus(promotionDetailRequest.getPromotionLineId(),1);
-					}
-					if(checkExist != null) {
-						dataResponse.setResponseMsg("You cannot have two promotional structures at the same time");
-						dataResponse.setRespType(Constant.PROMOTION_DETAIL_ALREADY_EXIST);
-						return dataResponse;
-					}
+//					PromotionDetail checkExist = null;
+//					if(promotionDetailRequest.getPromotionLineId() != null) {
+//						checkExist = promoDetailRepository.findByPromotionLineIdAndStatus(promotionDetailRequest.getPromotionLineId(),1);
+//					}
+//					if(checkExist != null) {
+//						dataResponse.setResponseMsg("You cannot have two promotional structures at the same time");
+//						dataResponse.setRespType(Constant.PROMOTION_DETAIL_ALREADY_EXIST);
+//						return dataResponse;
+//					}
 					PromotionDetail promotionDetail = promoDetailRepository.findByPromotionLineIdAndStatus(line.getId(), 1);
 					if(promotionDetail == null) {
 						promotionDetail = new PromotionDetail();
@@ -321,8 +321,8 @@ public class PromotionServiceImpl implements PromotionService {
 						promotionDetail.setConditionApply(null);
 					else promotionDetail.setConditionApply(new BigDecimal(promotionDetailRequest.getConditionApply()));
 					if(line.getPromotionType().equals(2)) {
-						if(promotionDetailRequest.getDiscount()<0 && promotionDetailRequest.getDiscount()>100) {
-							dataResponse.setResponseMsg("The discount must be >0 and <100");
+						if(promotionDetailRequest.getDiscount()<0 || promotionDetailRequest.getDiscount()>100) {
+							dataResponse.setResponseMsg("The discount value for the promotion type must be greater than 0 and less than 100.");
 							dataResponse.setRespType(Constant.DISCOUNT_INVALID);
 							return dataResponse;
 						}
