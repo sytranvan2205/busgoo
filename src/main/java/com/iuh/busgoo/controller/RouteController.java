@@ -30,7 +30,11 @@ public class RouteController {
 			RouteFilter filter = new RouteFilter();
 			filter.setFromId(fromId);
 			filter.setToId(toId);
-			filter.setStatus(status);
+			if (status == null) {
+				filter.setStatus(1);
+			}else {
+				filter.setStatus(status);
+			}
 			filter.setPage(page - 1);
 			filter.setItemPerPage(itemPerPage);
 			filter.setOrderBy(orderBy);
