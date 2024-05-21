@@ -144,13 +144,13 @@ public class PromotionServiceImpl implements PromotionService {
 	}
 
 	@Override
-	public DataResponse deletePromotion(Long promotionId) {
+	public DataResponse deletePromotion(Long id) {
 		DataResponse dataResponse = new DataResponse();
 		try {
-			if (promotionId == null) {
+			if (id == null) {
 				throw new Exception();
 			}
-			Promotion checkExist = promotionRepo.findByIdAndStatus(promotionId, 1);
+			Promotion checkExist = promotionRepo.findByIdAndStatus(id, 1);
 			if (checkExist != null) {
 				checkExist.setStatus(0);
 			}

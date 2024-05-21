@@ -17,7 +17,7 @@ public interface PromotionService {
 
 	DataResponse getPromotionLine(Long promotionId);
 
-	DataResponse deletePromotion(Long promotionId);
+	DataResponse deletePromotion(Long id);
 
 	DataResponse createPromotionLine(PromotionLineRq promotionLineRq);
 

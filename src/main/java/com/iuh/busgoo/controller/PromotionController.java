@@ -64,12 +64,12 @@ public class PromotionController {
 			return dataResponse;
 		}
 	}
-	
-	@PostMapping("/delete")
+
+	@DeleteMapping("/delete/{id}")
 	@SecurityRequirement(name = "bearerAuth")
-	public DataResponse deletePromotion(@RequestBody Long promotionId) {
+	public DataResponse deletePromotion(@PathVariable Long id) {
 		try {
-			return promotionService.deletePromotion(promotionId);
+			return promotionService.deletePromotion(id);
 		} catch (Exception e) {
 			DataResponse dataResponse = new DataResponse();
 			dataResponse.setResponseMsg("System error");
