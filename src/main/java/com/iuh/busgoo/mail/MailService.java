@@ -9,6 +9,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+import com.iuh.busgoo.entity.Account;
+
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -24,7 +26,13 @@ public class MailService {
 		MimeMessageHelper helper = new MimeMessageHelper( message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
 				StandardCharsets.UTF_8.name());
 		helper.setTo(mail.getTo());
-		helper.setText("Mã xác nhận của bạn là: " + mail.getModel().get("token").toString());
+		String content = "Dear registrant"+ ",\n\n"
+				+ "You have requested to verify your account with BUSGOO. Below is your verification token:\n\n"
+				+ "Verification Token: "+mail.getModel().get("token").toString()+ "\n\n"
+				+ "If you did not request this token, please disregard this email." +"\n\n"
+				+ "Best regards,\n"
+				+ "BUSGOO";
+		helper.setText(content);
 		helper.setSubject(mail.getSubject());
 		helper.setFrom(mail.getFrom());
 

@@ -197,7 +197,7 @@ public class AccountServiceImpl implements AccountService {
 				
 				Mail mail = new Mail();
 				mail.setFrom("imusicstudio4nvb@gmail.com");
-				mail.setSubject("Registration");
+				mail.setSubject("Confirm Your Account with BUSGOO");
 				mail.setTo(account.getEmail());
 				mail.setModel(maps);
 				try {
